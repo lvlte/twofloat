@@ -18,6 +18,10 @@ export const F64_PRECISION = 53;
 export const F64_TRUNC_NB = Math.ceil(F64_PRECISION/2);
 export const F64_SPLIT_K = 2**F64_TRUNC_NB + 1;
 
+
+/* Error-free transforms */
+
+
 // EFT - Dekker "fast2Sum" algorithm (NB. assumes |x| ≥ |y|)
 export function normalize(x: f64, y: f64): TwoF64 {
   const hi = x + y;
@@ -49,4 +53,49 @@ export function twoProd(x: f64, y: f64): TwoF64 {
   const e3 = e2 - xhi*ylo;
   const lo = xlo*ylo - e3;
   return [hi, lo];
+}
+
+
+/* Main algorithms (cf. J.M. Muller et al.) */
+
+
+// DWPlusFP - 2u²
+export function add21([xhi, xlo]: TwoF64, y: f64): TwoF64 {
+  const [hi, lo] = twoSum(xhi, y);
+  return normalize(hi, xlo + lo);
+}
+
+// AccurateDWPlusDW - 3u² + 13u³
+export function add22([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF64 {
+  const [shi, slo] = twoSum(xhi, yhi);
+  const [thi, tlo] = twoSum(xlo, ylo);
+  const [vhi, vlo] = normalize(shi, slo + thi);
+  return normalize(vhi, tlo + vlo);
+}
+
+// DWTimesFP1 - 3u²/2 + 4u³
+export function mul21([xhi, xlo]: TwoF64, y: f64): TwoF64 {
+  const [shi, slo] = twoProd(xhi, y);
+  const [hi, lo] = normalize(shi, xlo*y);
+  return normalize(hi, lo + slo);
+}
+
+// DWTimesDW1 - 5u²
+export function mul22([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF64 {
+  const [hi, lo] = twoProd(xhi, yhi);
+  return normalize(hi, lo + (xhi*ylo + xlo*yhi));
+}
+
+// DWDivFP3 - 3u²
+export function div21([xhi, xlo]: TwoF64, y: f64): TwoF64 {
+  const hi = xhi/y;
+  const [shi, slo] = twoProd(hi, y);
+  return normalize(hi, (((xhi - shi) - slo) + xlo)/y);
+}
+
+// DWDivDW2 - 15u² + 56u³
+export function div22([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF64 {
+  const hi = xhi/yhi;
+  const [rhi, rlo] = mul21([yhi, ylo], hi);
+  return normalize(hi, ((xhi - rhi) + (xlo - rlo))/yhi);
 }
