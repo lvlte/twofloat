@@ -48,11 +48,13 @@
   ],
   "devDependencies": {
     "@lvlte/tsconfig": "^1.1.0",
+    "@lvlte/ulp": "^1.2.1",
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
     "make-dir-cli": "^4.0.0",
     "rimraf": "^6.0.1",
     "ts-jest": "29.2.5",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }
