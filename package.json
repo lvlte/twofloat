@@ -29,7 +29,9 @@
     "dist"
   ],
   "scripts": {
-    "test": "jest",
+    "pretest": "tsx ./test/algorithms.ts && julia ./test/algorithms.jl",
+    "test": "",
+    "tsc": "tsc",
     "prebuild": "rimraf dist && make-dir dist",
     "build": "tsc && tsc -p tsconfig-cjs.json",
     "postbuild": "(echo { && echo   \"type\": \"commonjs\" && echo }) > ./dist/cjs/package.json",
