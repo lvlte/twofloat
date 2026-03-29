@@ -3,3 +3,5 @@
 /drafts
 
 yarn.lock
+
+/test/*.json
