@@ -80,23 +80,25 @@ const [emin, emax] = [-128, 127];
 // Fill argsList with number combinations in the domain [±2^emin, ±2^emax]
 for (let e1 = emin; e1 <= emax; e1+=3) {
   for (let e2 = emin+1; e2 <= emax; e2+=3) {
-    const sw = random();
-    const sx = random();
-    const sy = random();
-    const sz = random();
+    for (const [s1, s2] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+      const sw = random();
+      const sx = random();
+      const sy = random();
+      const sz = random();
 
-    const w = sw * 2**(e1 - exponent(sw));
-    const x = sx * 2**(e1 - exponent(sx));
-    const y = sy * 2**(e2 - exponent(sy));
-    const z = sz * 2**(e2 - exponent(sz));
+      const w = s1 * sw * 2**(e1 - exponent(sw));
+      const x = s1 * sx * 2**(e1 - exponent(sx));
+      const y = s2 * sy * 2**(e2 - exponent(sy));
+      const z = s2 * sz * 2**(e2 - exponent(sz));
 
-    const xy = normalize(x, y);
-    const wz = normalize(w, z);
+      const xy = normalize(x, y);
+      const wz = normalize(w, z);
 
-    argsList['s1'].push([z]);
-    argsList['s11'].push([x, y]);
-    argsList['s21'].push([xy, z]);
-    argsList['s22'].push([xy, wz]);
+      argsList['s1'].push([z]);
+      argsList['s11'].push([x, y]);
+      argsList['s21'].push([xy, z]);
+      argsList['s22'].push([xy, wz]);
+    }
   }
 }
 
