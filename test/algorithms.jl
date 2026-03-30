@@ -30,9 +30,10 @@ fn_output = testset.fnOutput
 const u = big(2.0)^-precision(Float64)
 const e = big(eps(0.0))
 
-@testset "Error-free transforms" begin
+println()
+@testset verbose = true "Error-free transforms ───" begin
 
-    @testset "split is error-free" begin
+    @testset "split" begin
         output = fn_output["split"]
         args = args_list.s1
         @test length(args) == length(output)
@@ -42,7 +43,7 @@ const e = big(eps(0.0))
         end
     end
 
-    @testset "normalize is error-free" begin
+    @testset "normalize" begin
         output = fn_output["normalize"]
         args = args_list.s11
         @test length(args) == length(output)
@@ -52,7 +53,7 @@ const e = big(eps(0.0))
         end
     end
 
-    @testset "twoSum is error-free" begin
+    @testset "twoSum" begin
         output = fn_output["twoSum"]
         args = args_list.s11
         @test length(args) == length(output)
@@ -62,21 +63,22 @@ const e = big(eps(0.0))
         end
     end
 
-    @testset "twoProd is error-free" begin
+    @testset "twoProd" begin
         output = fn_output["twoProd"]
         args = args_list.s11
         @test length(args) == length(output)
         for (i, (x, y)) in enumerate(args)
             zhi, zlo = output[i]
-            big(x) * big(y) == big(zhi) + big(zlo)
+            @test big(x) * big(y) == big(zhi) + big(zlo)
         end
     end
 end
 
-@testset "op21(TwoF64, F64)" begin
+println()
+@testset verbose = true "Error bounds op21 ───────" begin
     args = args_list.s21
 
-    @testset "add21 error bound" begin
+    @testset "add21" begin
         output = fn_output["add21"]
         @test length(args) == length(output)
         rel_err = 2u^2
@@ -89,7 +91,7 @@ end
         end
     end
 
-    @testset "mul21 error bound" begin
+    @testset "mul21" begin
         output = fn_output["mul21"]
         @test length(args) == length(output)
         rel_err = 3u^2/2 + 4u^3
@@ -102,7 +104,7 @@ end
         end
     end
 
-    @testset "div21 error bound" begin
+    @testset "div21" begin
         output = fn_output["div21"]
         @test length(args) == length(output)
         rel_err = 3u^2
@@ -116,10 +118,11 @@ end
     end
 end
 
-@testset "op22(TwoF64, TwoF64)" begin
+println()
+@testset verbose = true "Error bounds op22 ───────" begin
     args = args_list.s22
 
-    @testset "add22 error bound" begin
+    @testset "add22" begin
         output = fn_output["add22"]
         @test length(args) == length(output)
         rel_err = 3u^2 + 13u^3
@@ -132,7 +135,7 @@ end
         end
     end
 
-    @testset "mul22 error bound" begin
+    @testset "mul22" begin
         output = fn_output["mul22"]
         @test length(args) == length(output)
         rel_err = 5u^2
@@ -145,7 +148,7 @@ end
         end
     end
 
-    @testset "div22 error bound" begin
+    @testset "div22" begin
         output = fn_output["div22"]
         @test length(args) == length(output)
         rel_err = 15u^2 + 56u^3
