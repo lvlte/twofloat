@@ -10,10 +10,10 @@ setprecision(BigFloat, 512)
 const TwoF64 = Tuple{Float64, Float64}
 
 struct ArgsList
-    s1::Vector{Tuple{Float64}}
-    s11::Vector{Tuple{Float64, Float64}}
-    s21::Vector{Tuple{TwoF64, Float64}}
-    s22::Vector{Tuple{TwoF64, TwoF64}}
+    op1::Vector{Tuple{Float64}}
+    op11::Vector{Tuple{Float64, Float64}}
+    op21::Vector{Tuple{TwoF64, Float64}}
+    op22::Vector{Tuple{TwoF64, TwoF64}}
 end
 
 struct TestSet
@@ -35,7 +35,7 @@ println()
 
     @testset "split" begin
         output = fn_output["split"]
-        args = args_list.s1
+        args = args_list.op1
         @test length(args) == length(output)
         for (i, (x,)) in enumerate(args)
             zhi, zlo = output[i]
@@ -45,7 +45,7 @@ println()
 
     @testset "normalize" begin
         output = fn_output["normalize"]
-        args = args_list.s11
+        args = args_list.op11
         @test length(args) == length(output)
         for (i, (x, y)) in enumerate(args)
             zhi, zlo = output[i]
@@ -55,7 +55,7 @@ println()
 
     @testset "twoSum" begin
         output = fn_output["twoSum"]
-        args = args_list.s11
+        args = args_list.op11
         @test length(args) == length(output)
         for (i, (x, y)) in enumerate(args)
             zhi, zlo = output[i]
@@ -65,7 +65,7 @@ println()
 
     @testset "twoProd" begin
         output = fn_output["twoProd"]
-        args = args_list.s11
+        args = args_list.op11
         @test length(args) == length(output)
         for (i, (x, y)) in enumerate(args)
             zhi, zlo = output[i]
@@ -76,10 +76,10 @@ end
 
 println()
 @testset verbose = true "Error bounds op21 ───────" begin
-    args = args_list.s21
+    args = args_list.op21
 
-    @testset "add21" begin
-        output = fn_output["add21"]
+    @testset "DWPlusFP" begin
+        output = fn_output["DWPlusFP"]
         @test length(args) == length(output)
         rel_err = 2u^2
         abs_err = r -> max(abs(rel_err * r), e)
@@ -91,8 +91,8 @@ println()
         end
     end
 
-    @testset "mul21" begin
-        output = fn_output["mul21"]
+    @testset "DWTimesFP1" begin
+        output = fn_output["DWTimesFP1"]
         @test length(args) == length(output)
         rel_err = 3u^2/2 + 4u^3
         abs_err = r -> max(abs(rel_err * r), 2e)
@@ -104,8 +104,8 @@ println()
         end
     end
 
-    @testset "div21" begin
-        output = fn_output["div21"]
+    @testset "DWDivFP3" begin
+        output = fn_output["DWDivFP3"]
         @test length(args) == length(output)
         rel_err = 3u^2
         abs_err = r -> max(abs(rel_err * r), 2e)
@@ -120,10 +120,10 @@ end
 
 println()
 @testset verbose = true "Error bounds op22 ───────" begin
-    args = args_list.s22
+    args = args_list.op22
 
-    @testset "add22" begin
-        output = fn_output["add22"]
+    @testset "AccurateDWPlusDW" begin
+        output = fn_output["AccurateDWPlusDW"]
         @test length(args) == length(output)
         rel_err = 3u^2 + 13u^3
         abs_err = r -> max(abs(rel_err * r), e)
@@ -135,8 +135,8 @@ println()
         end
     end
 
-    @testset "mul22" begin
-        output = fn_output["mul22"]
+    @testset "DWTimesDW1" begin
+        output = fn_output["DWTimesDW1"]
         @test length(args) == length(output)
         rel_err = 5u^2
         abs_err = r -> max(abs(rel_err * r), 2.5e)
@@ -148,8 +148,8 @@ println()
         end
     end
 
-    @testset "div22" begin
-        output = fn_output["div22"]
+    @testset "DWDivDW2" begin
+        output = fn_output["DWDivDW2"]
         @test length(args) == length(output)
         rel_err = 15u^2 + 56u^3
         abs_err = r -> max(abs(rel_err * r), 2.5e)
