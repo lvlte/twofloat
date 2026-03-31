@@ -12,16 +12,19 @@ import {
   split,
   twoSum,
   twoProd,
-  add21,
-  add22,
-  mul21,
-  mul22,
-  div21,
-  div22,
 } from '../src/index';
 
 import { exponent } from '@lvlte/ulp';
 import fs from 'node:fs';
+
+import {
+  DWPlusFP,
+  AccurateDWPlusDW,
+  DWTimesFP1,
+  DWTimesDW1,
+  DWDivFP3,
+  DWDivDW2,
+} from '../src/base/algorithms';
 
 type Expand<T> = {} & { [P in keyof T]: Expand<T[P]> };
 
@@ -34,10 +37,10 @@ type UnionToIntersection<U> = _UnionToIntersection<U> extends infer O
   : never;
 
 interface FnSig {
-  's1': (x: f64) => TwoF64;
-  's11': (x: f64, y: f64) => TwoF64;
-  's21': (x: TwoF64, y: f64) => TwoF64;
-  's22': (x: TwoF64, y: TwoF64) => TwoF64;
+  'op1': (x: f64) => TwoF64;
+  'op11': (x: f64, y: f64) => TwoF64;
+  'op21': (x: TwoF64, y: f64) => TwoF64;
+  'op22': (x: TwoF64, y: TwoF64) => TwoF64;
 }
 
 // Wrap normalize so it is tested with the |x| ≥ |y| condition satisfied
@@ -47,10 +50,10 @@ const normalize: typeof _normalize = (x, y) => {
 
 // Functions to test grouped by signature
 const fnBySig = {
-  's1': {split},
-  's11': {normalize, twoSum, twoProd},
-  's21': {add21, mul21, div21},
-  's22': {add22, mul22, div22},
+  'op1': {split},
+  'op11': {normalize, twoSum, twoProd},
+  'op21': {DWPlusFP, DWTimesFP1, DWDivFP3},
+  'op22': {AccurateDWPlusDW, DWTimesDW1, DWDivDW2},
 } satisfies {
   [K in keyof FnSig]: { [fnName: string]: FnSig[K] }
 };
@@ -72,7 +75,7 @@ const random = (function () {
 })();
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
-const argsList: ArgsListBySig = {'s1': [], 's11': [], 's21': [], 's22': []};
+const argsList: ArgsListBySig = {'op1': [], 'op11': [], 'op21': [], 'op22': []};
 
 // Exponent range for the generated numbers
 const [emin, emax] = [-128, 127];
@@ -94,10 +97,10 @@ for (let e1 = emin; e1 <= emax; e1+=3) {
       const xy = normalize(x, y);
       const wz = normalize(w, z);
 
-      argsList['s1'].push([z]);
-      argsList['s11'].push([x, y]);
-      argsList['s21'].push([xy, z]);
-      argsList['s22'].push([xy, wz]);
+      argsList['op1'].push([z]);
+      argsList['op11'].push([x, y]);
+      argsList['op21'].push([xy, z]);
+      argsList['op22'].push([xy, wz]);
     }
   }
 }
