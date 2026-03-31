@@ -7,3 +7,4 @@
 export * from './utils.js';
 export * from './base/eft.js';
 export * from './base/arithmetic.js';
+export * from './compare.js';
