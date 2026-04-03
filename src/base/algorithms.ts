@@ -10,10 +10,14 @@
 import {
   type f64,
   type TwoF64,
+} from '../utils.js';
+
+import {
   normalize,
   twoSum,
-  twoProd
-} from '../index.js';
+  twoDiff,
+  twoProd,
+} from './eft.js';
 
 // η = relative error bound
 // u = 2^-53
@@ -57,4 +61,41 @@ export function DWDivDW2([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF64 {
   const hi = xhi/yhi;
   const [rhi, rlo] = DWTimesFP1([yhi, ylo], hi);
   return normalize(hi, ((xhi - rhi) + (xlo - rlo))/yhi);
+}
+
+/***/
+
+// η = 2u² - based on DWPlusFP
+export function DWMinusFP([xhi, xlo]: TwoF64, y: f64): TwoF64 {
+  const [hi, lo] = twoDiff(xhi, y);
+  return normalize(hi, xlo + lo);
+}
+
+// η = 3u² + 13u³ - based on AccurateDWPlusDW
+export function DWMinusDW([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF64 {
+  const [shi, slo] = twoDiff(xhi, yhi);
+  const [thi, tlo] = twoDiff(xlo, ylo);
+  const [vhi, vlo] = normalize(shi, slo + thi);
+  return normalize(vhi, tlo + vlo);
+}
+
+// η = 3u² - based on DWDivFP3
+export function twoDiv(x: f64, y: f64): TwoF64 {
+  const hi = x/y;
+  const [shi, slo] = twoProd(hi, y);
+  return normalize(hi, (x - shi - slo)/y);
+}
+
+// η = 3u² - based on DWDivFP3
+export function twoInv(x: f64): TwoF64 {
+  const hi = 1/x;
+  const [shi, slo] = twoProd(hi, x);
+  return normalize(hi, (1 - shi - slo)/x);
+}
+
+// η = 15u² + 56u³ - based on DWDivDW2
+export function DWInv([xhi, xlo]: TwoF64): TwoF64 {
+  const hi = 1/xhi;
+  const [rhi, rlo] = DWTimesFP1([xhi, xlo], hi);
+  return normalize(hi, (1 - rhi - rlo)/xhi);
 }
