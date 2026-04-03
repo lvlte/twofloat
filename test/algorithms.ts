@@ -8,13 +8,14 @@
 import {
   f64,
   TwoF64,
+  F64_SPLIT_K,
   normalize as _normalize,
   split,
   twoSum,
   twoProd,
 } from '../src/index';
 
-import { exponent } from '@lvlte/ulp';
+import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
 import fs from 'node:fs';
 
 import {
@@ -24,6 +25,9 @@ import {
   DWTimesDW1,
   DWDivFP3,
   DWDivDW2,
+  twoDiv,
+  twoInv,
+  DWInv,
 } from '../src/base/algorithms';
 
 type Expand<T> = {} & { [P in keyof T]: Expand<T[P]> };
@@ -38,6 +42,7 @@ type UnionToIntersection<U> = _UnionToIntersection<U> extends infer O
 
 interface FnSig {
   'op1': (x: f64) => TwoF64;
+  'op2': (x: TwoF64) => TwoF64;
   'op11': (x: f64, y: f64) => TwoF64;
   'op21': (x: TwoF64, y: f64) => TwoF64;
   'op22': (x: TwoF64, y: TwoF64) => TwoF64;
@@ -49,9 +54,11 @@ const normalize: typeof _normalize = (x, y) => {
 };
 
 // Functions to test grouped by signature
+// (efts + algorithms, except twoDiff, fast2Diff, DWMinusFP, DWMinusDW)
 const fnBySig = {
-  'op1': {split},
-  'op11': {normalize, twoSum, twoProd},
+  'op1': {split, twoInv},
+  'op2': {DWInv},
+  'op11': {normalize, twoSum, twoProd, twoDiv},
   'op21': {DWPlusFP, DWTimesFP1, DWDivFP3},
   'op22': {AccurateDWPlusDW, DWTimesDW1, DWDivDW2},
 } satisfies {
@@ -75,10 +82,19 @@ const random = (function () {
 })();
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
-const argsList: ArgsListBySig = {'op1': [], 'op11': [], 'op21': [], 'op22': []};
+const argsList: ArgsListBySig = {
+  'op1': [], 'op2': [], 'op11': [], 'op21': [], 'op22': []
+};
 
-// Exponent range for the generated numbers
-const [emin, emax] = [-128, 127];
+// split is not immune to overflow
+const E_SPLIT_MAX = exponent(Number.MAX_VALUE/F64_SPLIT_K);
+
+// Exponent range for the generated numbers (roughly the largest window for
+// which the error bounds can be checked properly since they assume no overflow
+// /underflow occurs during calculations).
+const e_shift = 0; // decrease to shift the window towards subnormals
+const emin = Math.floor(exponent(FLOAT64_MIN)/2) + e_shift;
+const emax = Math.min(0, emin) + E_SPLIT_MAX;
 
 // Fill argsList with number combinations in the domain [±2^emin, ±2^emax]
 for (let e1 = emin; e1 <= emax; e1+=3) {
@@ -97,7 +113,12 @@ for (let e1 = emin; e1 <= emax; e1+=3) {
       const xy = normalize(x, y);
       const wz = normalize(w, z);
 
-      argsList['op1'].push([z]);
+      if ([w, x, y, z, ...xy, ...wz].some(v => !Number.isFinite(v))) {
+        continue;
+      }
+
+      argsList['op1'].push([x]);
+      argsList['op2'].push([xy]);
       argsList['op11'].push([x, y]);
       argsList['op21'].push([xy, z]);
       argsList['op22'].push([xy, wz]);
