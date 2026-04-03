@@ -12,12 +12,20 @@ import {
   type f64,
   type TwoF64,
   F64_SPLIT_K
-} from '../index.js';
+} from '../utils.js';
 
-// Dekker "fast2Sum" algorithm (NB. assumes |x| ≥ |y|)
+// Dekker "fast2Sum" algorithm - NB. assumes |x| ≥ |y|
 export function normalize(x: f64, y: f64): TwoF64 {
   const hi = x + y;
   return [hi, x - hi + y];
+}
+
+export const fast2Sum = normalize;
+
+// fast2Sum(x, -y) - NB. assumes |x| ≥ |y|)
+export function fast2Diff(x: f64, y: f64): TwoF64 {
+  const hi = x - y;
+  return [hi, x - hi - y];
 }
 
 // Dekker/Veltkamp splitter
@@ -35,6 +43,14 @@ export function twoSum(x: f64, y: f64): TwoF64 {
   return [hi, x - x1 + (y - y1)];
 }
 
+// twoSum(x, -y)
+export function twoDiff(x: f64, y: f64): TwoF64 {
+  const hi = x - y;
+  const x1 = hi + y;
+  const y1 = hi - x1;
+  return [hi, x - x1 - (y + y1)];
+}
+
 // Dekker/Veltkamp product
 export function twoProd(x: f64, y: f64): TwoF64 {
   const [xhi, xlo] = split(x);
@@ -44,5 +60,16 @@ export function twoProd(x: f64, y: f64): TwoF64 {
   const e2 = e1 - xlo*yhi;
   const e3 = e2 - xhi*ylo;
   const lo = xlo*ylo - e3;
+  return [hi, lo];
+}
+
+// twoProd(x, x)
+export function twoSquare(x: f64): TwoF64 {
+  const [xhi, xlo] = split(x);
+  const hi = x*x;
+  const lh = xhi*xlo;
+  const e1 = hi - xhi*xhi;
+  const e2 = e1 - lh - lh;
+  const lo = xlo*xlo - e2;
   return [hi, lo];
 }
