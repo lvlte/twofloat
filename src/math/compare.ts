@@ -1,7 +1,7 @@
 import {
   type f64,
   type TwoF64,
-} from './index.js'
+} from '../base/common.js'
 
 export function eq21([xhi, xlo]: TwoF64, y: f64): boolean {
   return xhi === y && xlo === 0;
