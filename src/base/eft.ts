@@ -12,7 +12,7 @@ import {
   type f64,
   type TwoF64,
   F64_SPLIT_K
-} from '../utils.js';
+} from './common.js';
 
 // Dekker "fast2Sum" algorithm - NB. assumes |x| ≥ |y|
 export function normalize(x: f64, y: f64): TwoF64 {
