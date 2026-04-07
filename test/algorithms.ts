@@ -30,15 +30,11 @@ import {
   DWInv,
 } from '../src/base/algorithms';
 
-type Expand<T> = {} & { [P in keyof T]: Expand<T[P]> };
-
-type _UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-  (k: infer I) => void
-) ? I : never;
-
-type UnionToIntersection<U> = _UnionToIntersection<U> extends infer O
-  ? { [K in keyof O]: O[K] }
-  : never;
+import {
+  UnionToIntersection,
+  Expand,
+  randomFn,
+} from './utils';
 
 interface FnSig {
   'op1': (x: f64) => TwoF64;
@@ -74,12 +70,7 @@ type FnOutputList = { [K in FnName]: ReturnType<TestedFunctions[K]>[] }
 
 // Pseudo-random number generator
 const SEED = Math.sqrt(2);
-const random = (function () {
-  let n = SEED;
-  return function(): number {
-    return Math.abs(Math.sin(n++));
-  }
-})();
+const random = randomFn(SEED, true);
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
 const argsList: ArgsListBySig = {
@@ -100,15 +91,10 @@ const emax = Math.min(0, emin) + E_SPLIT_MAX;
 for (let e1 = emin; e1 <= emax; e1+=3) {
   for (let e2 = emin+1; e2 <= emax; e2+=3) {
     for (const [s1, s2] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) {
-      const sw = random();
-      const sx = random();
-      const sy = random();
-      const sz = random();
-
-      const w = s1 * sw * 2**(e1 - exponent(sw));
-      const x = s1 * sx * 2**(e1 - exponent(sx));
-      const y = s2 * sy * 2**(e2 - exponent(sy));
-      const z = s2 * sz * 2**(e2 - exponent(sz));
+      const w = random(e1, s1);
+      const x = random(e1, s1);
+      const y = random(e2, s2);
+      const z = random(e2, s2);
 
       const xy = normalize(x, y);
       const wz = normalize(w, z);
