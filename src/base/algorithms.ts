@@ -10,7 +10,7 @@
 import {
   type f64,
   type TwoF64,
-} from '../utils.js';
+} from './common.js';
 
 import {
   normalize,
