@@ -1,6 +1,6 @@
 
 /**
- * Error-free transforms
+ * @file Error-Free Transforms
  *
  * References:
  * - {@link https://csclub.uwaterloo.ca/~pbarfuss/dekker1971.pdf     | T.J. Dekker        }
@@ -11,31 +11,63 @@
 import {
   type f64,
   type TwoF64,
-  F64_SPLIT_K
+  F64_SPLITTER
 } from './common.js';
 
-// Dekker "fast2Sum" algorithm - NB. assumes |x| ≥ |y|
+/**
+ * Canonical representation of `x + y` (error-free transform).
+ *
+ * Return a tuple `[hi, lo]` where the non-zero bits in `hi` and `lo` don't
+ * overlap and such that mathematically `hi + lo = x + y`.
+ *
+ * **NB. Assumes the absolute value of `x` is larger than that of `y`. Use
+ * `twoSum(x, y)` if this condition is not satisfied.**
+ */
 export function normalize(x: f64, y: f64): TwoF64 {
   const hi = x + y;
   return [hi, x - hi + y];
 }
 
+/**
+ * @borrows normalize as fast2Sum
+ */
 export const fast2Sum = normalize;
 
-// fast2Sum(x, -y) - NB. assumes |x| ≥ |y|)
+/**
+ * Error-free transform of `x - y`.
+ *
+ * Return a tuple `[hi, lo]` where the non-zero bits in `hi` and `lo` don't
+ * overlap and such that mathematically `hi + lo = x - y`.
+ *
+ * **NB. Assumes the absolute value of `x` is larger than that of `y`. Use
+ * `twoDiff(x, y)` if this condition is not satisfied.**
+ */
 export function fast2Diff(x: f64, y: f64): TwoF64 {
   const hi = x - y;
   return [hi, x - hi - y];
 }
 
-// Dekker/Veltkamp splitter
+/**
+ * Dekker/Veltkamp splitter function (error-free transform).
+ *
+ * Split the given number into two halves, `hi` and `lo`, using the splitting
+ * constant `F64_SPLITTER`. Return a tuple `[hi, lo]` where the non-zero bits in
+ * `hi` and `lo` don't overlap and such that mathematically `hi + lo = x` .
+ *
+ * @see {@link F64_SPLITTER}
+ */
 export function split(x: f64): TwoF64 {
-  const c = F64_SPLIT_K*x;
+  const c = F64_SPLITTER*x;
   const hi = c + (x - c);
   return [hi, x - hi];
 }
 
-// Møller & Knuth "2Sum" algorithm
+/**
+ * Error-free transform of `x + y` (Møller & Knuth algorithm).
+ *
+ * Return a tuple `[hi, lo]` where the non-zero bits in `hi` and `lo` don't
+ * overlap and such that mathematically `hi + lo = x + y`.
+ */
 export function twoSum(x: f64, y: f64): TwoF64 {
   const hi = x + y;
   const x1 = hi - y;
@@ -43,7 +75,12 @@ export function twoSum(x: f64, y: f64): TwoF64 {
   return [hi, x - x1 + (y - y1)];
 }
 
-// twoSum(x, -y)
+/**
+ * Error-free transform of `x - y` (Møller & Knuth algorithm).
+ *
+ * Return a tuple `[hi, lo]` where the non-zero bits in `hi` and `lo` don't
+ * overlap and such that mathematically `hi + lo = x - y`.
+ */
 export function twoDiff(x: f64, y: f64): TwoF64 {
   const hi = x - y;
   const x1 = hi + y;
@@ -51,7 +88,13 @@ export function twoDiff(x: f64, y: f64): TwoF64 {
   return [hi, x - x1 - (y + y1)];
 }
 
-// Dekker/Veltkamp product
+/**
+ * Error-free transform of `x * y` (Dekker/Veltkamp product).
+ *
+ * Return a high precision representation of `x * y` as a tuple `[hi, lo]`
+ * where the non-zero bits in `hi` and `lo` don't overlap and such that
+ * mathematically `hi + lo = x * y`.
+ */
 export function twoProd(x: f64, y: f64): TwoF64 {
   const [xhi, xlo] = split(x);
   const [yhi, ylo] = split(y);
@@ -63,7 +106,13 @@ export function twoProd(x: f64, y: f64): TwoF64 {
   return [hi, lo];
 }
 
-// twoProd(x, x)
+/**
+ * Error-free transform of `x²` (Dekker/Veltkamp product).
+ *
+ * Return a high precision representation of the square of `x` as a tuple
+ * `[hi, lo]` where the non-zero bits in `hi` and `lo` don't overlap and such
+ * that mathematically `hi + lo = x²`.
+ */
 export function twoSquare(x: f64): TwoF64 {
   const [xhi, xlo] = split(x);
   const hi = x*x;
