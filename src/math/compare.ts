@@ -86,11 +86,3 @@ export function ge22(x: TwoF64, y: TwoF64): boolean;
 export function ge22([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): boolean {
   return xhi > yhi || (xhi === yhi && xlo >= ylo);
 }
-
-export function ne21([xhi, xlo]: TwoF64, y: f64): boolean {
-  return xhi !== y || xlo !== 0;
-}
-
-export function ne22([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): boolean {
-  return xhi !== yhi || xlo !== ylo;
-}
