@@ -1,5 +1,5 @@
 /**
- * Pre-test for the main algorithms
+ * @file Pre-test for the main algorithms
  *
  * Generates inputs and collect outputs for each algorithm then export the whole
  * as JSON so we can import it and do proper tests in Julia using BigFloat.
@@ -8,7 +8,7 @@
 import {
   f64,
   TwoF64,
-  F64_SPLIT_K,
+  F64_SPLITTER,
   normalize as _normalize,
   split,
   twoSum,
@@ -50,7 +50,8 @@ const normalize: typeof _normalize = (x, y) => {
 };
 
 // Functions to test grouped by signature
-// (efts + algorithms, except twoDiff, fast2Diff, DWMinusFP, DWMinusDW)
+// (efts + algorithms, except twoDiff, fast2Diff, DWMinusFP, AccurateDWMinusDW,
+// which are tested separately against their "Sum/Plus" counterpart)
 const fnBySig = {
   'op1': {split, twoInv},
   'op2': {DWInv},
@@ -78,7 +79,7 @@ const argsList: ArgsListBySig = {
 };
 
 // split is not immune to overflow
-const E_SPLIT_MAX = exponent(Number.MAX_VALUE/F64_SPLIT_K);
+const E_SPLIT_MAX = exponent(Number.MAX_VALUE/F64_SPLITTER);
 
 // Exponent range for the generated numbers (roughly the largest window for
 // which the error bounds can be checked properly since they assume no overflow
