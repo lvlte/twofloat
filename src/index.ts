@@ -8,3 +8,4 @@ export * from './base/common.js';
 export * from './base/eft.js';
 export * from './arithmetic/index.js';
 export * from './math/compare.js';
+export * from './math/sign.js';
