@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "pretest": "tsx ./test/algorithms.ts && julia ./test/algorithms.jl",
-    "test": "",
+    "test": "jest",
     "tsc": "tsc",
     "prebuild": "rimraf dist && make-dir dist",
     "build": "tsc && tsc -p tsconfig-cjs.json",
