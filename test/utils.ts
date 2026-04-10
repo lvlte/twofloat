@@ -1,4 +1,9 @@
+/**
+ * @file Test utils
+ */
+
 import { exponent } from '@lvlte/ulp';
+import { f64 } from '../src';
 
 type _UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   (k: infer I) => void
@@ -35,7 +40,7 @@ export function ldexp(x: number, n: number) {
 export function randomFn<T extends boolean>(seed: number, domainOpt: T): RandomFn<T> {
   let n = seed;
   if (domainOpt === true) {
-    return function (exp: number, sign: number): number {
+    return function (exp: number, sign: -1 | 1): number {
       const x = Math.abs(Math.sin(n++));
       const p = exp - exponent(x);
       return sign * ldexp(x, p);
@@ -45,3 +50,22 @@ export function randomFn<T extends boolean>(seed: number, domainOpt: T): RandomF
     return Math.abs(Math.sin(n++));
   } as RandomFn<T>;
 }
+
+/**
+ * Return pairs of numbers in the range [emin, emax] according to the given step.
+ */
+export function pairsInRange(emin: f64, emax: f64, step: f64): Array<[f64, f64]> {
+  const pairs: Array<[f64, f64]> = [];
+  for (let e1 = emin; e1 <= emax; e1+=step) {
+    for (let e2 = emin+1; e2 <= emax; e2+=step) {
+      pairs.push([e1, e2]);
+    }
+  }
+  return pairs;
+}
+
+/**
+ * Sign pairs used for generating pairs of number/twofloat args.
+ */
+export const signCombinations = [[1, 1], [1, -1], [-1, 1], [-1, -1]] as const;
+

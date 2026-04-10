@@ -34,6 +34,8 @@ import {
   UnionToIntersection,
   Expand,
   randomFn,
+  pairsInRange,
+  signCombinations
 } from './utils';
 
 interface FnSig {
@@ -89,27 +91,25 @@ const emin = Math.floor(exponent(FLOAT64_MIN)/2) + e_shift;
 const emax = Math.min(0, emin) + E_SPLIT_MAX;
 
 // Fill argsList with number combinations in the domain [±2^emin, ±2^emax]
-for (let e1 = emin; e1 <= emax; e1+=3) {
-  for (let e2 = emin+1; e2 <= emax; e2+=3) {
-    for (const [s1, s2] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) {
-      const w = random(e1, s1);
-      const x = random(e1, s1);
-      const y = random(e2, s2);
-      const z = random(e2, s2);
+for (const [e1, e2] of pairsInRange(emin, emax, 3)) {
+  for (const [s1, s2] of signCombinations) {
+    const w = random(e1, s1);
+    const x = random(e1, s1);
+    const y = random(e2, s2);
+    const z = random(e2, s2);
 
-      const xy = normalize(x, y);
-      const wz = normalize(w, z);
+    const wx = normalize(w, x);
+    const yz = normalize(y, z);
 
-      if ([w, x, y, z, ...xy, ...wz].some(v => !Number.isFinite(v))) {
-        continue;
-      }
-
-      argsList['op1'].push([x]);
-      argsList['op2'].push([xy]);
-      argsList['op11'].push([x, y]);
-      argsList['op21'].push([xy, z]);
-      argsList['op22'].push([xy, wz]);
+    if ([w, x, y, z, ...wx, ...yz].some(v => !Number.isFinite(v))) {
+      continue;
     }
+
+    argsList['op1'].push([x]);
+    argsList['op2'].push([wx]);
+    argsList['op11'].push([x, y]);
+    argsList['op21'].push([wx, z]);
+    argsList['op22'].push([wx, yz]);
   }
 }
 
