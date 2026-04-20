@@ -8,6 +8,11 @@
 export type f64 = number;
 
 /**
+ * A `number` that holds the value of a 32-bit integer.
+ */
+export type i32 = number;
+
+/**
  * Canonical representation of a floating-point number with extended precision,
  * ie. whose value is mathematically equal to `hi + lo` and where the non-zero
  * bits in `hi` and `lo` don't overlap. `hi` contains the most significant bits
