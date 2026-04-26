@@ -5,7 +5,7 @@
 import {
   type TwoF64,
   type f64,
-  type i32,
+  type int,
   ONE2,
   NaN2
 } from '../base/common.js';
@@ -14,33 +14,69 @@ import { twoSquare, normalize } from '../base/eft.js';
 import { inv1, inv2 } from '../arithmetic/div.js';
 import { mul11, mul21, mul22 } from '../arithmetic/mul.js';
 
+/**
+ * Computes `x²` using extended precision arithmetic.
+ *
+ * Error-free transform.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
 export const square1 = twoSquare;
 
-// based on DWTimesDW1
-// `5u²` with `u = 2^-53`
-export function square2([xhi, xlo]: TwoF64) {
+/**
+ * Computes `(xₕᵢ + xₗₒ)²` using extended precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ *
+ * Relative error bound: `5u²`.
+ */
+export function square2(x: TwoF64): TwoF64;
+export function square2([xhi, xlo]: TwoF64): TwoF64 {
   const [hi, lo] = square1(xhi);
   return normalize(hi, lo + (2*xhi*xlo));
 }
 
-export function cube1(x: f64) {
+/**
+ * Computes `x³` using extended precision arithmetic.
+ *
+ * Relative error bound: `3u²/2 + 4u³`.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function cube1(x: f64): TwoF64 {
   let [hi, lo, e=0] = square1(x); // EFT (twoProd)
-  // return mul21([hi, lo], x);   // 3u²/2 + 4u³
-  [hi, e] = mul11(hi, x);         // EFT (twoProd)
-  return normalize(hi, lo*x + e); // 2u²
-}
-
-export function cube2([xhi, xlo]: TwoF64) {
-  return mul22(square2([xhi, xlo]), [xhi, xlo]);
+  return mul21([hi, lo], x);   // 3u²/2 + 4u³
+  // [hi, e] = mul11(hi, x);         // EFT (twoProd)
+  // return normalize(hi, lo*x + e); // 2u²
 }
 
 /**
- * Integer power using compensated linear product (Horner scheme evaluation
- * applied to the polynomial `p(x) = x^n`)
+ * Computes `(xₕᵢ + xₗₒ)³` using extended precision arithmetic.
  *
- * if `n < 2^25` then `f64([hi, lo])` is faithfully rounded.
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
  */
-export function _linpow(x: f64, n: i32): TwoF64 {
+export function cube2(x: TwoF64): TwoF64 {
+  return mul22(square2(x), x);
+}
+
+/**
+ * Integer power of `x` - Computes `xⁿ` using extended precision arithmetic.
+ * `n` must be an integer.
+ *
+ * Error bound:
+ *  - for `|n| ≤ 3`, see {@link square1 | `square1`}, {@link cube1 | `cube1`}.
+ *  - for positive `n`, the result `[hi, lo]` is such that `f64([hi, lo])` is a
+ * faithful rounding of `x^n` as long as `n ≤ 2^49`.
+ *
+ * @param {f64} x `f64` number (base)
+ * @param {int} n `int` number (integer exponent)
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function pow1int(x: f64, n: int): TwoF64 {
   switch (n) {
     case 0:
       return ONE2;
@@ -64,75 +100,90 @@ export function _linpow(x: f64, n: i32): TwoF64 {
       return inv2(cube1(x));
 
     default:
-      if (n !== (n | 0)) {
-        return NaN2;
+      if (!Number.isSafeInteger(n)) {
+        return NaN2; // or throw ?
       }
   }
 
   const p = Math.abs(n);
+  const xn = p > 30 ? _logpow(x, p) : _linpow(x, p);
+
+  return n < 0 ? inv2(xn) : xn;
+}
+
+/**
+ * Integer power using compensated linear product (Horner scheme applied to the
+ * polynomial `p(x) = x^n`).
+ *
+ * **Assumes `n` is a {@link int | safe integer} such that `n ≥ 3`.**
+ *
+ * The result `[hi, lo]` is such that `f64([hi, lo])` is a faithful rounding
+ * of `x^n` as long as `n < 2^25`.
+ */
+export function _linpow(x: f64, n: int): TwoF64 {
   let [hi, lo] = cube1(x);
   let ei = 0;
   let i = 3;
 
-  while (i++ < p) {
+  while (i++ < n) {
     [hi, ei] = mul11(hi, x);
     lo = lo*x + ei;
   }
 
-  return n < 0 ? inv2([hi, lo]) : normalize(hi, lo);
+  return normalize(hi, lo);
 }
-
 
 /**
  * Integer power using compensated logarithmic product, based on successive
- * squarings (rtl binary exponentiation).
+ * squarings (RTL binary exponentiation).
+ * Faster than {@link _linpow | `_linpow(x,n)`} for (roughly) `n > 30`.
  *
- * result `f64([hi, lo])` is a faithful rounding of `x^n` as long as `n ≤ 2^49`
+ * **Assumes `n` is a {@link int | safe integer} such that `n ≥ 3`.**
  *
- * faster than _linpow for (roughly) |n| > 30
+ * The result `[hi, lo]` is such that `f64([hi, lo])` is a faithful rounding
+ * of `x^n` as long as `n ≤ 2^49`.
  */
-export function _logpow(x: f64, n: i32): TwoF64 {
-  // assuming |n| is an integer > 1
-
-  const p = Math.abs(n);
-  let [u, v] = square1(x);
-  let [h, l] = [p % 2 ? x : 1, 0];
-
-  let i = Math.floor(p/2);
+export function _logpow(x: f64, n: int): TwoF64 {
+  let sn: TwoF64 = square1(x);
+  let xn: TwoF64 = [n % 2 ? x : 1, 0];
+  let i = Math.floor(n/2);
 
   while (i > 1) {
     if (i % 2) {
-      [h, l] = mul22([h, l], [u, v]);
+      xn = mul22(xn, sn);
     }
-    [u, v] = square2([u, v]);
+    sn = square2(sn);
     i = Math.floor(i/2);
   }
 
-  [h, l] = mul22([h, l], [u, v]);
-
-  return n < 0 ? inv2([h, l]) : [h, l];
+  return mul22(xn, sn);
 }
 
-// same as above but using ltr binary exponentiation
-// (ltr allows using mul21 instead of mul22)
-export function _logpowltr(x: f64, n: i32): TwoF64 {
-  // assuming |n| is an int32 > 1
-
-  const p = Math.abs(n);
-  let bits = p.toString(2);
-  let [h, l] = square1(x);
+/**
+ * Integer power using compensated logarithmic product, based on successive
+ * squarings (LTR binary exponentiation).
+ * Faster than {@link _linpow | `_linpow(x,n)`} for (roughly) `n > 30`.
+ *
+ * **Assumes `n` is an integer (supports unsafe int) such that `n ≥ 2`.**
+ *
+ * The result `[hi, lo]` is such that `f64([hi, lo])` is a faithful rounding
+ * of `x^n` as long as `n ≤ 2^49`.
+ */
+export function _logpowltr(x: f64, n: int): TwoF64 {
+  let bits = n.toString(2);
+  let xn = square1(x);
   let i = 1;
 
   if (+bits[i]) {
-    [h, l] = mul21([h, l], x);
+    xn = mul21(xn, x);
   }
 
   while (++i < bits.length) {
-    [h, l] = square2([h, l]);
+    xn = square2(xn);
     if (+bits[i]) {
-      [h, l] = mul21([h, l], x);
+      xn = mul21(xn, x);
     }
   }
 
-  return n < 0 ? inv2([h, l]) : [h, l];
+  return xn;
 }

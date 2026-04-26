@@ -13,6 +13,11 @@ export type f64 = number;
 export type i32 = number;
 
 /**
+ * A safe integer `number`: an integer whose absolute value is less than `2^53`.
+ */
+export type int = number;
+
+/**
  * Canonical representation of a floating-point number with extended precision,
  * ie. whose value is mathematically equal to `hi + lo` and where the non-zero
  * bits in `hi` and `lo` don't overlap. `hi` contains the most significant bits
