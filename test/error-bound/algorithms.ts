@@ -31,20 +31,13 @@ import {
 } from '../../src/base/algorithms';
 
 import {
+  FnSig,
   UnionToIntersection,
   Expand,
   randomFn,
   pairsInRange,
   signCombinations
 } from '../utils';
-
-interface FnSig {
-  'op1': (x: f64) => TwoF64;
-  'op2': (x: TwoF64) => TwoF64;
-  'op11': (x: f64, y: f64) => TwoF64;
-  'op21': (x: TwoF64, y: f64) => TwoF64;
-  'op22': (x: TwoF64, y: TwoF64) => TwoF64;
-}
 
 // Wrap normalize so it is tested with the |x| ≥ |y| condition satisfied
 const normalize: typeof _normalize = (x, y) => {
@@ -134,3 +127,5 @@ const testset = { argsList, fnOutput} as Expand<{
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
 fs.writeFileSync('test/error-bound/algorithms-testset.json', testsetJSON, 'utf8');
+
+console.log('prerun algorithms.ts done');
