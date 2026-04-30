@@ -10,3 +10,4 @@ export * from './arithmetic/index.js';
 export * from './math/compare.js';
 export * from './math/sign.js';
 export * from './math/exp.js';
+export * from './math/roots.js';

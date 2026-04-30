@@ -11,7 +11,8 @@ import {
   ZERO2
 } from '../base/common.js';
 
-import { normalize, twoSquare } from '../base/eft.js';
+import { normalize } from '../base/eft.js';
+import { square1 } from '../math/exp.js';
 
 /**
  * Computes `√(x)`, the square root of `x`, using extended precision arithmetic.
@@ -24,12 +25,12 @@ import { normalize, twoSquare } from '../base/eft.js';
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
 export function sqrt1(x: f64): TwoF64 {
-  if (x) {
+  if (x <= 0) {
     return x === 0 ? ZERO2 : NaN2;
   }
 
   const hi = Math.sqrt(x);
-  const [shi, slo] = twoSquare(hi);
+  const [shi, slo] = square1(hi);
   const eh = x - shi - slo;
   const lo = eh/(2*hi);
 
@@ -54,7 +55,7 @@ export function sqrt2([xhi, xlo]: TwoF64): TwoF64 {
   }
 
   const hi = Math.sqrt(xhi);
-  const [shi, slo] = twoSquare(hi);
+  const [shi, slo] = square1(hi);
   const eh = xhi - shi - slo;
   const lo = (xlo + eh)/(2*hi);
 
