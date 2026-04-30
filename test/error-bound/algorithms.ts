@@ -1,8 +1,11 @@
 /**
- * @file Pre-test for the main algorithms
+ * @file Pre-test for the well known EFTs and algorithms
  *
  * Generates inputs and collect outputs for each algorithm then export the whole
  * as JSON so we can import it and do proper tests in Julia using BigFloat.
+ *
+ * Derived algorithms that are just specialization of those ones are tested
+ * separately).
  */
 
 import {
@@ -25,9 +28,6 @@ import {
   DWTimesDW1,
   DWDivFP3,
   DWDivDW2,
-  twoDiv,
-  twoInv,
-  DWInv,
 } from '../../src/base/algorithms';
 
 import {
@@ -52,17 +52,14 @@ const normalize: typeof _normalize = (x, y) => {
 };
 
 // Functions to test grouped by signature
-// (efts + algorithms, except twoDiff, fast2Diff, DWMinusFP, AccurateDWMinusDW,
-// which are tested separately against their "Sum/Plus" counterpart)
 const fnBySig = {
-  'op1': {split, twoInv},
-  'op2': {DWInv},
-  'op11': {normalize, twoSum, twoProd, twoDiv},
+  'op1': {split},
+  'op11': {normalize, twoSum, twoProd},
   'op21': {DWPlusFP, DWTimesFP1, DWDivFP3},
   'op22': {AccurateDWPlusDW, DWTimesDW1, DWDivDW2},
-} satisfies {
+} satisfies Partial<{
   [K in keyof FnSig]: { [fnName: string]: FnSig[K] }
-};
+}>;
 
 type FnBySig = typeof fnBySig;
 type TestedFunctions = UnionToIntersection<FnBySig[keyof FnBySig]>;
@@ -77,7 +74,7 @@ const random = randomFn(SEED, true);
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
 const argsList: ArgsListBySig = {
-  'op1': [], 'op2': [], 'op11': [], 'op21': [], 'op22': []
+  'op1': [], 'op11': [], 'op21': [], 'op22': []
 };
 
 // split is not immune to overflow
@@ -106,7 +103,6 @@ for (const [e1, e2] of pairsInRange(emin, emax, 3)) {
     }
 
     argsList['op1'].push([x]);
-    argsList['op2'].push([wx]);
     argsList['op11'].push([x, y]);
     argsList['op21'].push([wx, z]);
     argsList['op22'].push([wx, yz]);

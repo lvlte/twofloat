@@ -1,5 +1,5 @@
 /**
- * @file Tests derived algorithms and basic arithmetic functions
+ * @file Tests - Basic arithmetic functions
  */
 
 import {
@@ -21,6 +21,7 @@ import {
   DWInv,
   twoDiv,
   twoInv,
+  DWDivFP3,
 } from '../src/base/algorithms';
 
 import {
@@ -34,10 +35,9 @@ const SEED = Math.sqrt(5);
 const random = randomFn(SEED, true);
 
 describe('Derived Algorithms', () => {
-
   const exponentPairs = pairsInRange(-100, 60, 7);
 
-  test('`twoDiff(x, y)` equals `twoSum(x, -y)', () => {
+  test('twoDiff', () => {
     for (const [e1, e2] of exponentPairs) {
       for (const [s1, s2] of signCombinations) {
         const x = random(e1, s1);
@@ -47,7 +47,7 @@ describe('Derived Algorithms', () => {
     }
   });
 
-  test('`fast2Diff(x, y)` equals `fast2Sum(x, -y)', () => {
+  test('fast2Diff', () => {
     for (const [e1, e2] of exponentPairs) {
       for (const [s1, s2] of signCombinations) {
         const a = random(e1, s1);
@@ -58,7 +58,7 @@ describe('Derived Algorithms', () => {
     }
   });
 
-  test('`DWMinusFP(x, y)` equals `DWPlusFP(x, -y)', () => {
+  test('DWMinusFP', () => {
     for (const [e1, e2] of exponentPairs) {
       for (const [s1, s2] of signCombinations) {
         const x = twoSum(random(e1, s1), random(e1, s1));
@@ -68,7 +68,7 @@ describe('Derived Algorithms', () => {
     }
   });
 
-  test('`AccurateDWMinusDW(x, y)` equals `AccurateDWPlusDW(x, neg2(y))', () => {
+  test('AccurateDWMinusDW', () => {
     for (const [e1, e2] of exponentPairs) {
       for (const [s1, s2] of signCombinations) {
         const x = twoSum(random(e1, s1), random(e1, s1));
@@ -78,22 +78,31 @@ describe('Derived Algorithms', () => {
     }
   });
 
-  test('`twoInv(x)` equals `twoDiv(1, x)', () => {
-    for (let exp = -100; exp <= 60; exp++) {
-      const x = random(exp, 1);
-      expect(twoInv(x)).toEqual(twoDiv(1, x));
-      expect(twoInv(-x)).toEqual(twoDiv(-1, x));
-      expect(twoInv(-x)).toEqual(twoDiv(1, -x));
+  test('twoDiv', () => {
+    for (const [e1, e2] of exponentPairs) {
+      for (const [s1, s2] of signCombinations) {
+        const x = random(e1, s1);
+        const y = random(e2, s2);
+        expect(twoDiv(x, y)).toEqual(DWDivFP3([x, 0], y));
+      }
     }
   });
 
-  test('`DWInv(x)` equals `DWDivDW2(ONE2, x)', () => {
-    const mONE2: TwoF64 = [-1, 0];
+  test('twoInv', () => {
+    for (let exp = -100; exp <= 60; exp++) {
+      const x = random(exp, 1);
+      expect(twoInv(x)).toEqual(DWDivFP3(ONE2, x));
+      expect(twoInv(-x)).toEqual(DWDivFP3(neg2(ONE2), x));
+      expect(twoInv(-x)).toEqual(DWDivFP3(ONE2, -x));
+    }
+  });
+
+  test('DWInv', () => {
     for (let exp = -100; exp <= 60; exp++) {
       const x = twoSum(random(exp, 1), random(exp, 1));
       const mx = neg2(x);
       expect(DWInv(x)).toEqual(DWDivDW2(ONE2, x));
-      expect(DWInv(mx)).toEqual(DWDivDW2(mONE2, x));
+      expect(DWInv(mx)).toEqual(DWDivDW2(neg2(ONE2), x));
       expect(DWInv(mx)).toEqual(DWDivDW2(ONE2, mx));
     }
   });
