@@ -13,7 +13,7 @@ import {
   split,
   twoSum,
   twoProd,
-} from '../src/index';
+} from '../../src/index';
 
 import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
 import fs from 'node:fs';
@@ -28,7 +28,7 @@ import {
   twoDiv,
   twoInv,
   DWInv,
-} from '../src/base/algorithms';
+} from '../../src/base/algorithms';
 
 import {
   UnionToIntersection,
@@ -36,7 +36,7 @@ import {
   randomFn,
   pairsInRange,
   signCombinations
-} from './utils';
+} from '../utils';
 
 interface FnSig {
   'op1': (x: f64) => TwoF64;
@@ -137,4 +137,4 @@ const testset = { argsList, fnOutput} as Expand<{
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
-fs.writeFileSync('test/algorithms-testset.json', testsetJSON, 'utf8');
+fs.writeFileSync('test/error-bound/algorithms-testset.json', testsetJSON, 'utf8');

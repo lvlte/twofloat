@@ -29,7 +29,7 @@
     "dist"
   ],
   "scripts": {
-    "pretest": "tsx ./test/algorithms.ts && julia ./test/algorithms.jl",
+    "pretest": "tsx ./test/error-bound/prerun.ts && julia ./test/error-bound/runtest.jl",
     "test": "jest",
     "tsc": "tsc",
     "prebuild": "rimraf dist && make-dir dist",
