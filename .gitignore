@@ -4,4 +4,4 @@
 
 yarn.lock
 
-/test/*.json
+/test/**/*.json
