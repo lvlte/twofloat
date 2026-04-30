@@ -6,4 +6,5 @@
  */
 
 import './algorithms';
+import './math';
 
