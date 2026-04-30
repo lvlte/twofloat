@@ -3,7 +3,7 @@
  */
 
 import { exponent } from '@lvlte/ulp';
-import { f64 } from '../src';
+import { f64, int, TwoF64 } from '../src';
 
 type _UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   (k: infer I) => void
@@ -23,6 +23,15 @@ type RandomFn<T extends boolean> = T extends false
     ? RandomFnWithDomainOpt
     : never;
 
+export interface FnSig {
+  'op1': (x: f64) => TwoF64;
+  'op2': (x: TwoF64) => TwoF64;
+  'op11': (x: f64, y: f64) => TwoF64;
+  'op21': (x: TwoF64, y: f64) => TwoF64;
+  'op22': (x: TwoF64, y: TwoF64) => TwoF64;
+  'op1n': (x: f64, n: int) => TwoF64;
+  'opa1': (x: f64[]) => TwoF64;
+}
 
 /**
  * Computes x * 2^n.

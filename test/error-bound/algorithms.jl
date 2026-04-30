@@ -2,25 +2,7 @@
 # Relative error bounds: cf. paper from J.M. Muller et al.
 # Function inputs/outputs dataset is created by /test/algorithms.ts
 
-using Test
-using JSON
-
-setprecision(BigFloat, 512)
-
-const TwoF64 = Tuple{Float64, Float64}
-
-struct ArgsList
-    op1::Vector{Tuple{Float64}}
-    op2::Vector{Tuple{TwoF64}}
-    op11::Vector{Tuple{Float64, Float64}}
-    op21::Vector{Tuple{TwoF64, Float64}}
-    op22::Vector{Tuple{TwoF64, TwoF64}}
-end
-
-struct TestSet
-    argsList::ArgsList
-    fnOutput::Dict{String, Vector{TwoF64}}
-end
+include("./common.jl")
 
 json = read("$(@__DIR__)/algorithms-testset.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)
@@ -29,10 +11,6 @@ args_list = testset.argsList
 fn_output = testset.fnOutput
 
 coverage = Dict(keys(fn_output) .=> false)
-
-const split_max = prevfloat(floatmax(Float64)/(2^27 + 1))
-const u = big(2.0)^-precision(Float64)
-const ε₀ = big(eps(0.0))
 overflow = Dict(keys(fn_output) .=> 0)
 
 println()
