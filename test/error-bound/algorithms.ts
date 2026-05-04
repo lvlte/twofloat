@@ -81,7 +81,7 @@ const emin = Math.floor(exponent(FLOAT64_MIN)/2) + e_shift;
 const emax = Math.min(0, emin) + E_SPLIT_MAX;
 
 // Fill argsList with number combinations in the domain [±2^emin, ±2^emax]
-for (const [e1, e2] of pairsInRange(emin, emax, 3)) {
+for (const [e1, e2] of pairsInRange(emin, emax, 5)) {
   for (const [s1, s2] of signCombinations) {
     const w = random(e1, s1);
     const x = random(e1, s1);
