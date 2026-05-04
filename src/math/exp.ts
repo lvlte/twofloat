@@ -47,10 +47,7 @@ export function square2([xhi, xlo]: TwoF64): TwoF64 {
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
 export function cube1(x: f64): TwoF64 {
-  let [hi, lo, e=0] = square1(x); // EFT (twoProd)
-  return mul21([hi, lo], x);   // 3u²/2 + 4u³
-  // [hi, e] = mul11(hi, x);         // EFT (twoProd)
-  // return normalize(hi, lo*x + e); // 2u²
+  return mul21(square1(x), x);
 }
 
 /**
@@ -106,7 +103,7 @@ export function pow1int(x: f64, n: int): TwoF64 {
   }
 
   const p = Math.abs(n);
-  const xn = p > 30 ? _logpow(x, p) : _linpow(x, p);
+  const xn = p > 31 ? _logpowltr(x, p) : _linpow(x, p);
 
   return n < 0 ? inv2(xn) : xn;
 }
