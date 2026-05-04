@@ -4,7 +4,7 @@
 
 include("./common.jl")
 
-json = read("$(@__DIR__)/algorithms-testset.json", String)
+json = read("$(@__DIR__)/testset/algorithms.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)
 
 args_list = testset.argsList

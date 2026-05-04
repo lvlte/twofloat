@@ -126,6 +126,6 @@ const testset = { argsList, fnOutput} as Expand<{
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
-fs.writeFileSync('test/error-bound/algorithms-testset.json', testsetJSON, 'utf8');
+fs.writeFileSync('test/error-bound/testset/algorithms.json', testsetJSON, 'utf8');
 
 console.log('prerun algorithms.ts done');
