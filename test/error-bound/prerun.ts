@@ -6,5 +6,5 @@
  */
 
 import './algorithms';
+import './arithmetic';
 import './math';
-
