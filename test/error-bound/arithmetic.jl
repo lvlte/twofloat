@@ -1,8 +1,6 @@
 # Test the accuracy of twofloat's math functions
 # Function inputs/outputs dataset is created by /test/error-bound/math.ts
 
-include("./common.jl")
-
 json = read("$(@__DIR__)/testset/arithmetic.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)
 
