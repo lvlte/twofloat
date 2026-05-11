@@ -49,8 +49,8 @@ const argsList: ArgsListBySig = {'opa1': [], 'opa2': []};
 
 // Fill argsList with number sequences of increasing length
 for (let len = 3; len < 1e4; len = Math.floor(len*1.5)) {
-  const emin = Math.max(-52, exponent(Math.pow(FLOAT64_MIN, 1/len)));
-  const emax = Math.min(+52, exponent(Math.pow(Number.MAX_VALUE, 1/len)));
+  const emin = Math.max(-52, exponent(Math.pow(FLOAT64_MIN, 1/len))) - 0.25;
+  const emax = Math.min(+52, exponent(Math.pow(Number.MAX_VALUE, 1/len))) - 0.25;
   const rmax = len < 100 ? 500 : len < 1000 ? 50 : 5;
   for (let r = 0; r < rmax; r++) {
     const list: f64[] = [];
