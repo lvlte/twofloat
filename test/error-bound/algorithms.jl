@@ -2,8 +2,6 @@
 # Relative error bounds: cf. paper from J.M. Muller et al.
 # Function inputs/outputs dataset is created by /test/algorithms.ts
 
-include("./common.jl")
-
 json = read("$(@__DIR__)/testset/algorithms.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)
 
