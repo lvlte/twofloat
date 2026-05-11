@@ -4,12 +4,15 @@
 
 import {
   f64,
-  F64_SPLITTER,
+  TwoF64,
+  normalize,
   sum1,
   prod1,
+  sum2,
+  prod2,
 } from '../../src/index';
 
-import { eps, exponent, FLOAT64_MIN, nextFloat, prevFloat } from '@lvlte/ulp';
+import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
 import fs from 'node:fs';
 
 import {
@@ -22,6 +25,7 @@ import {
 // Functions to test grouped by signature
 const fnBySig = {
   'opa1': {sum1, prod1},
+  'opa2': {sum2, prod2},
 } satisfies Partial<{
   [K in keyof FnSig]: { [fnName: string]: FnSig[K] }
 }>;
@@ -41,7 +45,7 @@ function randWithin(min: number, max: number) {
 }
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
-const argsList: ArgsListBySig = {'opa1': []};
+const argsList: ArgsListBySig = {'opa1': [], 'opa2': []};
 
 // Fill argsList with number sequences of increasing length
 for (let len = 3; len < 1e4; len = Math.floor(len*1.5)) {
@@ -50,14 +54,18 @@ for (let len = 3; len < 1e4; len = Math.floor(len*1.5)) {
   const rmax = len < 100 ? 500 : len < 1000 ? 50 : 5;
   for (let r = 0; r < rmax; r++) {
     const list: f64[] = [];
+    const list2: TwoF64[] = [];
     for (let i = 0; i < len; i++) {
       // randWithin(2**emin, 2**emax) yields sequences whose sum1 have no error
       const exp = randWithin(emin, emax);
       const sign = random(0, 1) - 1 > 0.4 ? 1 : -1;
       const x = random(exp, sign);
+      const xx = normalize(x, random(exp - 53, sign));
       list.push(x);
+      list2.push(xx);
     }
     argsList['opa1'].push([list]);
+    argsList['opa2'].push([list2]);
   }
 }
 
