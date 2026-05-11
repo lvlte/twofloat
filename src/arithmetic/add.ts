@@ -22,7 +22,7 @@ export const add22 = AccurateDWPlusDW;
  * The result `[hi, lo]` is such that `f64([hi, lo])` is faithfully rounded.
  *
  * @param {ArrayLike<f64>} terms Array-like object of `f64` summands
- * @returns {TwoF64} A tuple `[hi, lo]` in its canonical form
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
 export function sum1(terms: ArrayLike<f64>): TwoF64 {
   switch (terms.length) {
@@ -34,6 +34,9 @@ export function sum1(terms: ArrayLike<f64>): TwoF64 {
 
     case 2:
       return add11(terms[0], terms[1]);
+
+    case 3:
+      return add21(add11(terms[0], terms[1]), terms[2]);
 
     case undefined:
       return NaN2;
@@ -52,4 +55,33 @@ export function sum1(terms: ArrayLike<f64>): TwoF64 {
   }
 
   return normalize(hi, lo);
+}
+
+/**
+ * Extended-precision addition of a given sequence of `TwoF64` numbers.
+ *
+ * @param {ArrayLike<TwoF64>} terms Array-like object of `TwoF64` summands
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function sum2(terms: ArrayLike<TwoF64>): TwoF64 {
+  switch (terms.length) {
+    case 0:
+      return ZERO2;
+
+    case 1:
+      return terms[0];
+
+    case 2:
+      return add22(terms[0], terms[1]);
+
+    case undefined:
+      return NaN2;
+  }
+
+  let s = add22(terms[0], terms[1]);
+  for (let i = 2; i < terms.length; i++) {
+    s = add22(s, terms[i]);
+  }
+
+  return s;
 }
