@@ -85,3 +85,43 @@ export function sum2(terms: ArrayLike<TwoF64>): TwoF64 {
 
   return s;
 }
+
+// Alternative sum2: sum1(hi) ++ sum1(lo)
+// Appear to be more accurate (on average) when both :
+// - terms.length < 100
+// - eps(max_abs(terms) / min_abs(terms)) < 1
+export function sum2_alt(terms: ArrayLike<TwoF64>): TwoF64 {
+  switch (terms.length) {
+    case 0:
+      return ZERO2;
+
+    case 1:
+      return terms[0];
+
+    case 2:
+      return add22(terms[0], terms[1]);
+
+    case undefined:
+      return NaN2;
+  }
+
+  let hhi = terms[0][0];
+  let hlo = 0;
+  let hlo_i = 0;
+
+  let lhi = terms[0][1];
+  let llo = 0;
+  let llo_i = 0;
+
+  for (let i = 1; i < terms.length; i++) {
+    [hhi, hlo_i] = add11(hhi, terms[i][0]);
+    [lhi, llo_i] = add11(lhi, terms[i][1]);
+    hlo += hlo_i;
+    llo += llo_i;
+  }
+
+  const hi = normalize(hhi, hlo);
+  const lo = normalize(lhi, llo);
+
+  return add22(hi, lo);
+}
