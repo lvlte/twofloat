@@ -76,7 +76,7 @@ println()
         output = fn_output["cube2"]
         coverage["cube2"] = true
         @test length(args) == length(output)
-        rel_err_bound = 10u^2
+        rel_err_bound = 10u^2 + 25u^4
         abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
         for (i, ((xhi, xlo),)) in enumerate(args)
             zhi, zlo = output[i]

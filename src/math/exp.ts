@@ -55,6 +55,8 @@ export function cube1(x: f64): TwoF64 {
  *
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
+ *
+ * Relative error bound: `10u² + 25u⁴`.
  */
 export function cube2(x: TwoF64): TwoF64 {
   return mul22(square2(x), x);
@@ -110,12 +112,12 @@ export function pow1int(x: f64, n: int): TwoF64 {
 
 /**
  * Integer power using compensated linear product (Horner scheme applied to the
- * polynomial `p(x) = x^n`).
+ * polynomial `p(x) = xⁿ`).
  *
  * **Assumes `n` is a {@link int | safe integer} such that `n ≥ 3`.**
  *
  * The result `[hi, lo]` is such that `f64([hi, lo])` is a faithful rounding
- * of `x^n` as long as `n < 2^25`.
+ * of `xⁿ` as long as `n < 2^25`.
  */
 export function _linpow(x: f64, n: int): TwoF64 {
   let [hi, lo] = cube1(x);
@@ -138,7 +140,7 @@ export function _linpow(x: f64, n: int): TwoF64 {
  * **Assumes `n` is a {@link int | safe integer} such that `n ≥ 3`.**
  *
  * The result `[hi, lo]` is such that `f64([hi, lo])` is a faithful rounding
- * of `x^n` as long as `n ≤ 2^49`.
+ * of `xⁿ` as long as `n ≤ 2^49`.
  */
 export function _logpow(x: f64, n: int): TwoF64 {
   let sn: TwoF64 = square1(x);
