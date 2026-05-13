@@ -18,6 +18,7 @@ struct ArgsList
     op21::Union{Vector{Tuple{TwoF64,Float64}},Nothing}
     op22::Union{Vector{Tuple{TwoF64,TwoF64}},Nothing}
     op1n::Union{Vector{Tuple{Float64,Int64}},Nothing}
+    op2n::Union{Vector{Tuple{TwoF64,Int64}},Nothing}
     opa1::Union{Vector{Tuple{VecF64}},Nothing}
     opa2::Union{Vector{Tuple{VecTwo}},Nothing}
 end
