@@ -30,6 +30,7 @@ export interface FnSig {
   'op21': (x: TwoF64, y: f64) => TwoF64;
   'op22': (x: TwoF64, y: TwoF64) => TwoF64;
   'op1n': (x: f64, n: int) => TwoF64;
+  'op2n': (x: TwoF64, n: int) => TwoF64;
   'opa1': (x: f64[]) => TwoF64;
   'opa2': (x: TwoF64[]) => TwoF64;
 }

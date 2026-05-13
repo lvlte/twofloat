@@ -96,7 +96,7 @@ println()
         output = fn_output["_linpow"]
         coverage["_linpow"] = true
         @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78 # theorically < 2u (2^-52)
+        rel_err_bound = big(2.0)^-78
         abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
         max_rel_err = (0, 0, 0)
         for (i, (x, n)) in enumerate(args)
@@ -123,7 +123,7 @@ println()
         output = fn_output["_logpow"]
         coverage["_logpow"] = true
         @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78 # theorically < 2u (2^-52)
+        rel_err_bound = big(2.0)^-78
         abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
         max_rel_err = (0, 0, 0)
         for (i, (x, n)) in enumerate(args)
@@ -169,6 +169,59 @@ println()
         end
         # @info "_logpowltr max_rel_err" err=max_rel_err[1] x=max_rel_err[2] n=max_rel_err[3]
         # println()
+    end
+
+    @testset "_linpow2" begin
+        args = args_list.op2n
+        output = fn_output["_linpow2"]
+        coverage["_linpow2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-78
+        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
+        max_rel_err = (0, (0, 0), 0)
+        for (i, ((xhi, xlo), n)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = (big(xhi) + big(xlo))^n
+            if abs(r) > floatmax(Float64)
+                overflow["_linpow2"] += 1
+                @test !isfinite(zhi + zlo)
+            else
+                @test abs(z - r) < abs_err_bound(r)
+                rel_err = abs((z - r) / r)
+                if rel_err > max_rel_err[1]
+                  max_rel_err = (Float64(rel_err), (xhi, xlo), n)
+                end
+            end
+        end
+        # @info "_linpow max_rel_err" err=max_rel_err[1] x=max_rel_err[2] n=max_rel_err[3]
+    end
+
+
+    @testset "_logpow2" begin
+        args = args_list.op2n
+        output = fn_output["_logpow2"]
+        coverage["_logpow2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-78
+        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
+        max_rel_err = (0, (0, 0), 0)
+        for (i, ((xhi, xlo), n)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = (big(xhi) + big(xlo))^n
+            if abs(r) > floatmax(Float64)
+                overflow["_logpow2"] += 1
+                @test !isfinite(zhi + zlo)
+            else
+                @test abs(z - r) < abs_err_bound(r)
+                rel_err = abs((z - r) / r)
+                if rel_err > max_rel_err[1]
+                  max_rel_err = (Float64(rel_err), (xhi, xlo), n)
+                end
+            end
+        end
+        # @info "_logpow max_rel_err" err=max_rel_err[1] x=max_rel_err[2] n=max_rel_err[3]
     end
 end
 
