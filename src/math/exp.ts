@@ -184,3 +184,85 @@ export function _logpowltr(x: f64, n: int): TwoF64 {
 
   return xn;
 }
+
+/**
+ * Integer power of `x` - Computes `(xₕᵢ + xₗₒ)ⁿ` using extended precision
+ * arithmetic. `n` must be an integer.
+ *
+ * @param {TwoF64} x `TwoF64` number (base)
+ * @param {int} n `int` number (integer exponent)
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function pow2int(x: TwoF64, n: int): TwoF64 {
+  switch (n) {
+    case 0:
+      return ONE2;
+
+    case 1:
+      return x;
+
+    case 2:
+      return square2(x);
+
+    case 3:
+      return cube2(x);
+
+    case -1:
+      return inv2(x);
+
+    case -2:
+      return inv2(square2(x));
+
+    case -3:
+      return inv2(cube2(x));
+
+    default:
+      if (!Number.isSafeInteger(n)) {
+        return NaN2;
+      }
+  }
+
+  const p = Math.abs(n);
+  const xn = p > 31 ? _logpow2(x, p) : _linpow2(x, p);
+
+  return n < 0 ? inv2(xn) : xn;
+}
+
+/**
+ * Integer power using linear product.
+ *
+ * **Assumes `n` is a {@link int | safe integer} such that `n ≥ 3`.**
+ */
+export function _linpow2(x: TwoF64, n: int): TwoF64 {
+  let r = cube2(x);
+  let i = 3;
+
+  while (i++ < n) {
+    r = mul22(r, x);
+  }
+
+  return r;
+}
+
+/**
+ * Integer power using compensated logarithmic product, based on successive
+ * squarings (RTL binary exponentiation).
+ * Faster than {@link _linpow2 | `_linpow2(x,n)`} for (roughly) `n > 30`.
+ *
+ * **Assumes `n` is a {@link int | safe integer} such that `n ≥ 3`.**
+ */
+export function _logpow2(x: TwoF64, n: int): TwoF64 {
+  let sn = square2(x);
+  let xn = n % 2 ? x : ONE2;
+  let i = Math.floor(n/2);
+
+  while (i > 1) {
+    if (i % 2) {
+      xn = mul22(xn, sn);
+    }
+    sn = square2(sn);
+    i = Math.floor(i/2);
+  }
+
+  return mul22(xn, sn);
+}
