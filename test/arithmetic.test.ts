@@ -9,7 +9,7 @@ import {
   fast2Sum,
   fast2Diff,
   neg2,
-  ONE2
+  ONE
 } from '../src/index';
 
 import {
@@ -91,9 +91,9 @@ describe('Derived Algorithms', () => {
   test('twoInv', () => {
     for (let exp = -100; exp <= 60; exp++) {
       const x = random(exp, 1);
-      expect(twoInv(x)).toEqual(DWDivFP3(ONE2, x));
-      expect(twoInv(-x)).toEqual(DWDivFP3(neg2(ONE2), x));
-      expect(twoInv(-x)).toEqual(DWDivFP3(ONE2, -x));
+      expect(twoInv(x)).toEqual(DWDivFP3(ONE, x));
+      expect(twoInv(-x)).toEqual(DWDivFP3(neg2(ONE), x));
+      expect(twoInv(-x)).toEqual(DWDivFP3(ONE, -x));
     }
   });
 
@@ -101,9 +101,9 @@ describe('Derived Algorithms', () => {
     for (let exp = -100; exp <= 60; exp++) {
       const x = twoSum(random(exp, 1), random(exp, 1));
       const mx = neg2(x);
-      expect(DWInv(x)).toEqual(DWDivDW2(ONE2, x));
-      expect(DWInv(mx)).toEqual(DWDivDW2(neg2(ONE2), x));
-      expect(DWInv(mx)).toEqual(DWDivDW2(ONE2, mx));
+      expect(DWInv(x)).toEqual(DWDivDW2(ONE, x));
+      expect(DWInv(mx)).toEqual(DWDivDW2(neg2(ONE), x));
+      expect(DWInv(mx)).toEqual(DWDivDW2(ONE, mx));
     }
   });
 });

@@ -6,9 +6,9 @@ import {
   type TwoF64,
   type f64,
   type int,
-  ONE2,
+  ONE,
   NaN2,
-  ZERO2
+  ZERO
 } from '../base/common.js';
 
 import { normalize } from '../base/eft.js';
@@ -26,7 +26,7 @@ import { square1 } from '../math/exp.js';
  */
 export function sqrt1(x: f64): TwoF64 {
   if (x <= 0) {
-    return x === 0 ? ZERO2 : NaN2;
+    return x === 0 ? ZERO : NaN2;
   }
 
   const hi = Math.sqrt(x);
@@ -51,7 +51,7 @@ export function sqrt1(x: f64): TwoF64 {
 export function sqrt2(x: TwoF64): TwoF64;
 export function sqrt2([xhi, xlo]: TwoF64): TwoF64 {
   if (xhi <= 0) {
-    return xhi === 0 ? ZERO2 : NaN2;
+    return xhi === 0 ? ZERO : NaN2;
   }
 
   const hi = Math.sqrt(xhi);

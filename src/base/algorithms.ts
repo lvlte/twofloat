@@ -10,6 +10,7 @@
 import {
   type f64,
   type TwoF64,
+  ZERO
 } from './common.js';
 
 import {

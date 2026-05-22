@@ -44,19 +44,14 @@ export const F64_SPLITTER = 134217729;    // 2**F64_SPLIT_NB + 1;
 /**
  * `TwoF64` number equal to `1`
  */
-export const ONE2: TwoF64 = [1, 0];
+export const ONE: TwoF64 = [1, 0];
 
 /**
  * `TwoF64` number equal to `0`
  */
-export const ZERO2: TwoF64 = [0, 0];
+export const ZERO: TwoF64 = [0, 0];
 
 /**
  * `TwoF64` number representing `NaN`
  */
 export const NaN2: TwoF64 = [NaN, NaN];
-
-/**
- * `TwoF64` number representing `Infinity`
- */
-export const Inf2: TwoF64 = [Infinity, Infinity];

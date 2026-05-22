@@ -6,8 +6,9 @@ import {
   type TwoF64,
   type f64,
   type int,
-  ONE2,
-  NaN2
+  ONE,
+  NaN2,
+  ZERO
 } from '../base/common.js';
 
 import { twoSquare, normalize } from '../base/eft.js';
@@ -78,7 +79,7 @@ export function cube2(x: TwoF64): TwoF64 {
 export function pow1int(x: f64, n: int): TwoF64 {
   switch (n) {
     case 0:
-      return ONE2;
+      return ONE;
 
     case 1:
       return [x, 0*x];
@@ -198,7 +199,7 @@ export function _logpowltr(x: f64, n: int): TwoF64 {
 export function pow2int(x: TwoF64, n: int): TwoF64 {
   switch (n) {
     case 0:
-      return ONE2;
+      return ONE;
 
     case 1:
       return x;
@@ -255,7 +256,7 @@ export function _linpow2(x: TwoF64, n: int): TwoF64 {
  */
 export function _logpow2(x: TwoF64, n: int): TwoF64 {
   let sn = square2(x);
-  let xn = n % 2 ? x : ONE2;
+  let xn = n % 2 ? x : ONE;
   let i = Math.floor(n/2);
 
   while (i > 1) {

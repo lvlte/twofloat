@@ -6,7 +6,7 @@ import {
   type f64,
   type TwoF64,
   NaN2,
-  ONE2,
+  ONE,
 } from '../base/common.js';
 
 import { normalize, twoProd } from '../base/eft.js';
@@ -28,7 +28,7 @@ export const mul22 = DWTimesDW1;
 export function prod1(terms: ArrayLike<f64>): TwoF64 {
   switch (terms.length) {
     case 0:
-      return ONE2;
+      return ONE;
 
     case 1:
       return [terms[0], 0*terms[0]];
@@ -67,7 +67,7 @@ export function prod1(terms: ArrayLike<f64>): TwoF64 {
 export function prod2(terms: ArrayLike<TwoF64>): TwoF64 {
   switch (terms.length) {
     case 0:
-      return ONE2;
+      return ONE;
 
     case 1:
       return terms[0];

@@ -6,7 +6,7 @@ import {
   type f64,
   type TwoF64,
   NaN2,
-  ZERO2,
+  ZERO,
 } from '../base/common.js';
 
 import { normalize, twoSum } from '../base/eft.js';
@@ -27,7 +27,7 @@ export const add22 = AccurateDWPlusDW;
 export function sum1(terms: ArrayLike<f64>): TwoF64 {
   switch (terms.length) {
     case 0:
-      return ZERO2;
+      return ZERO;
 
     case 1:
       return [terms[0], 0*terms[0]];
@@ -66,7 +66,7 @@ export function sum1(terms: ArrayLike<f64>): TwoF64 {
 export function sum2(terms: ArrayLike<TwoF64>): TwoF64 {
   switch (terms.length) {
     case 0:
-      return ZERO2;
+      return ZERO;
 
     case 1:
       return terms[0];
@@ -93,7 +93,7 @@ export function sum2(terms: ArrayLike<TwoF64>): TwoF64 {
 export function sum2_alt(terms: ArrayLike<TwoF64>): TwoF64 {
   switch (terms.length) {
     case 0:
-      return ZERO2;
+      return ZERO;
 
     case 1:
       return terms[0];
