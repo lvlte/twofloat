@@ -12,8 +12,12 @@ import {
 } from '../base/common.js';
 
 import { twoSquare, normalize } from '../base/eft.js';
-import { inv1, inv2 } from '../arithmetic/div.js';
+import { div22, inv1, inv2 } from '../arithmetic/div.js';
 import { mul11, mul21, mul22 } from '../arithmetic/mul.js';
+import { add21, add22 } from '../arithmetic/add.js';
+import { sub21, sub22 } from '../arithmetic/sub.js';
+import { exp_n, exp_nmax, pade, padeInt } from '../pre/exp.js';
+import { INF } from './constants.js';
 
 /**
  * Computes `x²` using extended precision arithmetic.
@@ -268,4 +272,77 @@ export function _logpow2(x: TwoF64, n: int): TwoF64 {
   }
 
   return mul22(xn, sn);
+}
+
+/**
+ * Compute `e^x`, the natural base exponential of `x`, using extended precision
+ * arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function exp1(x: f64): TwoF64 {
+  if (exp_n.has(x)) {
+    return exp_n.get(x) as TwoF64;
+  }
+
+  if (Number.isInteger(x)) {
+    return _exp1i(x);
+  }
+
+  if (Math.abs(x) < 1) {
+    return _exp1f(x);
+  }
+
+  if (!Number.isFinite(x)) {
+    return x < 0 ? ZERO : x > 0 ? INF : NaN2;
+  }
+
+  const e_xi = _exp1i(Math.trunc(x));
+  const e_xf = _exp1f(x % 1);
+
+  return mul22(e_xi, e_xf);
+}
+
+/**
+ * Compute `e^x`, assuming `x` is a non-zero integer.
+ */
+function _exp1i(x: int): TwoF64 {
+  if (x > 709) {
+    return INF;
+  }
+
+  if (x < -745) {
+    return ZERO;
+  }
+
+  const m = Math.sign(x) * exp_nmax;
+  const [a, r] = divrem(x, m);
+  const e_xi = pow2int(exp_n.get(m) as TwoF64, a);
+
+  return r !== 0 ? mul22(e_xi, exp_n.get(r) as TwoF64) : e_xi;
+}
+
+/**
+ * Compute `e^x` using Padé approximant (meant to be used for `-1 < x < 1`, ie.
+ * the relative error grows significantly as `x` moves away from that range).
+ */
+function _exp1f(x: int): TwoF64 {
+  const coeff = padeInt[15];
+  const p_add = coeff.length % 2 ? add21 : sub21;
+
+  let p = ZERO;
+  let q = ZERO;
+  for (let i = 0, s = 1; i < coeff.length; i++, s*=-1) {
+    p = p_add(mul21(p, x), coeff[i]);
+    q = add21(mul21(q, x), coeff[i] * s);
+  }
+
+  return div22(p, q);
+}
+
+function divrem(x: f64, y: f64): [int, f64] {
+  const r = x % y;
+  const q = Math.round(x/y - r/y);
+  return [q, r];
 }
