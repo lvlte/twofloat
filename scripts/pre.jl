@@ -32,7 +32,8 @@ math_const = Dict(
     "SQRT2" => sqrt(big(2.0)),
 )
 
-exp_n = [exp(BigFloat(n)) for n in 0:80]
+nmax = 80
+exp_n = [[n, TwoF64(exp(BigFloat(n)))] for n in -nmax:nmax]
 
 N = UnitRange{Int128}(10, 16)
 exp_pade = Dict(n => pade_exp(n,n)[1] for n in N)
@@ -40,7 +41,7 @@ exp_pade_int = Dict(n => pade_exp_int(n) for n in N)
 
 two_const = Dict(key => TwoF64(val) for (key, val) in math_const)
 pre_exp = Dict(
-    "exp_n" => TwoF64.(exp_n),
+    "exp_n" => [exp_n; [["nmax", nmax]]],
     "exp_pade" => Dict(n => TwoF64.(exp_pade[n]) for n in N),
     "exp_pade_int" => Dict(n => TwoF64Int.(exp_pade_int[n]) for n in N)
 )
