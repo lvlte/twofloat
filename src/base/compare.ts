@@ -86,3 +86,44 @@ export function ge22(x: TwoF64, y: TwoF64): boolean;
 export function ge22([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): boolean {
   return xhi > yhi || (xhi === yhi && xlo >= ylo);
 }
+
+/**
+ * Return a boolean indicating whether `x` is equal to `0`.
+ */
+export function isZero(x: TwoF64): boolean;
+export function isZero([xhi, xlo]: TwoF64): boolean {
+  return xhi === 0 && xlo === 0;
+}
+
+/**
+ * Return a boolean indicating whether `x` is equal to `1`.
+ */
+export function isOne(x: TwoF64): boolean;
+export function isOne([xhi, xlo]: TwoF64): boolean {
+  return xhi === 1 && xlo === 0;
+}
+
+/**
+ * Return a boolean indicating whether `x` represents a finite number.
+ */
+export function isFinite2(x: TwoF64): boolean;
+export function isFinite2([xhi, xlo]: TwoF64): boolean {
+  return Number.isFinite(xhi + xlo);
+}
+
+/**
+ * Return a boolean indicating whether `x` represents an integer.
+ */
+export function isInteger2(x: TwoF64): boolean;
+export function isInteger2([xhi, xlo]: TwoF64): boolean {
+  return Number.isInteger(xlo) && Number.isInteger(xhi);
+}
+
+/**
+ * Return a boolean indicating whether `x` is a safe twofloat integer (where xₕᵢ
+ * is an integer and `xₗₒ` a safe integer).
+ */
+export function isSafeInteger2(x: TwoF64): boolean;
+export function isSafeInteger2([xhi, xlo]: TwoF64): boolean {
+  return Number.isSafeInteger(xlo) && Number.isInteger(xhi);
+}

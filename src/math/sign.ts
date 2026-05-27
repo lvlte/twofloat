@@ -2,7 +2,7 @@
  * @file Sign-related functions
  */
 
-import { type TwoF64 } from '../base/common.js';
+import { NaN2, type TwoF64 } from '../base/common.js';
 
 /**
  * Return the absolute value of `x`. Expect and return a `TwoF64` number tuple
@@ -27,7 +27,7 @@ export function neg2([xhi, xlo]: TwoF64): TwoF64 {
  * tuple `[hi, lo]` in its canonical form.
  */
 export function sign2(x: TwoF64): TwoF64;
-export function sign2([xhi]: TwoF64): TwoF64 {
-  const sign = Math.sign(xhi);
-  return [sign, 0*xhi];
+export function sign2([xhi, xlo]: TwoF64): TwoF64 {
+  const sign = Math.sign(xhi + xlo);
+  return Number.isFinite(sign) ? [sign, 0] : NaN2;
 }
