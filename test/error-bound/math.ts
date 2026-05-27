@@ -18,6 +18,8 @@ import {
   add11,
   _linpow2,
   _logpow2,
+  exp1,
+  exp2,
 } from '../../src/index';
 
 import { exponent } from '@lvlte/ulp';
@@ -40,6 +42,8 @@ const fnBySig = {
   'op2': {square2, cube2, sqrt2},
   'op1n': {_linpow, _logpow, _logpowltr},
   'op2n': {_linpow2, _logpow2},
+  'exp1': {exp1},
+  'exp2': {exp2},
 } satisfies Partial<{
   [K in keyof FnSig]: { [fnName: string]: FnSig[K] }
 }>;
@@ -57,7 +61,7 @@ const random = randomFn(SEED, true);
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
 const argsList: ArgsListBySig = {
-  'op1': [], 'op2': [], 'op1n': [], 'op2n': []
+  'op1': [], 'op2': [], 'op1n': [], 'op2n': [], 'exp1': [], 'exp2': []
 };
 
 // split is not immune to overflow
@@ -92,6 +96,24 @@ for (let exp = emin; exp <= emax; exp++) {
         }
       }
       n = n > 50 ? Math.trunc(n * (1 + random(-2, 1))) : n + 1;
+    }
+  }
+}
+
+// e^x specific input range
+// - e^-745.134 < Number.MIN_VALUE
+// - e^+709.783 > Number.MAX_VALUE
+const e_negx = Math.log2(-Math.log(Number.MIN_VALUE)) - 1;
+const e_posx = Math.log2(+Math.log(Number.MAX_VALUE)) - 1;
+for (const [sign, emax] of [[1, e_posx], [-1, e_negx]]) {
+  const emaxint = Math.floor(emax);
+  for (let exp = emin; exp <= emax; exp = exp == emaxint ? emax : exp+1) {
+    for (let r = 0; r < 200; r++) {
+      const x = random(exp, sign);
+      const y = random(exp - 52, sign);
+      const xy = add11(x, y);
+      argsList['exp1'].push([x]);
+      argsList['exp2'].push([xy]);
     }
   }
 }

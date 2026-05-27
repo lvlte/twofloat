@@ -35,7 +35,7 @@ println()
                 end
             end
         end
-        @info "sum1 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
+        # @info "sum1 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
     end
 
     @testset "prod1" begin
@@ -61,8 +61,8 @@ println()
                 end
             end
         end
-        @info "prod1 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
-        println()
+        # @info "prod1 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
+        # println()
     end
 
     @testset "sum2" begin
@@ -88,7 +88,7 @@ println()
                 end
             end
         end
-        @info "sum2 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
+        # @info "sum2 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
     end
 
     @testset "prod2" begin
@@ -114,8 +114,8 @@ println()
                 end
             end
         end
-        @info "prod2 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
-        println()
+        # @info "prod2 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
+        # println()
     end
 end
 

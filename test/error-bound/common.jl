@@ -21,6 +21,8 @@ struct ArgsList
     op2n::Union{Vector{Tuple{TwoF64,Int64}},Nothing}
     opa1::Union{Vector{Tuple{VecF64}},Nothing}
     opa2::Union{Vector{Tuple{VecTwo}},Nothing}
+    exp1::Union{Vector{Tuple{Float64}},Nothing}
+    exp2::Union{Vector{Tuple{TwoF64}},Nothing}
 end
 
 struct TestSet
