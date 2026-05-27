@@ -18,6 +18,7 @@ import { add21, add22 } from '../arithmetic/add.js';
 import { sub21, sub22 } from '../arithmetic/sub.js';
 import { exp_n, exp_nmax, pade, padeInt } from '../pre/exp.js';
 import { INF } from './constants.js';
+import { isFinite2, isZero } from '../base/compare.js';
 
 /**
  * Computes `x²` using extended precision arithmetic.
@@ -345,4 +346,20 @@ function divrem(x: f64, y: f64): [int, f64] {
   const r = x % y;
   const q = Math.round(x/y - r/y);
   return [q, r];
+}
+
+/**
+ * Computes `e^(xₕᵢ + xₗₒ)` using extended precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function exp2([xhi, xlo]: TwoF64): TwoF64 {
+  const e_xhi = exp1(xhi);
+  if (!isFinite2(e_xhi) || isZero(e_xhi) || xlo === 0) {
+    return e_xhi;
+  }
+  // 0 < |xlo| < 1
+  const e_xlo = _exp1f(xlo);
+  return mul22(e_xhi, e_xlo);
 }
