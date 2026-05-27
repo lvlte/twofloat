@@ -5,7 +5,7 @@
 import {
   type f64,
   type TwoF64,
-} from '../base/common.js';
+} from './common.js';
 
 /**
  * Return a boolean indicating whether `x` is equal to `y`.
