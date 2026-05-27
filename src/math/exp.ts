@@ -11,12 +11,12 @@ import {
   ZERO
 } from '../base/common.js';
 
-import { twoSquare, normalize } from '../base/eft.js';
+import { twoSquare, normalize, fast2Diff, fast2Sum } from '../base/eft.js';
 import { div22, inv1, inv2 } from '../arithmetic/div.js';
 import { mul11, mul21, mul22 } from '../arithmetic/mul.js';
 import { add21, add22 } from '../arithmetic/add.js';
-import { sub21, sub22 } from '../arithmetic/sub.js';
-import { exp_n, exp_nmax, pade, padeInt } from '../pre/exp.js';
+import { sub12, sub21, sub22 } from '../arithmetic/sub.js';
+import { exp_n, exp_nmax, padeInt } from '../pre/exp.js';
 import { INF } from './constants.js';
 import { isFinite2, isZero } from '../base/compare.js';
 
@@ -283,10 +283,6 @@ export function _logpow2(x: TwoF64, n: int): TwoF64 {
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
 export function exp1(x: f64): TwoF64 {
-  if (exp_n.has(x)) {
-    return exp_n.get(x) as TwoF64;
-  }
-
   if (Number.isInteger(x)) {
     return _exp1i(x);
   }
@@ -306,9 +302,13 @@ export function exp1(x: f64): TwoF64 {
 }
 
 /**
- * Compute `e^x`, assuming `x` is a non-zero integer.
+ * Compute `e^x`, assuming `x` is an integer.
  */
 function _exp1i(x: int): TwoF64 {
+  if (exp_n.has(x))  {
+    return exp_n.get(x) as TwoF64;
+  }
+
   if (x > 709) {
     return INF;
   }
@@ -330,12 +330,12 @@ function _exp1i(x: int): TwoF64 {
  */
 function _exp1f(x: int): TwoF64 {
   const coeff = padeInt[15];
-  const p_add = coeff.length % 2 ? add21 : sub21;
+  // const p_add = coeff.length % 2 ? add21 : sub21;
 
-  let p = ZERO;
-  let q = ZERO;
-  for (let i = 0, s = 1; i < coeff.length; i++, s*=-1) {
-    p = p_add(mul21(p, x), coeff[i]);
+  let p = fast2Diff(-coeff[1], x);
+  let q = fast2Sum(-coeff[1], x);
+  for (let i = 2, s = 1; i < coeff.length; i++, s*=-1) {
+    p = sub21(mul21(p, x), coeff[i]);
     q = add21(mul21(q, x), coeff[i] * s);
   }
 
@@ -355,11 +355,51 @@ function divrem(x: f64, y: f64): [int, f64] {
  * its canonical form).
  */
 export function exp2([xhi, xlo]: TwoF64): TwoF64 {
-  const e_xhi = exp1(xhi);
-  if (!isFinite2(e_xhi) || isZero(e_xhi) || xlo === 0) {
-    return e_xhi;
+  if (Number.isInteger(xhi)) {
+    const e_xhi = _exp1i(xhi);
+    if (xlo === 0 || !isFinite2(e_xhi) || isZero(e_xhi)) {
+      return e_xhi;
+    }
+    return mul22(e_xhi, _exp1f(xlo));
   }
-  // 0 < |xlo| < 1
-  const e_xlo = _exp1f(xlo);
-  return mul22(e_xhi, e_xlo);
+
+  const xf64 = xhi + xlo;
+  if (!Number.isFinite(xf64)) {
+    return xf64 < 0 ? ZERO : xf64 > 0 ? INF : NaN2;
+  }
+
+  // If xlo is an integer, then |xhi| ≥ 2^53 so the result will be the same (0
+  // or inf) whether or not we consider xlo in the integer part, so we don't.
+  const xi = Math.trunc(xhi);
+  if (xi === 0) {
+    return _exp2f([xhi, xlo]);
+  }
+
+  const e_xi = _exp1i(xi);
+  if (!isFinite2(e_xi) || isZero(e_xi)) {
+    return e_xi;
+  }
+
+  // xhi - xi is exact and |xhi - xi| > xlo
+  const xf = normalize(xhi - xi, xlo);
+  const e_xf = _exp2f(xf);
+
+  return mul22(e_xi, e_xf);
+}
+
+/**
+ * Compute `e^x` using Padé approximant (meant to be used for `-1 < x < 1`, ie.
+ * the relative error grows significantly as `x` moves away from that range).
+ */
+function _exp2f(x: TwoF64): TwoF64 {
+  const coeff = padeInt[15];
+
+  let p = sub12(-coeff[1], x);
+  let q = sub21(x, coeff[1]);
+  for (let i = 2, s = 1; i < coeff.length; i++, s*=-1) {
+    p = sub21(mul22(p, x), coeff[i]);
+    q = add21(mul22(q, x), coeff[i] * s);
+  }
+
+  return div22(p, q);
 }

@@ -264,7 +264,7 @@ println()
         output = fn_output["exp2"]
         coverage["exp2"] = true
         @test length(args) == length(output)
-        rel_err_bound = 15u^2
+        rel_err_bound = 10u^2
         abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
         max_rel_err = (0, 0, 0,0)
         rel_err_vec = Vector{BigFloat}()
