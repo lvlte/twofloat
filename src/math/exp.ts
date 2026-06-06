@@ -12,10 +12,7 @@ import {
 } from '../base/common.js';
 
 import { twoSquare, normalize, fast2Diff, fast2Sum } from '../base/eft.js';
-import { div22, inv1, inv2 } from '../arithmetic/div.js';
-import { mul11, mul21, mul22 } from '../arithmetic/mul.js';
-import { add21, add22 } from '../arithmetic/add.js';
-import { sub12, sub21, sub22 } from '../arithmetic/sub.js';
+import { add21, sub12, sub21, mul11, mul21, mul22, div22, inv1, inv2 } from '../arithmetic/index.js';
 import { exp_n, exp_nmax, padeInt } from '../pre/exp.js';
 import { INF } from './constants.js';
 import { isFinite2, isZero } from '../base/compare.js';
