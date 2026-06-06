@@ -20,6 +20,8 @@ import {
   _logpow2,
   exp1,
   exp2,
+  ln1 as _ln1,
+  ln2 as _ln2,
 } from '../../src/index';
 
 import { exponent } from '@lvlte/ulp';
@@ -30,16 +32,19 @@ import {
   UnionToIntersection,
   Expand,
   randomFn,
+  ldexp,
 } from '../utils';
 
-// Wrap sqrt functions so that they are tested with positive values only
+// Wrap sqrt and log functions so that they are tested with positive values only
 const sqrt1: typeof _sqrt1 = x => _sqrt1(Math.abs(x));
 const sqrt2: typeof _sqrt2 = x => _sqrt2(abs2(x));
+const ln1: typeof _ln1 = x => _ln1(Math.abs(x));
+const ln2: typeof _ln2 = x => _ln2(abs2(x));
 
 // Functions to test grouped by signature
 const fnBySig = {
-  'op1': {square1, cube1, sqrt1},
-  'op2': {square2, cube2, sqrt2},
+  'op1': {square1, cube1, sqrt1, ln1},
+  'op2': {square2, cube2, sqrt2, ln2},
   'op1n': {_linpow, _logpow, _logpowltr},
   'op2n': {_linpow2, _logpow2},
   'exp1': {exp1},

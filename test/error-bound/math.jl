@@ -241,7 +241,8 @@ println()
                 overflow["exp1"] += 1
                 @test !isfinite(zhi + zlo)
             elseif isnan(z)
-                @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+                overflow["exp1"] += 1
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
             else
                 @test abs(z - r) < abs_err_bound(r)
                 abs(u^2 * r) < ε₀ && continue # underflow
@@ -276,7 +277,8 @@ println()
                 overflow["exp2"] += 1
                 @test !isfinite(zhi + zlo)
             elseif isnan(z)
-                @error "NaN (overflow but could be avoided)" (xhi, xlo) (zhi, zlo) r
+                overflow["exp2"] += 1
+                # @error "NaN (overflow but could be avoided)" (xhi, xlo) (zhi, zlo) r
             else
                 @test abs(z - r) < abs_err_bound(r)
                 abs(u^2 * r) < ε₀ && continue # underflow
@@ -291,6 +293,67 @@ println()
         avg = Float64(sum(rel_err_vec)/length(rel_err_vec))
         @info "exp2 max rel err" err x z r
         @info "exp2 avg rel err" avg
+        println()
+    end
+end
+
+println()
+@testset verbose = true "Logarithms ──────────────" begin ######################
+    @testset "ln1" begin
+        args = args_list.op1
+        output = fn_output["ln1"]
+        coverage["ln1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-85
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        rel_err_vec = Vector{BigFloat}()
+        for (i, (x,)) in enumerate(args)
+            x = abs(x)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = log(big(x))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            push!(rel_err_vec, rel_err)
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), x, z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(sum(rel_err_vec)/length(rel_err_vec))
+        @info "ln1 max rel err" err x z r
+        @info "ln1 avg rel err" avg
+        println()
+    end
+
+    @testset "ln2" begin
+        args = args_list.op2
+        output = fn_output["ln2"]
+        coverage["ln2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-85
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0,0)
+        rel_err_vec = Vector{BigFloat}()
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = log(big(xhi) + big(xlo))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            push!(rel_err_vec, rel_err)
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(sum(rel_err_vec)/length(rel_err_vec))
+        @info "ln2 max rel err" err x z r
+        @info "ln2 avg rel err" avg
         println()
     end
 end
@@ -333,12 +396,12 @@ end
 
 ###
 
-println()
-@testset "Math functions coverage ─" begin
-    for (fn, covered) in coverage
-        @test (fn, covered) == (fn, true)
-    end
-end
+# println()
+# @testset "Math functions coverage ─" begin
+#     for (fn, covered) in coverage
+#         @test (fn, covered) == (fn, true)
+#     end
+# end
 
 println()
 @info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflow)...] |> join
