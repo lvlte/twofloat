@@ -92,6 +92,8 @@ export function ge22([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): boolean {
  */
 export function isZero(x: TwoF64): boolean;
 export function isZero([xhi, xlo]: TwoF64): boolean {
+  // xhi = 0 implies xlo = 0, but we ensure xlo is not NaN even if it should
+  // not happen.
   return xhi === 0 && xlo === 0;
 }
 
@@ -120,10 +122,29 @@ export function isInteger2([xhi, xlo]: TwoF64): boolean {
 }
 
 /**
- * Return a boolean indicating whether `x` is a safe twofloat integer (where xₕᵢ
- * is an integer and `xₗₒ` a safe integer).
+ * Return a boolean indicating whether `x` is a safe f64 integer (ie. can be
+ * converted to a float64 number without loosing precision).
  */
 export function isSafeInteger2(x: TwoF64): boolean;
 export function isSafeInteger2([xhi, xlo]: TwoF64): boolean {
-  return Number.isSafeInteger(xlo) && Number.isInteger(xhi);
+  return Number.isSafeInteger(xhi) && xlo === 0;
+}
+
+/**
+ * Return a boolean indicating whether `x` is a safe twofloat integer (ie. such
+ * that `x` and `x ± 1` are integers that can be represented exactly using
+ * extended precision).
+ */
+export function isSafeTwoInteger(x: TwoF64): boolean;
+export function isSafeTwoInteger([xhi, xlo]: TwoF64): boolean {
+  return xlo === 0 ? Number.isSafeInteger(xhi) : Number.isSafeInteger(xlo);
+}
+
+/**
+ * Return a boolean indicating whether `x` is the reserved value `NaN2` (not a
+ * number).
+ */
+export function isNaN2(x: TwoF64): boolean;
+export function isNaN2([xhi, xlo]: TwoF64): boolean {
+  return Number.isNaN(xhi + xlo);
 }
