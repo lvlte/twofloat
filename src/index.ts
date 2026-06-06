@@ -1,4 +1,3 @@
-
 /**
  * Double-double arithmetic implementation for TS/JS
  * @module twofloat
@@ -8,7 +7,4 @@ export * from './base/common.js';
 export * from './base/eft.js';
 export * from './arithmetic/index.js';
 export * from './base/compare.js';
-export * from './math/sign.js';
-export * from './math/exp.js';
-export * from './math/roots.js';
-export * from './math/log.js';
+export * from './math/index.js';
