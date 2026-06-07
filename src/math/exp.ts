@@ -15,7 +15,8 @@ import { twoSquare, normalize, fast2Diff, fast2Sum } from '../base/eft.js';
 import { add21, sub12, sub21, mul11, mul21, mul22, div22, inv1, inv2 } from '../arithmetic/index.js';
 import { exp_n, exp_nmax, padeInt } from '../pre/exp.js';
 import { INF } from './constants.js';
-import { isFinite2, isZero } from '../base/compare.js';
+import { isFinite2, isSafeInteger2, isZero } from '../base/compare.js';
+import { ln1, ln2 } from './log.js';
 
 /**
  * Computes `x²` using extended precision arithmetic.
@@ -270,6 +271,62 @@ export function _logpow2(x: TwoF64, n: int): TwoF64 {
   }
 
   return mul22(xn, sn);
+}
+
+/**
+ * Computes `xᵖ` using extended precision arithmetic.
+ *
+ * @param {f64} x `f64` number (base)
+ * @param {f64} p `f64` number (exponent)
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function pow11(x: f64, p: f64): TwoF64 {
+  if (Number.isSafeInteger(p)) {
+    return pow1int(x, p);
+  }
+  return exp2(mul21(ln1(x), p));
+}
+
+/**
+ * Computes `xᵖ` using extended precision arithmetic.
+ *
+ * @param {f64} x `f64` number (base)
+ * @param {TwoF64} p `TwoF64` number (exponent)
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function pow12(x: f64, p: TwoF64): TwoF64 {
+  if (isSafeInteger2(p)) {
+    return pow1int(x, p[0]);
+  }
+  return exp2(mul22(ln1(x), p));
+}
+
+/**
+ * Computes `xᵖ` using extended precision arithmetic.
+ *
+ * @param {TwoF64} x `TwoF64` number (base)
+ * @param {f64} p `f64` number (exponent)
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function pow21(x: TwoF64, p: f64): TwoF64 {
+  if (Number.isSafeInteger(p)) {
+    return pow2int(x, p);
+  }
+  return exp2(mul21(ln2(x), p));
+}
+
+/**
+ * Computes `xᵖ` using extended precision arithmetic.
+ *
+ * @param {TwoF64} x `TwoF64` number (base)
+ * @param {TwoF64} p `TwoF64` number (exponent)
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function pow22(x: TwoF64, p: TwoF64): TwoF64 {
+  if (isSafeInteger2(p)) {
+    return pow2int(x, p[0]);
+  }
+  return exp2(mul22(ln2(x), p));
 }
 
 /**
