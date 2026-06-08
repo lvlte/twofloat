@@ -10,18 +10,24 @@ import {
   square2,
   cube1,
   cube2,
-  _linpow,
-  _logpow,
-  _logpowltr,
+  _linpow as __linpow,
+  _logpow as __logpow,
+  _logpowltr as __logpowltr,
+  _linpow2 as __linpow2,
+  _logpow2 as __logpow2,
   sqrt1 as _sqrt1,
   sqrt2 as _sqrt2,
   add11,
-  _linpow2,
-  _logpow2,
   exp1,
   exp2,
   ln1 as _ln1,
   ln2 as _ln2,
+  pow1int,
+  pow2int,
+  pow11 as _pow11,
+  pow12 as _pow12,
+  pow21 as _pow21,
+  pow22 as _pow22,
 } from '../../src/index';
 
 import { exponent } from '@lvlte/ulp';
@@ -32,23 +38,35 @@ import {
   UnionToIntersection,
   Expand,
   randomFn,
-  ldexp,
 } from '../utils';
 
-// Wrap sqrt and log functions so that they are tested with positive values only
+// Wrap some functions so that they are tested with inputs that fit their domain
 const sqrt1: typeof _sqrt1 = x => _sqrt1(Math.abs(x));
 const sqrt2: typeof _sqrt2 = x => _sqrt2(abs2(x));
 const ln1: typeof _ln1 = x => _ln1(Math.abs(x));
 const ln2: typeof _ln2 = x => _ln2(abs2(x));
+const _linpow: typeof __linpow = (x, n) => __linpow(x, Math.abs(n));
+const _logpow: typeof __logpow = (x, n) => __logpow(x, Math.abs(n));
+const _logpowltr: typeof __logpowltr = (x, n) => __logpowltr(x, Math.abs(n));
+const _linpow2: typeof __linpow2 = (x, n) => __linpow2(x, Math.abs(n));
+const _logpow2: typeof __logpow2 = (x, n) => __logpow2(x, Math.abs(n));
+const pow11: typeof _pow11 = (x, p) => _pow11(Math.abs(x), p);
+const pow12: typeof _pow12 = (x, p) => _pow12(Math.abs(x), p);
+const pow21: typeof _pow21 = (x, p) => _pow21(abs2(x), p);
+const pow22: typeof _pow22 = (x, p) => _pow22(abs2(x), p);
 
 // Functions to test grouped by signature
 const fnBySig = {
   'op1': {square1, cube1, sqrt1, ln1},
   'op2': {square2, cube2, sqrt2, ln2},
-  'op1n': {_linpow, _logpow, _logpowltr},
-  'op2n': {_linpow2, _logpow2},
+  'op1n': {_linpow, _logpow, _logpowltr, pow1int},
+  'op2n': {_linpow2, _logpow2, pow2int},
   'exp1': {exp1},
   'exp2': {exp2},
+  'op11': {pow11},
+  'op12': {pow12},
+  'op21': {pow21},
+  'op22': {pow22}
 } satisfies Partial<{
   [K in keyof FnSig]: { [fnName: string]: FnSig[K] }
 }>;
@@ -63,10 +81,12 @@ type FnOutputList = { [K in FnName]: ReturnType<TestedFunctions[K]>[] }
 // Pseudo-random number generator
 const SEED = Math.sqrt(2);
 const random = randomFn(SEED, true);
+const rand = randomFn(SEED, false);
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
 const argsList: ArgsListBySig = {
-  'op1': [], 'op2': [], 'op1n': [], 'op2n': [], 'exp1': [], 'exp2': []
+  'op1': [], 'op2': [], 'op1n': [], 'op2n': [], 'exp1': [], 'exp2': [],
+  'op11': [], 'op12': [], 'op21': [], 'op22': []
 };
 
 // split is not immune to overflow
@@ -89,15 +109,23 @@ for (let exp = emin; exp <= emax; exp++) {
       argsList['op2'].push([xy]);
     }
 
-    // linpow, logpow
+    // power functions
     const exp_max = Math.min(Math.trunc(1022 / Math.abs(exp)), 1022);
     for (let n = 3; n <= exp_max;) {
       for (let r = 0; r < 10; r++) {
         const x = random(exp, sign);
         if (Number.isFinite(x**n) && Math.abs(exponent(x**n)) < E_SPLIT_MAX) {
-          const xx = normalize(x, random(exp - 53, 1))
-          argsList['op1n'].push([x, n]);
-          argsList['op2n'].push([xx, n]);
+          const xx = normalize(x, random(exp - 52, -1*sign));
+          const exp_sign = r % 2 ? -1 : 1;
+          const sn = exp_sign * n;
+          const p = exp_sign * (n - rand());
+          const pp = normalize(p, random(exponent(p) - 52, 1));
+          argsList['op1n'].push([x, sn]);
+          argsList['op2n'].push([xx, sn]);
+          argsList['op11'].push([x, p]);
+          argsList['op12'].push([x, pp]);
+          argsList['op21'].push([xx, p]);
+          argsList['op22'].push([xx, pp]);
         }
       }
       n = n > 50 ? Math.trunc(n * (1 + random(-2, 1))) : n + 1;
