@@ -119,10 +119,51 @@ println()
     end
 end
 
+println()
+@testset verbose = true "Arithmetic (op12) ───────" begin ######################
+    args = args_list.op12
+
+    @testset "sub12" begin
+        output = fn_output["sub12"]
+        coverage["sub12"] = true
+        @test length(args) == length(output)
+        rel_err = 2u^2
+        abs_err = r -> max(abs(rel_err * r), ε₀)
+        for (i, (x, (yhi, ylo))) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = big(x) - (big(yhi) + big(ylo))
+            if abs(r) > floatmax(Float64)
+                overflow["sub12"] += 1
+                @test !isfinite(zhi + zlo)
+            else
+                @test abs(z - r) < abs_err(r)
+            end
+        end
+    end
+    @testset "div12" begin
+        output = fn_output["div12"]
+        coverage["div12"] = true
+        @test length(args) == length(output)
+        rel_err = 15u^2 + 56u^3
+        abs_err = r -> max(abs(rel_err * r), 2.5ε₀)
+        for (i, (x, (yhi, ylo))) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = big(x) / (big(yhi) + big(ylo))
+            if abs(r) > floatmax(Float64)
+                overflow["div12"] += 1
+                @test !isfinite(zhi + zlo)
+            else
+                @test abs(z - r) < abs_err(r)
+            end
+        end
+    end
+end
 ###
 
 println()
-@testset "Arithmetic functions coverage ──────" begin
+@testset "Arithmetic coverage ─────" begin
     for (fn, covered) in coverage
         @test (fn, covered) == (fn, true)
     end

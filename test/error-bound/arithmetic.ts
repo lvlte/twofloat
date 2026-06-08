@@ -10,6 +10,9 @@ import {
   prod1,
   sum2,
   prod2,
+  F64_SPLITTER,
+  sub12,
+  div12,
 } from '../../src/index';
 
 import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
@@ -20,12 +23,15 @@ import {
   UnionToIntersection,
   Expand,
   randomFn,
+  pairsInRange,
+  signCombinations,
 } from '../utils';
 
 // Functions to test grouped by signature
 const fnBySig = {
   'opa1': {sum1, prod1},
   'opa2': {sum2, prod2},
+  'op12': {sub12, div12},
 } satisfies Partial<{
   [K in keyof FnSig]: { [fnName: string]: FnSig[K] }
 }>;
@@ -45,7 +51,7 @@ function randWithin(min: number, max: number) {
 }
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
-const argsList: ArgsListBySig = {'opa1': [], 'opa2': []};
+const argsList: ArgsListBySig = {'opa1': [], 'opa2': [], 'op12': []};
 
 // Fill argsList with number sequences of increasing length
 for (let len = 3; len < 1e4; len = Math.floor(len*1.5)) {
@@ -68,6 +74,28 @@ for (let len = 3; len < 1e4; len = Math.floor(len*1.5)) {
     argsList['opa2'].push([list2]);
   }
 }
+
+const E_SPLIT_MAX = exponent(Number.MAX_VALUE/F64_SPLITTER);
+const e_shift = 0; // decrease to shift the window towards subnormals
+const emin = Math.floor(exponent(FLOAT64_MIN)/2) + e_shift;
+const emax = Math.min(0, emin) + E_SPLIT_MAX;
+
+// Fill argsList with number combinations in the domain [±2^emin, ±2^emax]
+for (const [e1, e2] of pairsInRange(emin, emax, 5)) {
+  for (const [s1, s2] of signCombinations) {
+    const x = random(e1, s1);
+    const y = random(e2, s2);
+    const z = random(e2 - 52, s2);
+    const yz = normalize(y, z);
+
+    if ([x, y, z, ...yz].some(v => !Number.isFinite(v))) {
+      continue;
+    }
+
+    argsList['op12'].push([x, yz]);
+  }
+}
+
 
 // Produce the list of outputs keyed by function given argsList
 const fnOutput = {} as FnOutputList;
