@@ -623,6 +623,122 @@ println()
         @info "ln2 avg rel err" avg
         println()
     end
+
+    @testset "log2_1" begin
+        args = args_list.op1
+        output = fn_output["log2_1"]
+        coverage["log2_1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-85
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            x = abs(x)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = log2(big(x))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), x, z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "log2_1 max rel err" err x z r
+        @info "log2_1 avg rel err" avg
+        println()
+    end
+
+    @testset "log2_2" begin
+        args = args_list.op2
+        output = fn_output["log2_2"]
+        coverage["log2_2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-85
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0,0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = log2(big(xhi) + big(xlo))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "log2_2 max rel err" err x z r
+        @info "log2_2 avg rel err" avg
+        println()
+    end
+
+    @testset "log10_1" begin
+        args = args_list.op1
+        output = fn_output["log10_1"]
+        coverage["log10_1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-85
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            x = abs(x)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = log10(big(x))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), x, z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "log10_1 max rel err" err x z r
+        @info "log10_1 avg rel err" avg
+        println()
+    end
+
+    @testset "log10_2" begin
+        args = args_list.op2
+        output = fn_output["log10_2"]
+        coverage["log10_2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-85
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0,0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = log10(big(xhi) + big(xlo))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "log10_2 max rel err" err x z r
+        @info "log10_2 avg rel err" avg
+        println()
+    end
 end
 
 println()

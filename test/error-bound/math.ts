@@ -22,6 +22,10 @@ import {
   exp2,
   ln1 as _ln1,
   ln2 as _ln2,
+  log2_1 as _log2_1,
+  log2_2 as _log2_2,
+  log10_1 as _log10_1,
+  log10_2 as _log10_2,
   pow1int,
   pow2int,
   pow11 as _pow11,
@@ -45,6 +49,10 @@ const sqrt1: typeof _sqrt1 = x => _sqrt1(Math.abs(x));
 const sqrt2: typeof _sqrt2 = x => _sqrt2(abs2(x));
 const ln1: typeof _ln1 = x => _ln1(Math.abs(x));
 const ln2: typeof _ln2 = x => _ln2(abs2(x));
+const log2_1: typeof _log2_1 = x => _log2_1(Math.abs(x));
+const log2_2: typeof _log2_2 = x => _log2_2(abs2(x));
+const log10_1: typeof _log10_1 = x => _log10_1(Math.abs(x));
+const log10_2: typeof _log10_2 = x => _log10_2(abs2(x));
 const _linpow: typeof __linpow = (x, n) => __linpow(x, Math.abs(n));
 const _logpow: typeof __logpow = (x, n) => __logpow(x, Math.abs(n));
 const _logpowltr: typeof __logpowltr = (x, n) => __logpowltr(x, Math.abs(n));
@@ -57,8 +65,8 @@ const pow22: typeof _pow22 = (x, p) => _pow22(abs2(x), p);
 
 // Functions to test grouped by signature
 const fnBySig = {
-  'op1': {square1, cube1, sqrt1, ln1},
-  'op2': {square2, cube2, sqrt2, ln2},
+  'op1': {square1, cube1, sqrt1, ln1, log2_1, log10_1},
+  'op2': {square2, cube2, sqrt2, ln2, log2_2, log10_2},
   'op1n': {_linpow, _logpow, _logpowltr, pow1int},
   'op2n': {_linpow2, _logpow2, pow2int},
   'exp1': {exp1},

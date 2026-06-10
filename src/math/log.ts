@@ -2,10 +2,9 @@
  * @file Logarithms
  */
 
-import { NaN2, ZERO, type f64, type TwoF64 } from "../base/common.js";
+import { NaN2, ONE, ZERO, type f64, type TwoF64 } from "../base/common.js";
 import { add21, add22, div22, sub12, sub21, sub22 } from "../arithmetic/index.js";
-import { isNaN2 } from "../base/compare.js";
-import { INF, NINF } from "./constants.js";
+import { INF, LN10, LN2, NINF } from "./constants.js";
 import { exp1 } from "./exp.js";
 
 /**
@@ -79,3 +78,106 @@ export function ln2(x: TwoF64): TwoF64 {
   return sub12(y, [2*rhi, 2*rlo]);
 }
 
+/**
+ * Compute `log₂(x)`, the base-2 logarithm of `x`, using extended precision
+ * arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function log2_1(x: f64): TwoF64 {
+  switch (x) {
+    case 0:
+      return NINF;
+
+    case 1:
+      return ZERO;
+
+    case 2:
+      return ONE;
+
+    case Infinity:
+      return INF;
+  }
+
+  const y = Math.log2(x);
+  if (Number.isInteger(y) && 2**y === x) {
+    return [y, 0];
+  }
+
+  return div22(ln1(x), LN2);
+}
+
+/**
+ * Compute `log₂(xₕᵢ + xₗₒ)`, the base-2 logarithm of `x`, using extended
+ * precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function log2_2(x: TwoF64): TwoF64 {
+  const [xhi, xlo] = x;
+
+  if (xlo === 0) {
+    return log2_1(xhi);
+  }
+
+  if (!Number.isFinite(xhi)) {
+    return xhi > 0 ? INF : NaN2;
+  }
+
+  return div22(ln2(x), LN2);
+}
+
+/**
+ * Compute `log₁₀(x)`, the base-10 logarithm of `x`, using extended precision
+ * arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function log10_1(x: f64): TwoF64 {
+  switch (x) {
+    case 0:
+      return NINF;
+
+    case 1:
+      return ZERO;
+
+    case 10:
+      return ONE;
+
+    case Infinity:
+      return INF;
+  }
+
+  if (Number.isInteger(x)) {
+    const y = Math.log10(x);
+    if (Number.isInteger(y) && 10**y === x) {
+      return [y, 0];
+    }
+  }
+
+  return div22(ln1(x), LN10);
+}
+
+/**
+ * Compute `log₁₀(xₕᵢ + xₗₒ)`, the base-10 logarithm of `x`, using extended
+ * precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function log10_2(x: TwoF64): TwoF64 {
+  const [xhi, xlo] = x;
+
+  if (xlo === 0) {
+    return log10_1(xhi);
+  }
+
+  if (!Number.isFinite(xhi)) {
+    return xhi > 0 ? INF : NaN2;
+  }
+
+  return div22(ln2(x), LN10);
+}
