@@ -7,12 +7,20 @@ using DataStructures
 include("./pade.jl")
 
 TwoF64(x::Real) = TwoF64(BigFloat(x))
+ThreeF64(x::Real) = ThreeF64(BigFloat(x))
 TwoF64Int(x::Real) = TwoF64Int(BigFloat(x))
 
 function TwoF64(x::BigFloat)
     hi = Float64(x)
     lo = Float64(x - big(hi))
     return (hi, lo)
+end
+
+function ThreeF64(x::BigFloat)
+    hi = Float64(x)
+    md = Float64(x - big(hi))
+    lo = Float64(x - big(hi) - big(md))
+    return (hi, md, lo)
 end
 
 function TwoF64Int(x::BigFloat)
@@ -85,6 +93,7 @@ cos_pade = OrderedDict(2n => taylor_to_pade(taylor_cos, n, n) for n in N)
 cos_pade_TwoF64 = OrderedDict(2n => [TwoF64.(cos_pade[2n][1]), TwoF64.(cos_pade[2n][2])] for n in N)
 
 pre_trig = OrderedDict(
+    "PI_3F64"  => ThreeF64(pi),
     "sin_pade" => sin_pade_TwoF64,
     "cos_pade" => cos_pade_TwoF64,
 )
@@ -92,7 +101,17 @@ pre_trig = OrderedDict(
 
 ### Output
 
-JSON.json("$(@__DIR__)/constants.json", two_const; pretty=true)
-JSON.json("$(@__DIR__)/exp.json", pre_exp; pretty=true)
-JSON.json("$(@__DIR__)/log.json", pre_log; pretty=true)
-JSON.json("$(@__DIR__)/trig.json", pre_trig; pretty=true)
+filemap = (
+    "constants" => two_const,
+    "exp"       => pre_exp,
+    "log"       => pre_log,
+    "trig"      => pre_trig
+)
+
+for (name, content) in filemap
+    out = JSON.json(content; pretty=true)
+    # pretty and compact format
+    out = replace(out, r"\[\n\s+([0-9\-.e]+),\n\s+([0-9\-.e]+)\n\s+\]" => s"[\1, \2]")
+    out = replace(out, r"\[\n\s+([0-9\-.e]+),\n\s+\[([0-9\-.e]+),\s([0-9\-.e]+)\]\n\s+\]" => s"[\1, [\2, \3]]")
+    write("$(@__DIR__)/$name.json", out)
+end
