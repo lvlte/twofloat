@@ -49,6 +49,7 @@ math_const = OrderedDict(
 )
 
 two_const = OrderedDict(key => TwoF64(val) for (key, val) in math_const)
+three_const = OrderedDict(key => ThreeF64(val) for (key, val) in math_const)
 
 # exp(n)
 nmax = 80
@@ -93,7 +94,6 @@ cos_pade = OrderedDict(2n => taylor_to_pade(taylor_cos, n, n) for n in N)
 cos_pade_TwoF64 = OrderedDict(2n => [TwoF64.(cos_pade[2n][1]), TwoF64.(cos_pade[2n][2])] for n in N)
 
 pre_trig = OrderedDict(
-    "PI_3F64"  => ThreeF64(pi),
     "sin_pade" => sin_pade_TwoF64,
     "cos_pade" => cos_pade_TwoF64,
 )
@@ -102,7 +102,7 @@ pre_trig = OrderedDict(
 ### Output
 
 filemap = (
-    "constants" => two_const,
+    "constants" => OrderedDict("TwoF64" => two_const, "ThreeF64" => three_const),
     "exp"       => pre_exp,
     "log"       => pre_log,
     "trig"      => pre_trig

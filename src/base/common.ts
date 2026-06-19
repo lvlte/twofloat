@@ -18,12 +18,31 @@ export type i32 = number;
 export type int = number;
 
 /**
- * Canonical representation of a floating-point number with extended precision,
- * ie. whose value is mathematically equal to `hi + lo` and where the non-zero
- * bits in `hi` and `lo` don't overlap. `hi` contains the most significant bits
- * and `lo` the least significant.
+ * Canonical representation of a twofloat number. As its name implies, a `TwoF64`
+ * is a tuple made of two `f64` components (ie. `hi` and `lo`, which represent
+ * the unevaluated but mathematically exact sum `hi + lo`) and can represent
+ * values with *at least** twice the precision of one single float64 number
+ * (* because `lo` is not necessarilly adjacent to `hi`).
+ *
+ * Here "canonical" means :
+ * - `hi` contains the most significant bits and `lo` the least significant,
+ * - the non-zero bits in `hi` and `lo` don't overlap.
+ *
+ * This non-overlapping representation is what guarantees the best accuracy
+ * during calculations. Do not use arbitrary values like `[x, y] as TwoF64`
+ * unless those two conditions are satisfied.
  */
-export type TwoF64 = [hi: f64, lo: f64];
+export type TwoF64 = readonly [hi: f64, lo: f64];
+
+/**
+ * Canonical representation of a floating-point number expansion with three
+ * components (similar to `TwoF64` but for triple precision) :
+ * - `hi` contains the most significant bits and `lo` the least significant
+ * - the non-zero bits in `hi`, `md` and `lo` don't overlap
+ *
+ * This implies `[hi, md]`, `[md, lo]` and `[hi, lo]` are valid `TwoF64`.
+ */
+export type ThreeF64 = readonly [hi: f64, md: f64, lo: f64];
 
 /**
  * Precision of a float64 number (effective number of bits in the significand).
