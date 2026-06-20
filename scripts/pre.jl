@@ -46,6 +46,7 @@ math_const = OrderedDict(
     "PI" => big(π),
     "SQRT1_2" => sqrt(big(0.5)),
     "SQRT2" => sqrt(big(2.0)),
+    "TAU" => 2*big(π),
 )
 
 two_const = OrderedDict(key => TwoF64(val) for (key, val) in math_const)

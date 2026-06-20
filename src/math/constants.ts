@@ -37,6 +37,12 @@ export const LOG10E: TwoF64 = [0.4342944819032518, 1.098319650216765e-17];
 export const PI: TwoF64 = [3.141592653589793, 1.2246467991473532e-16];
 
 /**
+ * `TwoF64` representation of the mathematical constant `τ = 2π`, the ratio of a
+ * circle's circumference to its radius.
+ */
+export const TAU: TwoF64 = [6.283185307179586, 2.4492935982947064e-16];
+
+/**
  * `TwoF64` representation of `√½`, the square root of `½`.
  */
 export const SQRT1_2: TwoF64 = [0.7071067811865476, -4.833646656726457e-17];
@@ -134,5 +140,15 @@ export const THREE = {
     1.4142135623730951,
     -9.667293313452913e-17,
     4.1386753086994136e-33
-  ]
+  ],
+
+  /**
+   * `ThreeF64` representation of the mathematical constant `τ = 2π`, the ratio
+   * of a circle's circumference to its radius.
+   */
+  TAU: <ThreeF64>[
+    6.283185307179586,
+    2.4492935982947064e-16,
+    -5.989539619436679e-33
+  ],
 };
