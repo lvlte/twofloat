@@ -108,7 +108,7 @@ for (let exp = emin; exp <= emax; exp++) {
   for (const sign of [1, -1]) {
     for (let r = 0; r < 100; r++) {
       const x = random(exp, sign);
-      const y = random(exp, sign);
+      const y = random(exp - 52, sign);
       const xy = add11(x, y);
 
       if ([x, y, ...xy].some(v => !Number.isFinite(v))) {
