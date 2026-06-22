@@ -40,7 +40,7 @@ export function sin1(x: f64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? neg2(_cos2(r)) : _cos2(r);
+    return sign < 0 ? neg2(_cos(r)) : _cos(r);
   }
 
   return sign < 0 ? _sin2(neg2(r)) : _sin2(r);
@@ -70,7 +70,7 @@ export function sin2(x: TwoF64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? neg2(_cos2(r)) : _cos2(r);
+    return sign < 0 ? neg2(_cos(r)) : _cos(r);
   }
 
   return sign < 0 ? _sin2(neg2(r)) : _sin2(r);
@@ -149,12 +149,72 @@ export function _sin2(x: TwoF64): TwoF64 {
 }
 
 /**
+ * Computes the cosine of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function cos1(x: f64): TwoF64 {
+  const xabs = Math.abs(x);
+  let sign = 1;
+
+  if (xabs <= PI_HALF[0]) {
+    return _cos(xabs);
+  }
+
+  let r = rem2pi_1(xabs);
+
+  if (ge22(r, PI)) {
+    r = sub22(r, PI);
+    sign = -1;
+  }
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    return sign < 0 ? _sin2(r) : _sin2(neg2(r));
+  }
+
+  return sign < 0 ? neg2(_cos(r)) : _cos(r);
+}
+
+/**
+ * Computes the cosine of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function cos2(x: TwoF64): TwoF64 {
+  const xabs = abs2(x);
+  let sign = 1;
+
+  if (lt22(xabs, PI_HALF)) {
+    return _cos(x);
+  }
+
+  let r = rem2pi_2(xabs);
+
+  if (ge22(r, PI)) {
+    r = sub22(r, PI);
+    sign = -1;
+  }
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    return sign < 0 ? _sin2(r) : _sin2(neg2(r));
+  }
+
+  return sign < 0 ? neg2(_cos(r)) : _cos(r);
+}
+
+/**
  * Compute the cosine of `x` using Padé approximant. Accurate for `|x| < π/2`
  * (the relative error grows significantly as `x` moves away from that range).
  */
-export function _cos2(x: TwoF64): TwoF64 {
+export function _cos(x: f64 | TwoF64): TwoF64 {
   const [P, Q] = cos_pade[16];
-  const x2 = square2(x);
+  const x2 = typeof x === 'number' ? square1(x) : square2(x);
 
   let p = mul22(P[1], x2)   // p = 1 + P₁x² + P₂x⁴ + ... + Pₖ*x²ᵏ
   let q = mul22(Q[1], x2);  // q = 1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ

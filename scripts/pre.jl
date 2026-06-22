@@ -92,7 +92,7 @@ sin_pade_TwoF64 = OrderedDict(n => [TwoF64.(sin_pade[n][1]), TwoF64.(sin_pade[n]
 #   Same logic here except both P[k] and Q[k] map to x^2k (like in tne Taylor
 #   expansion, every odd power of x is 0 zero whatever the Padé order)
 # NB. Integer coefficients are too big to fit in TwoF64
-N = UnitRange{BigInt}(8, 15)
+N = UnitRange{BigInt}(7, 15)
 cos_pade = OrderedDict(2n => taylor_to_pade(taylor_cos, n, n) for n in N)
 cos_pade_TwoF64 = OrderedDict(2n => [TwoF64.(cos_pade[2n][1]), TwoF64.(cos_pade[2n][2])] for n in N)
 

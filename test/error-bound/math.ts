@@ -35,7 +35,9 @@ import {
   rem2pi_1,
   rem2pi_2,
   sin1,
-  sin2
+  sin2,
+  cos1,
+  cos2
 } from '../../src/index';
 
 import { exponent } from '@lvlte/ulp';
@@ -69,8 +71,8 @@ const pow22: typeof _pow22 = (x, p) => _pow22(abs2(x), p);
 
 // Functions to test grouped by signature
 const fnBySig = {
-  'op1': {square1, cube1, sqrt1, ln1, log2_1, log10_1, rem2pi_1, sin1},
-  'op2': {square2, cube2, sqrt2, ln2, log2_2, log10_2, rem2pi_2, sin2},
+  'op1': {square1, cube1, sqrt1, ln1, log2_1, log10_1, rem2pi_1, sin1, cos1},
+  'op2': {square2, cube2, sqrt2, ln2, log2_2, log10_2, rem2pi_2, sin2, cos2},
   'op1n': {_linpow, _logpow, _logpowltr, pow1int},
   'op2n': {_linpow2, _logpow2, pow2int},
   'exp1': {exp1},

@@ -896,6 +896,62 @@ println()
         @info "sin2 avg rel err" avg
         println()
     end
+
+    @testset "cos1" begin
+        args = args_list.op1
+        output = fn_output["cos1"]
+        coverage["cos1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = cos(big(x))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), x, z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "cos1 max rel err" err x z r
+        @info "cos1 avg rel err" avg
+        println()
+    end
+
+    @testset "cos2" begin
+        args = args_list.op2
+        output = fn_output["cos2"]
+        coverage["cos2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = cos(big(xhi) + big(xlo))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "cos2 max rel err" err x z r
+        @info "cos2 avg rel err" avg
+        println()
+    end
 end
 
 ###
