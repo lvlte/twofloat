@@ -4,12 +4,12 @@
 
 import { type f64, type TwoF64 } from "../base/common.js";
 import { add21, add22, div22, mul21, mul22, sub22 } from "../arithmetic/index.js";
-import { ge22 } from "../base/compare.js";
+import { ge22, lt22 } from "../base/compare.js";
 import { sin_pade, cos_pade } from "../pre/trig.js";
 import { PI } from "./constants.js";
 import { square1, square2 } from "./exp.js";
-import { rem2pi_1 } from "./mod.js";
-import { neg2 } from "./sign.js";
+import { rem2pi_1, rem2pi_2 } from "./mod.js";
+import { abs2, neg2 } from "./sign.js";
 
 /**
  * TwoF64 representation of `π/2` (`PI_HALF > π/2`).
@@ -32,6 +32,36 @@ export function sin1(x: f64): TwoF64 {
   }
 
   let r = rem2pi_1(xabs);
+
+  if (ge22(r, PI)) {
+    r = sub22(r, PI);
+    sign *= -1;
+  }
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    return sign < 0 ? neg2(_cos2(r)) : _cos2(r);
+  }
+
+  return sign < 0 ? _sin2(neg2(r)) : _sin2(r);
+}
+
+/**
+ * Computes the sine of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function sin2(x: TwoF64): TwoF64 {
+  let sign = Math.sign(x[0]);
+  const xabs = abs2(x);
+
+  if (lt22(xabs, PI_HALF)) {
+    return _sin2(x);
+  }
+
+  let r = rem2pi_2(xabs);
 
   if (ge22(r, PI)) {
     r = sub22(r, PI);
@@ -123,7 +153,7 @@ export function _sin2(x: TwoF64): TwoF64 {
  * (the relative error grows significantly as `x` moves away from that range).
  */
 export function _cos2(x: TwoF64): TwoF64 {
-  const [P, Q] = cos_pade[26];
+  const [P, Q] = cos_pade[16];
   const x2 = square2(x);
 
   let p = mul22(P[1], x2)   // p = 1 + P₁x² + P₂x⁴ + ... + Pₖ*x²ᵏ
