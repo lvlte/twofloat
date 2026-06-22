@@ -1,0 +1,139 @@
+/**
+ * @file Trigonometry
+ */
+
+import { type f64, type TwoF64 } from "../base/common.js";
+import { add21, add22, div22, mul21, mul22, sub22 } from "../arithmetic/index.js";
+import { ge22 } from "../base/compare.js";
+import { sin_pade, cos_pade } from "../pre/trig.js";
+import { PI } from "./constants.js";
+import { square1, square2 } from "./exp.js";
+import { rem2pi_1 } from "./mod.js";
+import { neg2 } from "./sign.js";
+
+/**
+ * TwoF64 representation of `π/2` (`PI_HALF > π/2`).
+ */
+const PI_HALF: TwoF64 = [1.5707963267948966, 6.123233995736766e-17];
+
+/**
+ * Computes the sine of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function sin1(x: f64): TwoF64 {
+  let sign = Math.sign(x);
+  const xabs = Math.abs(x);
+
+  if (xabs <= PI_HALF[0]) {
+    return _sin1(x);
+  }
+
+  let r = rem2pi_1(xabs);
+
+  if (ge22(r, PI)) {
+    r = sub22(r, PI);
+    sign *= -1;
+  }
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    return sign < 0 ? neg2(_cos2(r)) : _cos2(r);
+  }
+
+  return sign < 0 ? _sin2(neg2(r)) : _sin2(r);
+}
+
+/**
+ * Compute the sine of `x` using Padé approximant. Accurate for `|x| < π/2`
+ * (the relative error grows significantly as `x` moves away from that range).
+ */
+export function _sin1(x: f64): TwoF64 {
+  // Padé [n/n] -> if n is odd, |P| = |Q|, otherwise |P| = |Q| - 1
+  //
+  //  p = P₀x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹
+  //  q =   1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
+
+  const [P, Q] = sin_pade[17];
+  let xpow = square1(x);
+
+  if (P.length < Q.length) {
+    let p = [x, 0] as TwoF64;
+    let q = mul22(Q[1], xpow);
+
+    for (let k = 1; k < P.length; k++) {
+      p = add22(p, mul22(P[k], xpow = mul21(xpow, x)));
+      q = add22(q, mul22(Q[k+1], xpow = mul21(xpow, x)));
+    }
+
+    return div22(p, add21(q, 1));
+  }
+
+  let q = mul22(Q[1], xpow);
+  let p = mul22(P[1], xpow = mul21(xpow, x));
+
+  for (let k = 2; k < P.length; k++) {
+    q = add22(q, mul22(Q[k], xpow = mul21(xpow, x)));
+    p = add22(p, mul22(P[k], xpow = mul21(xpow, x)));
+  }
+
+  return div22(add21(p, x), add21(q, 1));
+}
+
+/**
+ * Compute the sine of `x` using Padé approximant. Accurate for `|x| < π/2`
+ * (the relative error grows significantly as `x` moves away from that range).
+ */
+export function _sin2(x: TwoF64): TwoF64 {
+  // Padé [n/n] -> if n is odd, |P| = |Q|, otherwise |P| = |Q| - 1
+  //
+  //  p = P₀x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹
+  //  q =   1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
+
+  const [P, Q] = sin_pade[17];
+  let xpow = square2(x);
+
+  if (P.length < Q.length) {
+    let p = x;
+    let q = mul22(Q[1], xpow);
+
+    for (let k = 1; k < P.length; k++) {
+      p = add22(p, mul22(P[k], xpow = mul22(xpow, x)));
+      q = add22(q, mul22(Q[k+1], xpow = mul22(xpow, x)));
+    }
+
+    return div22(p, add21(q, 1));
+  }
+
+  let q = mul22(Q[1], xpow);
+  let p = mul22(P[1], xpow = mul22(xpow, x));
+
+  for (let k = 2; k < P.length; k++) {
+    q = add22(q, mul22(Q[k], xpow = mul22(xpow, x)));
+    p = add22(p, mul22(P[k], xpow = mul22(xpow, x)));
+  }
+
+  return div22(add22(p, x), add21(q, 1));
+}
+
+/**
+ * Compute the cosine of `x` using Padé approximant. Accurate for `|x| < π/2`
+ * (the relative error grows significantly as `x` moves away from that range).
+ */
+export function _cos2(x: TwoF64): TwoF64 {
+  const [P, Q] = cos_pade[26];
+  const x2 = square2(x);
+
+  let p = mul22(P[1], x2)   // p = 1 + P₁x² + P₂x⁴ + ... + Pₖ*x²ᵏ
+  let q = mul22(Q[1], x2);  // q = 1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
+
+  for (let i = 2, xpow = x2; i < P.length; i++) {
+    xpow = mul22(xpow, x2);
+    p = add22(p, mul22(P[i], xpow));
+    q = add22(q, mul22(Q[i], xpow));
+  }
+
+  return div22(add21(p, 1), add21(q, 1));
+}
