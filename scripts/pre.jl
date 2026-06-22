@@ -75,22 +75,24 @@ ln1p_pade = OrderedDict(n => taylor_to_pade(taylor_ln1p, n, n) for n in N)
 ln1p_pade_int = OrderedDict(n => reverse.(pade_int(ln1p_pade[n]...)) for n in N)
 pre_log = OrderedDict(
     "ln1p_pade" => OrderedDict(n => [TwoF64.(ln1p_pade[n][1]), TwoF64.(ln1p_pade[n][2])] for n in N),
-    "ln1p_pade_int" => OrderedDict(n => [TwoF64.(ln1p_pade_int[n][1]), TwoF64.(ln1p_pade_int[n][2])] for n in N)
+    "ln1p_pade_int" => OrderedDict(n => [TwoF64Int.(ln1p_pade_int[n][1]), TwoF64Int.(ln1p_pade_int[n][2])] for n in N)
 )
 
 # Padé [n/n] sin(x)
 #   use m,n pairs instead of n to skip the trivial zeros (NB. given the vector
 #   pair (P, Q) representing the Padé approximant R[n/n](x) = Pₙ(x)/Qₙ(x), P[k]
 #   holds the coefficient of degree 2k+1, and Q[k] the coefficient of degree 2k)
-N = UnitRange{BigInt}(20, 30)
+# NB. Integer coefficients are too big to fit in TwoF64
+N = UnitRange{BigInt}(15, 30)
 MN = map(n -> (div(n-1, 2), div(n, 2)), N)
 sin_pade = OrderedDict(m+n+1 => taylor_to_pade(taylor_sin, m, n) for (m,n) in MN)
 sin_pade_TwoF64 = OrderedDict(n => [TwoF64.(sin_pade[n][1]), TwoF64.(sin_pade[n][2])] for n in N)
 
 # Padé [2n/2n] cos(x)
-# Same logic here except both P[k] and Q[k] map to x^2k (like in tne Taylor
-# expansion, every odd power of x is 0 zero whatever the Padé order)
-N = UnitRange{BigInt}(10, 15)
+#   Same logic here except both P[k] and Q[k] map to x^2k (like in tne Taylor
+#   expansion, every odd power of x is 0 zero whatever the Padé order)
+# NB. Integer coefficients are too big to fit in TwoF64
+N = UnitRange{BigInt}(8, 15)
 cos_pade = OrderedDict(2n => taylor_to_pade(taylor_cos, n, n) for n in N)
 cos_pade_TwoF64 = OrderedDict(2n => [TwoF64.(cos_pade[2n][1]), TwoF64.(cos_pade[2n][2])] for n in N)
 
