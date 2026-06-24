@@ -2,13 +2,13 @@
  * @file Trigonometry
  */
 
-import { type f64, type TwoF64 } from "../base/common.js";
+import { type f64, type int, type TwoF64 } from "../base/common.js";
 import { add21, add22, div22, mul21, mul22, sub22 } from "../arithmetic/index.js";
 import { ge22, lt22 } from "../base/compare.js";
-import { sin_pade, cos_pade } from "../pre/trig.js";
+import { sin_pade, cos_pade, tan_pade_int } from "../pre/trig.js";
 import { PI } from "./constants.js";
 import { square1, square2 } from "./exp.js";
-import { rem2pi_1, rem2pi_2 } from "./mod.js";
+import { rem2pi_1, rem2pi_2, rempi_1, rempi_2 } from "./mod.js";
 import { abs2, neg2 } from "./sign.js";
 
 /**
@@ -226,4 +226,100 @@ export function _cos(x: f64 | TwoF64): TwoF64 {
   }
 
   return div22(add21(p, 1), add21(q, 1));
+}
+
+/**
+ * Computes the tangent of `x`, where `x` is expressed in radians, using
+ * extended precision arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function tan1(x: f64): TwoF64 {
+  let sign = Math.sign(x);
+  const xabs = Math.abs(x);
+
+  if (xabs <= PI_HALF[0]) {
+    return _tan(x);
+  }
+
+  let r = rempi_1(xabs);
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    sign *= -1;
+    return sign < 0 ? neg2(_cot(r)) : _cot(r);
+  }
+
+  return sign < 0 ? neg2(_tan(r)) : _tan(r);
+}
+
+/**
+ * Computes the tangent of `x`, where `x` is expressed in radians, using
+ * extended precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function tan2(x: TwoF64): TwoF64 {
+  let sign = Math.sign(x[0]);
+  const xabs = abs2(x);
+
+  if (lt22(xabs, PI_HALF)) {
+    return _tan(x);
+  }
+
+  let r = rempi_2(xabs);
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    sign *= -1;
+    return sign < 0 ? neg2(_cot(r)) : _cot(r);
+  }
+
+  return sign < 0 ? neg2(_tan(r)) : _tan(r);
+}
+
+/**
+ * Return a partially evaluated Padé approximant of `tan(x)`, or `cot(x)` if
+ * `co` is true, where `|x| < π/2`, as a rational `P/Q` represented as `[P, Q]`.
+ */
+function _tan_padé(x: f64 | TwoF64, co: boolean = false): [TwoF64, TwoF64] {
+  const [P, Q] = tan_pade_int[18]; // (17, 18, 19)
+  const [x2, pmulx] = typeof x === 'number'
+    ? [square1(x), mul21 as ((x:TwoF64, y:f64 | TwoF64) => TwoF64)]
+    : [square2(x), mul22 as ((x:TwoF64, y:f64 | TwoF64) => TwoF64)];
+
+  let p = add22(mul22(x2, P[0]), P[1]);
+  let q = add22(mul22(x2, Q[0]), Q[1]);
+
+  const k = P.length - 1;
+  let i = 2;
+  for (i; i < k; i++) {
+    p = add22(mul22(p, x2), P[i]);
+    q = add22(mul22(q, x2), Q[i]);
+  }
+
+  p = pmulx(p, x);
+  if (P.length === Q.length) {
+    q = add22(mul22(q, x2), Q[i]);
+  }
+
+  return co ? [q, p] : [p, q];
+}
+
+/**
+ * Compute the tangent of `x` using Padé approximant, where `|x| < π/2`.
+ */
+function _tan(x: f64 | TwoF64): TwoF64 {
+  const [p, q] = _tan_padé(x);
+  return div22(p, q);
+}
+
+/**
+ * Compute the cotangent of `x` using Padé approximant, where `|x| < π/2`.
+ */
+function _cot(x: f64 | TwoF64): TwoF64 {
+  const [p, q] = _tan_padé(x, true);
+  return div22(p, q);
 }
