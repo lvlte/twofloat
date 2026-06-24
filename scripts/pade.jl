@@ -77,6 +77,30 @@ function pade_int(::Type{T}, P::Vector{Rational{U}}, Q::Vector{Rational{U}}) whe
 end
 pade_int(P::Vector{Rational{T}}, Q::Vector{Rational{T}}) where {T<:Integer} = pade_int(T, P, Q)
 
+"""
+Return the Tangent numbers t₁, t₂, ..., tₙ as a `Vector{T}`.
+"""
+function tangent_numbers(n::T) where {T<:Integer}
+    # Use the Kronecker-Schönhage trick (@see https://arxiv.org/pdf/1108.0286)
+    p = ceil(T, n * log2(float(n)))
+    z = one(T)//T(2)^p
+    S = sum([T(-1)^k * z^(2k+1) * factorial(2n)//factorial(2k+1) for k in 0:n-1])
+    C = sum([T(-1)^k * z^(2k) * factorial(2n)//factorial(2k) for k in 0:n-1])
+    V = round(T, z^(1-2n) * factorial(2n-1) * S//C, RoundNearest)
+    vtrunc = V
+    m = T(2)^2p
+    A = Vector{T}(undef, n)
+    for k in n:-1:1
+        A[k] = vtrunc % m
+        vtrunc = div(vtrunc - A[k], m)
+    end
+    for k in 1:n
+        A[k] = div(A[k] * factorial(2k-1), factorial(2n-1))
+    end
+    return A
+end
+
+const Tan = tangent_numbers(big(30))
 
 # Taylor series are represented below with functions that return the coefficient
 # `cₙ` (in the expansion of the series) given some integer `n ≥ 0`.
@@ -88,7 +112,7 @@ taylor_exp(n::Integer) = one(n)//factorial(n)
 # taylor_sin(n::Integer) = isodd(n) ? oftype(n,(-1)^((n-1)/2))//factorial(n) : zero(n)//one(n)
 # taylor_cos(n::Integer) = iseven(n) ? oftype(n,(-1)^(n/2))//factorial(n) : zero(n)//one(n)
 
-# skip zero coefficients (n maps to 2n+1 for sin and 2n for cos)
+# sin/cos/tan - skip zero coefficients (n maps to 2n+1 for sin, 2n for cos, 2n-1 for tan)
 taylor_sin(n::T) where {T<:Integer} = T(-1)^n//factorial(T(2n+1))
 taylor_cos(n::T) where {T<:Integer} = T(-1)^n//factorial(T(2n))
-
+taylor_tan(n::T) where {T<:Integer} = iszero(n) ? T(0)//T(1) : T(Tan[n])//factorial(2n-1)

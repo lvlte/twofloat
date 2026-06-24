@@ -96,9 +96,23 @@ N = UnitRange{BigInt}(7, 15)
 cos_pade = OrderedDict(2n => taylor_to_pade(taylor_cos, n, n) for n in N)
 cos_pade_TwoF64 = OrderedDict(2n => [TwoF64.(cos_pade[2n][1]), TwoF64.(cos_pade[2n][2])] for n in N)
 
+# Padé [n/n] tan(x)
+#   use m,n pairs instead of n to skip the trivial zeros (NB. given the vector
+#   pair (P, Q) representing the Padé approximant R[n/n](x) = Pₙ(x)/Qₙ(x), P[k]
+#   holds the coefficient of degree 2k-1, and Q[k] the coefficient of degree 2k)
+N = UnitRange{BigInt}(15, 25)
+MN = map(n -> (div(n+1, 2), div(n, 2)), N)
+tan_pade = OrderedDict(m+n => taylor_to_pade(taylor_tan, m, n) for (m,n) in MN)
+tan_pade_TwoF64 = OrderedDict(n => [TwoF64.(tan_pade[n][1]), TwoF64.(tan_pade[n][2])] for n in N)
+tan_pade_int = OrderedDict(n => reverse.(pade_int(tan_pade[n]...)) for n in N)
+# tan_pade_int_f64 = OrderedDict(n => [F64Int.(tan_pade_int[n][1]), F64Int.(tan_pade_int[n][2])] for n in N)
+tan_pade_int_TwoF64 = OrderedDict(n => [TwoF64Int.(tan_pade_int[n][1]), TwoF64Int.(tan_pade_int[n][2])] for n in N)
+
 pre_trig = OrderedDict(
     "sin_pade" => sin_pade_TwoF64,
     "cos_pade" => cos_pade_TwoF64,
+    "tan_pade" => tan_pade_TwoF64,
+    "tan_pade_int" => tan_pade_int_TwoF64,
 )
 
 
