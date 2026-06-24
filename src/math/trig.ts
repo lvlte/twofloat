@@ -317,6 +317,58 @@ function _tan(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
+ * Computes the cotangent of `x`, where `x` is expressed in radians, using
+ * extended precision arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function cot1(x: f64): TwoF64 {
+  let sign = Math.sign(x);
+  const xabs = Math.abs(x);
+
+  if (xabs <= PI_HALF[0]) {
+    return _cot(x);
+  }
+
+  let r = rempi_1(xabs);
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    sign *= -1;
+    return sign < 0 ? neg2(_tan(r)) : _tan(r);
+  }
+
+  return sign < 0 ? neg2(_cot(r)) : _cot(r);
+}
+
+/**
+ * Computes the cotangent of `x`, where `x` is expressed in radians, using
+ * extended precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function cot2(x: TwoF64): TwoF64 {
+  let sign = Math.sign(x[0]);
+  const xabs = abs2(x);
+
+  if (lt22(xabs, PI_HALF)) {
+    return _cot(x);
+  }
+
+  let r = rempi_2(xabs);
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    sign *= -1;
+    return sign < 0 ? neg2(_tan(r)) : _tan(r);
+  }
+
+  return sign < 0 ? neg2(_cot(r)) : _cot(r);
+}
+
+/**
  * Compute the cotangent of `x` using Padé approximant, where `|x| < π/2`.
  */
 function _cot(x: f64 | TwoF64): TwoF64 {

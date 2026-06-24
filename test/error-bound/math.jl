@@ -1063,6 +1063,62 @@ println()
         @info "tan2 avg rel err" avg
         println()
     end
+
+    @testset "cot1" begin
+        args = args_list.op1
+        output = fn_output["cot1"]
+        coverage["cot1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = cot(big(x))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), x, z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "cot1 max rel err" err x z r
+        @info "cot1 avg rel err" avg
+        println()
+    end
+
+    @testset "cot2" begin
+        args = args_list.op2
+        output = fn_output["cot2"]
+        coverage["cot2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = cot(big(xhi) + big(xlo))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "cot2 max rel err" err x z r
+        @info "cot2 avg rel err" avg
+        println()
+    end
 end
 
 ###
