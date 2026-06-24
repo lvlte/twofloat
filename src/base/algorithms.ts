@@ -24,6 +24,7 @@ import {
  * Extended-precision computation of `(xhi, xlo) + y`.
  *
  * Relative error bound: `2u²` with `u = 2^-53` (*J.M. Muller et al.*).
+ *                        `u²` for positive operands
  */
 export function DWPlusFP([xhi, xlo]: TwoF64, y: f64): TwoF64 {
   const [hi, lo] = twoSum(xhi, y);

@@ -13,7 +13,7 @@ import {
 
 import { twoSquare, normalize, fast2Diff, fast2Sum } from '../base/eft.js';
 import { add21, sub12, sub21, mul11, mul21, mul22, div22, inv1, inv2 } from '../arithmetic/index.js';
-import { exp_n, exp_nmax, padeInt } from '../pre/exp.js';
+import { exp_n, exp_nmax, exp_pade_int } from '../pre/exp.js';
 import { INF } from './constants.js';
 import { isFinite2, isSafeInteger2, isZero } from '../base/compare.js';
 import { ln1, ln2 } from './log.js';
@@ -73,7 +73,7 @@ export function cube2(x: TwoF64): TwoF64 {
  * Error bound:
  *  - for `|n| ≤ 3`, see {@link square1 | `square1`}, {@link cube1 | `cube1`}.
  *  - for positive `n`, the result `[hi, lo]` is such that `f64([hi, lo])` is a
- * faithful rounding of `x^n` as long as `n ≤ 2^49`.
+ * faithful rounding of `xⁿ` as long as `n ≤ 2⁴⁹`.
  *
  * @param {f64} x `f64` number (base)
  * @param {int} n `int` number (integer exponent)
@@ -170,7 +170,7 @@ export function _logpow(x: f64, n: int): TwoF64 {
  * **Assumes `n` is an integer (supports unsafe int) such that `n ≥ 2`.**
  *
  * The result `[hi, lo]` is such that `f64([hi, lo])` is a faithful rounding
- * of `x^n` as long as `n ≤ 2^49`.
+ * of `xⁿ` as long as `n ≤ 2^49`.
  */
 export function _logpowltr(x: f64, n: int): TwoF64 {
   let bits = n.toString(2);
@@ -356,7 +356,7 @@ export function exp1(x: f64): TwoF64 {
 }
 
 /**
- * Compute `e^x`, assuming `x` is an integer.
+ * Compute `eˣ`, assuming `x` is an integer.
  */
 function _exp1i(x: int): TwoF64 {
   if (exp_n.has(x))  {
@@ -379,11 +379,11 @@ function _exp1i(x: int): TwoF64 {
 }
 
 /**
- * Compute `e^x` using Padé approximant (meant to be used for `-1 < x < 1`, ie.
+ * Compute `eˣ` using Padé approximant (meant to be used for `-1 < x < 1`, ie.
  * the relative error grows significantly as `x` moves away from that range).
  */
-function _exp1f(x: int): TwoF64 {
-  const coeff = padeInt[15];
+function _exp1f(x: f64): TwoF64 {
+  const coeff = exp_pade_int[15];
   // const p_add = coeff.length % 2 ? add21 : sub21;
 
   let p = fast2Diff(-coeff[1], x);
@@ -442,11 +442,11 @@ export function exp2([xhi, xlo]: TwoF64): TwoF64 {
 }
 
 /**
- * Compute `e^x` using Padé approximant (meant to be used for `-1 < x < 1`, ie.
+ * Compute `eˣ` using Padé approximant (meant to be used for `-1 < x < 1`, ie.
  * the relative error grows significantly as `x` moves away from that range).
  */
 function _exp2f(x: TwoF64): TwoF64 {
-  const coeff = padeInt[15];
+  const coeff = exp_pade_int[15];
 
   let p = sub12(-coeff[1], x);
   let q = sub21(x, coeff[1]);

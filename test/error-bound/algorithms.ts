@@ -9,8 +9,6 @@
  */
 
 import {
-  f64,
-  TwoF64,
   F64_SPLITTER,
   normalize as _normalize,
   split,

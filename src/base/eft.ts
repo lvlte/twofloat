@@ -20,8 +20,8 @@ import {
  * Return a tuple `[hi, lo]` where the non-zero bits in `hi` and `lo` don't
  * overlap and such that mathematically `hi + lo = x + y`.
  *
- * **NB. Assumes the absolute value of `x` is larger than that of `y`. Use
- * `twoSum(x, y)` if this condition is not satisfied.**
+ * **NB. Assumes `|x| ≥ |y|`. Use `twoSum(x, y)` if this condition is not
+ * satisfied.**
  */
 export function normalize(x: f64, y: f64): TwoF64 {
   const hi = x + y;

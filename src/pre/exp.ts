@@ -9,7 +9,7 @@ import type { int, TwoF64 } from "../base/common.js";
  * for e^x (absolute values, ie. one vector represent both numerator and
  * denominator coefficients).
  */
-export const pade = {
+export const exp_pade = {
   12: <TwoF64[]>[
     [1.0, 0.0],
     [0.5, 0.0],
@@ -91,7 +91,7 @@ export const pade = {
  *  - Lower orders (12,13,14) produce accurate results as well but only for
  *    smaller ranges (x closer to zero).
  */
-export const padeInt = {
+export const exp_pade_int = {
   12: <int[]>[1, 156, 12012, 600600, 21621600, 588107520, 12350257920, 201132771840, 2514159648000, 23465490048000, 154872234316800, 647647525324800, 1295295050649600],
   13: <int[]>[1, 182, 16380, 960960, 40840800, 1323241920, 33522128640, 670442572800, 10559470521600, 129060195264000, 1187353796428800, 7771770303897600, 32382376266240000, 64764752532480000],
   14: <int[]>[1, 210, 21840, 1485120, 73513440, 2793510720, 83805321600, 2011327718400, 38718058579200, 593676898214400, 7124122778572800, 64764752532480000, 420970891461120000, 1748648318376960000, 3497296636753920000],
