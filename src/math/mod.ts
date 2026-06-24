@@ -3,10 +3,37 @@
  */
 
 import { add11, add21, div12, div22, mul11, sub11, sub12, sub21, sub22 } from "../arithmetic/index.js";
-import type { f64, TwoF64 } from "../base/common.js";
-import { lt22 } from "../base/compare.js";
+import type { f64, ThreeF64, TwoF64 } from "../base/common.js";
+import { le22, lt22 } from "../base/compare.js";
 import { THREE } from "./constants.js";
 import { abs2 } from "./sign.js";
+
+/**
+ * Return the remainder left over after integer division by `π`, in other words
+ * the value `r` such that :
+ *
+ *  `r = x - a*π` where `a = trunc(x/π)` (round towards zero)
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function rempi_1(x: f64): TwoF64 {
+  return _rem_npi_13(x, THREE.PI);
+}
+
+/**
+ * Return the remainder left over after integer division by `π`, in other words
+ * the value `r` such that :
+ *
+ *  `r = x - a*π` where `a = trunc(x/π)` (round towards zero)
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function rempi_2(x: TwoF64): TwoF64 {
+  return _rem_npi_23(x, THREE.PI);
+}
+
 
 /**
  * Return the remainder left over after integer division by `2π`, in other words
@@ -18,11 +45,38 @@ import { abs2 } from "./sign.js";
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
 export function rem2pi_1(x: f64): TwoF64 {
-  const [yhi, ymd, ylo] = THREE.TAU;
+  return _rem_npi_13(x, THREE.TAU);
+}
+
+/**
+ * Return the remainder left over after integer division by `2π`, in other words
+ * the value `r` such that :
+ *
+ *  `r = x - a*2π` where `a = trunc(x/2π)` (round towards zero)
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function rem2pi_2(x: TwoF64): TwoF64 {
+  return _rem_npi_23(x, THREE.TAU);
+}
+
+/**
+ * Return the remainder left over after integer division by a multiple of `π`.
+ */
+function _rem_npi_13(x: f64, npi: ThreeF64): TwoF64 {
+  const [yhi, ymd, ylo] = npi;
 
   const xabs = Math.abs(x);
-  if (xabs <= 2*yhi) {
-    return xabs <= yhi ? [x, 0] : x > 0
+  if (ymd > 0) {
+    if (xabs <= 2*yhi) {
+      return xabs <= yhi ? [x, 0] : x > 0
+        ? sub21(sub21(sub11(x, yhi), ymd), ylo)
+        : add21(add21(add11(x, yhi), ymd), ylo);
+    }
+  }
+  else if (xabs < 2*yhi) {
+    return xabs < yhi ? [x, 0] : x > 0
       ? sub21(sub21(sub11(x, yhi), ymd), ylo)
       : add21(add21(add11(x, yhi), ymd), ylo);
   }
@@ -42,19 +96,21 @@ export function rem2pi_1(x: f64): TwoF64 {
 }
 
 /**
- * Return the remainder left over after integer division by `2π`, in other words
- * the value `r` such that :
- *
- *  `r = x - a*2π` where `a = trunc(x/2π)` (round towards zero)
- *
- * @param {f64} x A `TwoF64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * Return the remainder left over after integer division by a multiple of `π`.
  */
-export function rem2pi_2(x: TwoF64): TwoF64 {
-  const [yhi, ymd, ylo] = THREE.TAU;
+function _rem_npi_23(x: TwoF64, npi: ThreeF64): TwoF64 {
+  const [yhi, ymd, ylo] = npi;
 
   const xabs = abs2(x);
-  if (lt22(xabs, [2*yhi, 2*ymd])) {
+
+  if (ylo > 0) {
+    if (le22(xabs, [2*yhi, 2*ymd])) {
+      return le22(xabs, [yhi, ymd]) ? x : Math.sign(x[0]) > 0
+        ? sub21(sub21(sub21(x, yhi), ymd), ylo)
+        : add21(add21(add21(x, yhi), ymd), ylo);
+    }
+  }
+  else if (lt22(xabs, [2*yhi, 2*ymd])) {
     return lt22(xabs, [yhi, ymd]) ? x : Math.sign(x[0]) > 0
       ? sub21(sub21(sub21(x, yhi), ymd), ylo)
       : add21(add21(add21(x, yhi), ymd), ylo);
