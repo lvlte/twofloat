@@ -1119,6 +1119,118 @@ println()
         @info "cot2 avg rel err" avg
         println()
     end
+
+    @testset "sec1" begin
+        args = args_list.op1
+        output = fn_output["sec1"]
+        coverage["sec1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = sec(big(x))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), x, z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "sec1 max rel err" err x z r
+        @info "sec1 avg rel err" avg
+        println()
+    end
+
+    @testset "sec2" begin
+        args = args_list.op2
+        output = fn_output["sec2"]
+        coverage["sec2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = sec(big(xhi) + big(xlo))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "sec2 max rel err" err x z r
+        @info "sec2 avg rel err" avg
+        println()
+    end
+
+    @testset "csc1" begin
+        args = args_list.op1
+        output = fn_output["csc1"]
+        coverage["csc1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = csc(big(x))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), x, z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "csc1 max rel err" err x z r
+        @info "csc1 avg rel err" avg
+        println()
+    end
+
+    @testset "csc2" begin
+        args = args_list.op2
+        output = fn_output["csc2"]
+        coverage["csc2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = csc(big(xhi) + big(xlo))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "csc2 max rel err" err x z r
+        @info "csc2 avg rel err" avg
+        println()
+    end
 end
 
 ###

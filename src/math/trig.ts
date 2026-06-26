@@ -81,6 +81,15 @@ export function sin2(x: TwoF64): TwoF64 {
  * (the relative error grows significantly as `x` moves away from that range).
  */
 export function _sin1(x: f64): TwoF64 {
+  const [p, q] = _sin1_padé(x);
+  return div22(p, q);
+}
+
+/**
+ * Return a Padé approximant of `sin(x)`, where `|x| < π/2`, as a rational `p/q`
+ * represented as `[p, q]`.
+ */
+export function _sin1_padé(x: f64): [TwoF64, TwoF64] {
   // Padé [n/n] -> if n is odd, |P| = |Q|, otherwise |P| = |Q| - 1
   //
   //  p = P₀x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹
@@ -98,7 +107,7 @@ export function _sin1(x: f64): TwoF64 {
       q = add22(q, mul22(Q[k+1], xpow = mul21(xpow, x)));
     }
 
-    return div22(p, add21(q, 1));
+    return [p, add21(q, 1)];
   }
 
   let q = mul22(Q[1], xpow);
@@ -109,7 +118,7 @@ export function _sin1(x: f64): TwoF64 {
     p = add22(p, mul22(P[k], xpow = mul21(xpow, x)));
   }
 
-  return div22(add21(p, x), add21(q, 1));
+  return [add21(p, x), add21(q, 1)];
 }
 
 /**
@@ -117,6 +126,14 @@ export function _sin1(x: f64): TwoF64 {
  * (the relative error grows significantly as `x` moves away from that range).
  */
 export function _sin2(x: TwoF64): TwoF64 {
+  const [p, q] = _sin2_padé(x);
+  return div22(p, q);
+}
+/**
+ * Return a Padé approximant of `sin(x)`, where `|x| < π/2`, as a rational `p/q`
+ * represented as `[p, q]`.
+ */
+export function _sin2_padé(x: TwoF64): [TwoF64, TwoF64] {
   // Padé [n/n] -> if n is odd, |P| = |Q|, otherwise |P| = |Q| - 1
   //
   //  p = P₀x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹
@@ -134,7 +151,7 @@ export function _sin2(x: TwoF64): TwoF64 {
       q = add22(q, mul22(Q[k+1], xpow = mul22(xpow, x)));
     }
 
-    return div22(p, add21(q, 1));
+    return [p, add21(q, 1)];
   }
 
   let q = mul22(Q[1], xpow);
@@ -145,7 +162,7 @@ export function _sin2(x: TwoF64): TwoF64 {
     p = add22(p, mul22(P[k], xpow = mul22(xpow, x)));
   }
 
-  return div22(add22(p, x), add21(q, 1));
+  return [add22(p, x), add21(q, 1)];
 }
 
 /**
@@ -213,6 +230,15 @@ export function cos2(x: TwoF64): TwoF64 {
  * (the relative error grows significantly as `x` moves away from that range).
  */
 export function _cos(x: f64 | TwoF64): TwoF64 {
+  const [p, q] = _cos_padé(x);
+  return div22(p, q);
+}
+
+/**
+ * Return a Padé approximant of `cos(x)`, where `|x| < π/2`, as a rational `p/q`
+ * represented as `[p, q]`.
+ */
+export function _cos_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
   const [P, Q] = cos_pade[16];
   const x2 = typeof x === 'number' ? square1(x) : square2(x);
 
@@ -225,7 +251,7 @@ export function _cos(x: f64 | TwoF64): TwoF64 {
     q = add22(q, mul22(Q[i], xpow));
   }
 
-  return div22(add21(p, 1), add21(q, 1));
+  return [add21(p, 1), add21(q, 1)];
 }
 
 /**
@@ -281,10 +307,10 @@ export function tan2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Return a partially evaluated Padé approximant of `tan(x)`, or `cot(x)` if
- * `co` is true, where `|x| < π/2`, as a rational `P/Q` represented as `[P, Q]`.
+ * Return a Padé approximant of `tan(x)`, where `|x| < π/2`, as a rational `p/q`
+ * represented as `[p, q]`.
  */
-function _tan_padé(x: f64 | TwoF64, co: boolean = false): [TwoF64, TwoF64] {
+function _tan_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
   const [P, Q] = tan_pade_int[18]; // (17, 18, 19)
   const [x2, pmulx] = typeof x === 'number'
     ? [square1(x), mul21 as ((x:TwoF64, y:f64 | TwoF64) => TwoF64)]
@@ -305,7 +331,7 @@ function _tan_padé(x: f64 | TwoF64, co: boolean = false): [TwoF64, TwoF64] {
     q = add22(mul22(q, x2), Q[i]);
   }
 
-  return co ? [q, p] : [p, q];
+  return [p, q];
 }
 
 /**
@@ -372,6 +398,151 @@ export function cot2(x: TwoF64): TwoF64 {
  * Compute the cotangent of `x` using Padé approximant, where `|x| < π/2`.
  */
 function _cot(x: f64 | TwoF64): TwoF64 {
-  const [p, q] = _tan_padé(x, true);
-  return div22(p, q);
+  const [p, q] = _tan_padé(x);
+  return div22(q, p);
+}
+
+/**
+ * Computes the secant of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function sec1(x: f64): TwoF64 {
+  const xabs = Math.abs(x);
+  let sign = 1;
+
+  if (xabs <= PI_HALF[0]) {
+    return _sec(xabs);
+  }
+
+  let r = rem2pi_1(xabs);
+
+  if (ge22(r, PI)) {
+    r = sub22(r, PI);
+    sign = -1;
+  }
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    return sign < 0 ? _csc2(r) : neg2(_csc2(r));
+  }
+
+  return sign < 0 ? neg2(_sec(r)) : _sec(r);
+}
+
+/**
+ * Computes the secant of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function sec2(x: TwoF64): TwoF64 {
+  const xabs = abs2(x);
+  let sign = 1;
+
+  if (lt22(xabs, PI_HALF)) {
+    return _sec(x);
+  }
+
+  let r = rem2pi_2(xabs);
+
+  if (ge22(r, PI)) {
+    r = sub22(r, PI);
+    sign = -1;
+  }
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    return sign < 0 ? _csc2(r) : neg2(_csc2(r));
+  }
+
+  return sign < 0 ? neg2(_sec(r)) : _sec(r);
+}
+
+/**
+ * Compute the secant of `x` using Padé approximant, where `|x| < π/2`.
+ */
+function _sec(x: f64 | TwoF64): TwoF64 {
+  const [p, q] = _cos_padé(x);
+  return div22(q, p);
+}
+
+/**
+ * Computes the cosecant of `x`, where `x` is expressed in radians, using
+ * extended precision arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function csc1(x: f64): TwoF64 {
+  let sign = Math.sign(x);
+  const xabs = Math.abs(x);
+
+  if (xabs <= PI_HALF[0]) {
+    return _csc1(x);
+  }
+
+  let r = rem2pi_1(xabs);
+
+  if (ge22(r, PI)) {
+    r = sub22(r, PI);
+    sign *= -1;
+  }
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    return sign < 0 ? neg2(_sec(r)) : _sec(r);
+  }
+
+  return sign < 0 ? neg2(_csc2(r)) : _csc2(r);
+}
+
+/**
+ * Computes the cosecant of `x`, where `x` is expressed in radians, using
+ * extended precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function csc2(x: TwoF64): TwoF64 {
+  let sign = Math.sign(x[0]);
+  const xabs = abs2(x);
+
+  if (lt22(xabs, PI_HALF)) {
+    return _csc2(x);
+  }
+
+  let r = rem2pi_2(xabs);
+
+  if (ge22(r, PI)) {
+    r = sub22(r, PI);
+    sign *= -1;
+  }
+
+  if (ge22(r, PI_HALF)) {
+    r = sub22(r, PI_HALF);
+    return sign < 0 ? neg2(_sec(r)) : _sec(r);
+  }
+
+  return sign < 0 ? neg2(_csc2(r)) : _csc2(r);
+}
+
+
+/**
+ * Compute the cosecant of `x` using Padé approximant, where `|x| < π/2`.
+ */
+function _csc1(x: f64): TwoF64 {
+  const [p, q] = _sin1_padé(x);
+  return div22(q, p);
+}
+
+/**
+ * Compute the cosecant of `x` using Padé approximant, where `|x| < π/2`.
+ */
+function _csc2(x: TwoF64): TwoF64 {
+  const [p, q] = _sin2_padé(x);
+  return div22(q, p);
 }
