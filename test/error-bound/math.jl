@@ -844,7 +844,7 @@ println()
             zhi, zlo = output[i]
             z = big(zhi) + big(zlo)
             r = cbrt(big(xhi) + big(xlo))
-            # @test abs(z - r) < abs_err_bound(r)
+            @test abs(z - r) < abs_err_bound(r)
             abs(u^2 * r) < ε₀ && continue # underflow
             rel_err = abs((z - r) / r)
             avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
