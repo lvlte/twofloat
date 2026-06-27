@@ -24,6 +24,12 @@ export function sqrt1(x: f64): TwoF64 {
     return x === 0 ? ZERO : NaN2;
   }
 
+  if (!Number.isFinite(x)) {
+    return x > 0 ? INF : NaN2;
+  }
+
+  // yₖ₊₁ = yₖ + (x - yₖ²) / 2yₖ
+
   const hi = Math.sqrt(x);
   const [shi, slo] = square1(hi);
   const eh = x - shi - slo;
@@ -47,6 +53,10 @@ export function sqrt2(x: TwoF64): TwoF64;
 export function sqrt2([xhi, xlo]: TwoF64): TwoF64 {
   if (xhi <= 0) {
     return xhi === 0 ? ZERO : NaN2;
+  }
+
+  if (!Number.isFinite(xhi)) {
+    return xhi > 0 ? INF : NaN2;
   }
 
   const hi = Math.sqrt(xhi);
