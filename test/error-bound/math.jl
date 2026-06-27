@@ -858,6 +858,70 @@ println()
         @info "cbrt2 avg rel err" avg
         println()
     end
+
+    @testset "nthroot1" begin
+        args = args_list.op1n
+        output = fn_output["nthroot1"]
+        coverage["nthroot1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-95
+        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
+        max_rel_err = (0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+
+        count_nan = 0
+        for (i, (x, n)) in enumerate(args)
+            n = abs(n)
+            x = x < 0 && iseven(n) ? -x : x
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = sign(x) * big(abs(x))^inv(big(n))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), x, n)
+            end
+        end
+        err, x, n = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "nthroot1 max rel err" err x n
+        @info "nthroot1 avg rel err" avg
+        @info "nthroot1 issues" count_nan
+        println()
+    end
+
+    @testset "nthroot2" begin
+        args = args_list.op2n
+        output = fn_output["nthroot2"]
+        coverage["nthroot2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-95
+        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
+        max_rel_err = (0, (0, 0), 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo), n)) in enumerate(args)
+            n = abs(n)
+            (xhi, xlo) = xhi < 0 && iseven(n) ? (-xhi, -xlo) : (xhi, xlo)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            x = big(xhi) + big(xlo)
+            r = sign(x) * abs(x)^inv(big(n))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), (xhi, xlo), n)
+            end
+        end
+        err, x, n = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "nthroot2 max rel err" err x n
+        @info "nthroot2 avg rel err" avg
+        println()
+    end
 end
 
 println()

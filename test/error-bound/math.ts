@@ -7,7 +7,7 @@ import {
   square1, square2, cube1, cube2,
   exp1, exp2, pow1int, pow2int, pow11, pow12, pow21, pow22,
   _linpow, _logpow, _logpowltr, _linpow2, _logpow2,
-  sqrt1, sqrt2, cbrt1, cbrt2,
+  sqrt1, sqrt2, cbrt1, cbrt2, nthroot1, nthroot2,
   ln1, ln2, log2_1, log2_2, log10_1, log10_2,
   rem2pi_1, rem2pi_2, rempi_1, rempi_2,
   sin1, sin2, cos1, cos2, tan1, tan2, cot1, cot2, sec1, csc1, sec2, csc2,
@@ -23,8 +23,8 @@ const fnBySig = {
     sin1, cos1, tan1, cot1, sec1, csc1},
   'op2': {square2, cube2, sqrt2, cbrt2, ln2, log2_2, log10_2, rempi_2, rem2pi_2,
     sin2, cos2, tan2, cot2, sec2, csc2},
-  'op1n': {_linpow, _logpow, _logpowltr, pow1int},
-  'op2n': {_linpow2, _logpow2, pow2int},
+  'op1n': {_linpow, _logpow, _logpowltr, pow1int, nthroot1},
+  'op2n': {_linpow2, _logpow2, pow2int, nthroot2},
   'exp1': {exp1},
   'exp2': {exp2},
   'op11': {pow11},
@@ -69,6 +69,26 @@ function processArgsFn(fnName: FnName): Function {
     case '_linpow2':
     case '_logpow2':
       return (...args: FnArgs[typeof fnName]) => (args[1] = Math.abs(args[1]), args);
+
+    case 'nthroot1':
+      return (...args: FnArgs[typeof fnName]) => {
+        const [x, n] = args;
+        args[1] = Math.abs(n);
+        if (x < 0 && n % 2 === 0) {
+          args[0] = -x;
+        }
+        return args;
+      }
+
+    case 'nthroot2':
+      return (...args: FnArgs[typeof fnName]) => {
+        const [[xhi, xlo], n] = args;
+        args[1] = Math.abs(n);
+        if (xhi < 0 && n % 2 === 0) {
+          args[0] = [-xhi, -xlo];
+        }
+        return args;
+      }
   }
 
   return (...args: FnArgs[typeof fnName]) => args;

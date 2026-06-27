@@ -2,10 +2,10 @@
  * @file Roots
  */
 
-import { type TwoF64, type f64, NaN2, ZERO } from '../base/common.js';
+import { type TwoF64, type f64, type int, NaN2, ZERO } from '../base/common.js';
 import { add21, div12, mul21 } from '../arithmetic/index.js';
 import { normalize } from '../base/eft.js';
-import { square1 } from '../math/exp.js';
+import { pow1int, square1 } from '../math/exp.js';
 import { INF, NINF } from './constants.js';
 
 
@@ -104,6 +104,67 @@ export function cbrt2([xhi, xlo]: TwoF64): TwoF64 {
   const [y3h, y3l] = mul21(y2, y);
   const p = xhi - y3h - y3l + xlo;
   const q = mul21(y2, 3);
+
+  return add21(div12(p, q), y);
+}
+
+/**
+ * Computes `ⁿ√(x)`, the nth root of `x`, using extended precision arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @param {int} x A `int` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function nthroot1(x: f64, n: int): TwoF64 {
+  if (x === 0) {
+    return ZERO;
+  }
+
+  if (x < 0 && n % 2 === 0 || !Number.isInteger(n) || n < 1) {
+    return NaN2;
+  }
+
+  if (!Number.isFinite(x)) {
+    return x > 0 ? INF : (x < 0 ? NINF : NaN2);
+  }
+
+  //  yₖ₊₁ = yₖ - (yₖⁿ − x) / n*yₖⁿ⁻¹
+
+  const y = Math.sign(x) * Math.abs(x)**(1/n);
+  const ym = pow1int(y, n - 1);
+  const [ynh, ynl] = mul21(ym, y);
+  const p = x - ynh - ynl;
+  const q = mul21(ym, n);
+
+  return add21(div12(p, q), y);
+}
+
+/**
+ * Computes `ⁿ√(x)`, the nth root of `x`, using extended precision arithmetic.
+ *
+ * @param {TwoF64} x A `TwoF64` number
+ * @param {int} n A positive integer
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function nthroot2(x: TwoF64, n: int): TwoF64;
+export function nthroot2([xhi, xlo]: TwoF64, n: int): TwoF64 {
+  if (xhi === 0) {
+    return ZERO;
+  }
+
+  if (xhi < 0 && n % 2 === 0 || !Number.isInteger(n) || n < 1) {
+    return NaN2;
+  }
+
+  if (!Number.isFinite(xhi)) {
+    return xhi > 0 ? INF : (xhi < 0 ? NINF : NaN2);
+  }
+
+  const y = Math.sign(xhi) * Math.abs(xhi)**(1/n);
+  const ym = pow1int(y, n - 1);
+  const [ynh, ynl] = mul21(ym, y);
+  const p = xhi - ynh - ynl + xlo;
+  const q = mul21(ym, n);
 
   return add21(div12(p, q), y);
 }
