@@ -7,7 +7,7 @@ import {
   square1, square2, cube1, cube2,
   exp1, exp2, pow1int, pow2int, pow11, pow12, pow21, pow22,
   _linpow, _logpow, _logpowltr, _linpow2, _logpow2,
-  sqrt1, sqrt2,
+  sqrt1, sqrt2, cbrt1, cbrt2,
   ln1, ln2, log2_1, log2_2, log10_1, log10_2,
   rem2pi_1, rem2pi_2, rempi_1, rempi_2,
   sin1, sin2, cos1, cos2, tan1, tan2, cot1, cot2, sec1, csc1, sec2, csc2,
@@ -19,10 +19,10 @@ import fs from 'node:fs';
 
 // Functions to test grouped by signature
 const fnBySig = {
-  'op1': {square1, cube1, sqrt1, ln1, log2_1, log10_1, rempi_1, rem2pi_1, sin1,
-    cos1, tan1, cot1, sec1, csc1},
-  'op2': {square2, cube2, sqrt2, ln2, log2_2, log10_2, rempi_2, rem2pi_2, sin2,
-    cos2, tan2, cot2, sec2, csc2},
+  'op1': {square1, cube1, sqrt1, cbrt1, ln1, log2_1, log10_1, rempi_1, rem2pi_1,
+    sin1, cos1, tan1, cot1, sec1, csc1},
+  'op2': {square2, cube2, sqrt2, cbrt2, ln2, log2_2, log10_2, rempi_2, rem2pi_2,
+    sin2, cos2, tan2, cot2, sec2, csc2},
   'op1n': {_linpow, _logpow, _logpowltr, pow1int},
   'op2n': {_linpow2, _logpow2, pow2int},
   'exp1': {exp1},
