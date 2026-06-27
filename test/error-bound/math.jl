@@ -868,8 +868,6 @@ println()
         abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
         max_rel_err = (0, 0, 0)
         avg_psum, avg_n = big(0.0), 0
-
-        count_nan = 0
         for (i, (x, n)) in enumerate(args)
             n = abs(n)
             x = x < 0 && iseven(n) ? -x : x
@@ -888,7 +886,6 @@ println()
         avg = Float64(avg_psum / avg_n)
         @info "nthroot1 max rel err" err x n
         @info "nthroot1 avg rel err" avg
-        @info "nthroot1 issues" count_nan
         println()
     end
 

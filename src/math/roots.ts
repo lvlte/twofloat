@@ -3,7 +3,7 @@
  */
 
 import { type TwoF64, type f64, type int, NaN2, ZERO } from '../base/common.js';
-import { add21, div12, div21, div22, mul21 } from '../arithmetic/index.js';
+import { add21, add22, div12, div21, div22, mul11 } from '../arithmetic/index.js';
 import { normalize } from '../base/eft.js';
 import { pow1int, square1 } from '../math/exp.js';
 import { INF, NINF } from './constants.js';
@@ -125,15 +125,14 @@ export function nthroot1(x: f64, n: int): TwoF64 {
     return x > 0 ? INF : (x < 0 ? NINF : NaN2);
   }
 
-  //  yₖ₊₁ = yₖ - (yₖⁿ − x) / n*yₖⁿ⁻¹
+  // yₖ₊₁ = (yₖ*(n - 1) + x/yₖⁿ⁻¹) / n
 
-  const y = Math.sign(x) * Math.abs(x)**(1/n);
-  const ym = pow1int(y, n - 1);
-  const [ynh, ynl] = mul21(ym, y);
-  const p = x - ynh - ynl;
-  const q = mul21(ym, n);
+  const m = n - 1;
+  const yₖ = Math.sign(x) * Math.abs(x)**(1/n);
+  const x_yₖm = div12(x, pow1int(yₖ, m));
+  const num = add22(mul11(yₖ, m), x_yₖm);
 
-  return add21(div12(p, q), y);
+  return div21(num, n);
 }
 
 /**
@@ -157,11 +156,10 @@ export function nthroot2([xhi, xlo]: TwoF64, n: int): TwoF64 {
     return xhi > 0 ? INF : (xhi < 0 ? NINF : NaN2);
   }
 
-  const y = Math.sign(xhi) * Math.abs(xhi)**(1/n);
-  const ym = pow1int(y, n - 1);
-  const [ynh, ynl] = mul21(ym, y);
-  const p = xhi - ynh - ynl + xlo;
-  const q = mul21(ym, n);
+  const m = n - 1;
+  const yₖ = Math.sign(xhi) * Math.abs(xhi)**(1/n);
+  const x_yₖm = div22([xhi, xlo], pow1int(yₖ, m));
+  const num = add22(mul11(yₖ, m), x_yₖm);
 
-  return add21(div12(p, q), y);
+  return div21(num, n);
 }
