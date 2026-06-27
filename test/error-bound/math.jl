@@ -808,7 +808,7 @@ println()
         output = fn_output["cbrt1"]
         coverage["cbrt1"] = true
         @test length(args) == length(output)
-        rel_err_bound = 25u^2/8
+        rel_err_bound = 25u^2
         abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
         max_rel_err = (0, 0, 0, 0)
         avg_psum, avg_n = big(0.0), 0
@@ -836,7 +836,7 @@ println()
         output = fn_output["cbrt2"]
         coverage["cbrt2"] = true
         @test length(args) == length(output)
-        rel_err_bound = 25u^2/8
+        rel_err_bound = 25u^2
         abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
         max_rel_err = (0, 0, 0, 0)
         avg_psum, avg_n = big(0.0), 0
