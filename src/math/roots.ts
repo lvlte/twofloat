@@ -3,7 +3,7 @@
  */
 
 import { type TwoF64, type f64, type int, NaN2, ZERO } from '../base/common.js';
-import { add21, div12, mul21 } from '../arithmetic/index.js';
+import { add21, div12, div21, div22, mul21 } from '../arithmetic/index.js';
 import { normalize } from '../base/eft.js';
 import { pow1int, square1 } from '../math/exp.js';
 import { INF, NINF } from './constants.js';
@@ -72,14 +72,13 @@ export function cbrt1(x: f64): TwoF64 {
     return x > 0 ? INF : (x < 0 ? NINF : NaN2);
   }
 
-  // yₖ₊₁ = yₖ + (x - yₖ³) / 3yₖ²n√a
-  const y = Math.cbrt(x);
-  const y2 = square1(y);
-  const [y3h, y3l] = mul21(y2, y);
-  const p = x - y3h - y3l;
-  const q = mul21(y2, 3);
+  // yₖ₊₁ = (2yₖ + x/yₖ²) / 3
 
-  return add21(div12(p, q), y);
+  const yₖ = Math.cbrt(x);
+  const yₖ2 = square1(yₖ);
+  const x_yₖ2 = div12(x, yₖ2);
+
+  return div21(add21(x_yₖ2, 2*yₖ), 3);
 }
 
 /**
@@ -99,13 +98,11 @@ export function cbrt2([xhi, xlo]: TwoF64): TwoF64 {
     return xhi > 0 ? INF : (xhi < 0 ? NINF : NaN2);
   }
 
-  const y = Math.cbrt(xhi);
-  const y2 = square1(y);
-  const [y3h, y3l] = mul21(y2, y);
-  const p = xhi - y3h - y3l + xlo;
-  const q = mul21(y2, 3);
+  const yₖ = Math.cbrt(xhi);
+  const yₖ2 = square1(yₖ);
+  const x_yₖ2 = div22([xhi, xlo], yₖ2);
 
-  return add21(div12(p, q), y);
+  return div21(add21(x_yₖ2, 2*yₖ), 3);
 }
 
 /**
