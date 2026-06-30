@@ -562,6 +562,78 @@ println()
         @info "exp2 avg rel err" avg
         println()
     end
+
+    @testset "expm1_1" begin
+        args = args_list.exp1
+        output = fn_output["expm1_1"]
+        coverage["expm1_1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = 10u^2
+        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = expm1(big(x))
+            if abs(r) > floatmax(Float64)
+                overflow["expm1_1"] += 1
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["expm1_1"] += 1
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+            else
+                # @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * r) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), x, z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "expm1_1 max rel err" err x # z r
+        @info "expm1_1 avg rel err" avg
+        println()
+    end
+
+    @testset "expm1_2" begin
+        args = args_list.exp2
+        output = fn_output["expm1_2"]
+        coverage["expm1_2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = 10u^2
+        abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
+        max_rel_err = (0, 0, 0,0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = expm1(big(xhi) + big(xlo))
+            if abs(r) > floatmax(Float64)
+                overflow["expm1_2"] += 1
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["expm1_2"] += 1
+                # @error "NaN (overflow but could be avoided)" (xhi, xlo) (zhi, zlo) r
+            else
+                @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * r) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "expm1_2 max rel err" err x # z r
+        @info "expm1_2 avg rel err" avg
+        println()
+    end
 end
 
 println()

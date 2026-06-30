@@ -12,8 +12,8 @@ import {
 } from '../base/common.js';
 
 import { twoSquare, normalize, fast2Diff, fast2Sum } from '../base/eft.js';
-import { add21, sub12, sub21, mul11, mul21, mul22, div22, inv1, inv2 } from '../arithmetic/index.js';
-import { exp_n, exp_nmax, exp_pade_int } from '../pre/exp.js';
+import { add21, sub12, sub21, mul11, mul21, mul22, div22, inv1, inv2, add22 } from '../arithmetic/index.js';
+import { exp_n, exp_nmax, exp_pade_int, expm1_pade_int } from '../pre/exp.js';
 import { INF } from './constants.js';
 import { isFinite2, isSafeInteger2, isZero } from '../base/compare.js';
 import { ln1, ln2 } from './log.js';
@@ -456,4 +456,76 @@ function _exp2f(x: TwoF64): TwoF64 {
   }
 
   return div22(p, q);
+}
+
+/**
+ * Compute `eˣ - 1`, the natural base exponential of `x` subtracted by `1`,
+ * using extended precision arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function expm1_1(x: f64): TwoF64 {
+  if (Math.abs(x) < Math.LN2) {
+    return x === 0 ? ZERO : _expm1_1f(x);
+  }
+
+  return sub21(exp1(x), 1);
+}
+
+/**
+ * Compute `eˣ - 1` using Padé approximant (meant to be used for `x` close to 0)
+ */
+function _expm1_1f(x: f64): TwoF64 {
+  const [P, Q] = expm1_pade_int[16];
+  const x2 = square1(x);
+
+  let k = 1; // 0 for odd n/n, 1 otherwise
+  let p = add22(mul22(x2, P[k]), P[k+=2]);
+  for (k+=2; k < P.length; k+=2) {
+    p = add22(mul22(p, x2), P[k]);
+  }
+
+  let q = add21(Q[1], x);
+  for (let i = 2; i < Q.length; i++) {
+    q = add22(mul21(q, x), Q[i]);
+  }
+
+  return div22(mul21(p, x), q);
+}
+
+/**
+ * Compute `eˣ - 1`, the natural base exponential of `x` subtracted by `1`,
+ * using extended precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function expm1_2(x: TwoF64): TwoF64{
+  if (Math.abs(x[0]) < Math.LN2) {
+    return x[0] === 0 ? ZERO : _expm1_2f(x);
+  }
+
+  return sub21(exp2(x), 1);
+}
+
+/**
+ * Compute `eˣ - 1` using Padé approximant (meant to be used for `x` close to 0)
+ */
+function _expm1_2f(x: TwoF64): TwoF64 {
+  const [P, Q] = expm1_pade_int[16];
+  const x2 = square2(x);
+
+  let k = 1; // 0 for odd n/n, 1 otherwise
+  let p = add22(mul22(x2, P[k]), P[k+=2]);
+  for (k+=2; k < P.length; k+=2) {
+    p = add22(mul22(p, x2), P[k]);
+  }
+
+  let q = add22(Q[1], x);
+  for (let i = 2; i < Q.length; i++) {
+    q = add22(mul22(q, x), Q[i]);
+  }
+
+  return div22(mul22(p, x), q);
 }
