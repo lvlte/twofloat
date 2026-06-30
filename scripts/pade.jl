@@ -108,6 +108,7 @@ const Tan = tangent_numbers(big(30))
 taylor_ln1p(n::Integer) = iszero(n) ? zero(n)//one(n) : (-one(n))^(n+1)//n
 taylor_ln1m(n::Integer) = iszero(n) ? zero(n)//one(n) : -one(n)//n
 taylor_exp(n::Integer) = one(n)//factorial(n)
+taylor_expm1(n::Integer) = iszero(n) ? zero(n)//one(n) : one(n)//factorial(n)
 
 # taylor_sin(n::Integer) = isodd(n) ? oftype(n,(-1)^((n-1)/2))//factorial(n) : zero(n)//one(n)
 # taylor_cos(n::Integer) = iseven(n) ? oftype(n,(-1)^(n/2))//factorial(n) : zero(n)//one(n)

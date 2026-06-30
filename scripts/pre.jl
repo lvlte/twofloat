@@ -57,16 +57,28 @@ nmax = 80
 exp_n = [[n, TwoF64(exp(BigFloat(n)))] for n in -nmax:nmax]
 
 # Padé [n/n] exp(x)
-# Integer coefficients can be represented as f64 safe integers for n < 16,
-# higher orders requires TwoF64 but won't bring more accuracy (except if we
-# use more (ie. triple, quad, etc.) precision to evaluate the approximant.
+# Integer coefficients can be represented as f64 integers for n < 16, higher
+# orders requires TwoF64 but won't bring more accuracy (except if we use more
+# ie. triple, quad, etc.) precision to evaluate the approximant.
 N = UnitRange{Int128}(10, 15)
 exp_pade = OrderedDict(n => pade_exp(n,n)[1] for n in N)
 exp_pade_int = OrderedDict(n => pade_exp_int(n) for n in N)
+exp_pade_TwoF64 = OrderedDict(n => TwoF64.(exp_pade[n]) for n in N)
+exp_pade_int_f64 = OrderedDict(n => F64Int.(exp_pade_int[n]) for n in N)
+
+# Padé [n/n] expm1(x)
+N = UnitRange{BigInt}(15, 20)
+expm1_pade = OrderedDict(n => taylor_to_pade(taylor_expm1, n, n) for n in N)
+expm1_pade_int = OrderedDict(n => reverse.(pade_int(expm1_pade[n]...)) for n in N)
+expm1_pade_TwoF64 = OrderedDict(n => [TwoF64.(expm1_pade[n][1]), TwoF64.(expm1_pade[n][2])] for n in N)
+expm1_pade_int_TwoF64 = OrderedDict(n => [TwoF64Int.(expm1_pade_int[n][1]), TwoF64Int.(expm1_pade_int[n][2])] for n in N)
+
 pre_exp = OrderedDict(
     "exp_n" => [exp_n; [["nmax", nmax]]],
-    "exp_pade" => OrderedDict(n => TwoF64.(exp_pade[n]) for n in N),
-    "exp_pade_int" => OrderedDict(n => F64Int.(exp_pade_int[n]) for n in N)
+    "exp_pade" => exp_pade_TwoF64,
+    "exp_pade_int" => exp_pade_int_f64,
+    "expm1_pade" => expm1_pade_TwoF64,
+    "expm1_pade_int" => expm1_pade_int_TwoF64
 )
 
 # Padé [n/n] ln(x + 1)
