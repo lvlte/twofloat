@@ -384,12 +384,11 @@ function _exp1i(x: int): TwoF64 {
  */
 function _exp1f(x: f64): TwoF64 {
   const coeff = exp_pade_int[15];
-  // const p_add = coeff.length % 2 ? add21 : sub21;
 
-  let p = fast2Diff(-coeff[1], x);
-  let q = fast2Sum(-coeff[1], x);
-  for (let i = 2, s = 1; i < coeff.length; i++, s*=-1) {
-    p = sub21(mul21(p, x), coeff[i]);
+  let p = fast2Sum(coeff[1], x);
+  let q = fast2Diff(coeff[1], x);
+  for (let i = 2, s = -1; i < coeff.length; i++, s*=-1) {
+    p = add21(mul21(p, x), coeff[i]);
     q = add21(mul21(q, x), coeff[i] * s);
   }
 
@@ -448,10 +447,10 @@ export function exp2([xhi, xlo]: TwoF64): TwoF64 {
 function _exp2f(x: TwoF64): TwoF64 {
   const coeff = exp_pade_int[15];
 
-  let p = sub12(-coeff[1], x);
-  let q = sub21(x, coeff[1]);
-  for (let i = 2, s = 1; i < coeff.length; i++, s*=-1) {
-    p = sub21(mul22(p, x), coeff[i]);
+  let p = add21(x, coeff[1]);
+  let q = sub12(coeff[1], x);
+  for (let i = 2, s = -1; i < coeff.length; i++, s*=-1) {
+    p = add21(mul22(p, x), coeff[i]);
     q = add21(mul22(q, x), coeff[i] * s);
   }
 

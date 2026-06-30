@@ -5,9 +5,10 @@
 import type { int, TwoF64 } from "../base/common.js";
 
 /**
- * Coefficients (from lowest to highest degree) of the Padé (n,n) approximant
- * for e^x (absolute values, ie. one vector represent both numerator and
- * denominator coefficients).
+ * Coefficients (from lowest to highest degree) of the [n/n] Padé approximant
+ * of `eˣ` (absolute values, ie. one vector represent both the numerator, where
+ * all coefficients are positive, and denominator, where odd powers are negative
+ * and even powers positive).
  */
 export const exp_pade = {
   12: <TwoF64[]>[
@@ -79,9 +80,11 @@ export const exp_pade = {
 }
 
 /**
- * Integer coefficients (from highest to lowest degree) of the Padé (n,n)
- * approximant for e^x (absolute values, ie. one vector represent both numerator
- * and denominator coefficients).
+ * Integer coefficients (from highest to lowest degree) of the [n/n] Padé
+ * approximant of `eˣ` (absolute values, ie. one vector represent both the
+ * numerator, where all coefficients are positive, and denominator, where odd
+ * powers are negative and even powers positive).
+ *
  * NB.
  *  - For n=16, coefficients need TwoF64 representation and don't produce better
  *    results than coefficients for n=15.
@@ -101,6 +104,12 @@ export const exp_pade_int = {
 /**
  * Integer coefficients (from highest to lowest degree) of the [n/n] Padé
  * approximant of `eˣ - 1`.
+ *
+ * NB. At the numerator, all even powers are zeros and the odd ones have two
+ * times the corresponding coefficient for `eˣ`. At the denominator coefficients
+ * are the same as those for `eˣ` (we don't reuse `exp_pade_int` because we need
+ * higher order coefficients to produce accurate results, which don't fit in a
+ * single f64).
  */
 export const expm1_pade_int = {
   15: <[TwoF64[], TwoF64[]]>[
