@@ -1109,7 +1109,7 @@ println()
 end
 
 println()
-@testset verbose = true "Trigonometry ────────────" begin ######################
+@testset verbose = true "Trigonometric functions ─" begin ######################
 
     @testset "sin1" begin
         args = args_list.op1
@@ -1448,6 +1448,154 @@ println()
     end
 end
 
+println()
+@testset verbose = true "Hyperbolic functions ────" begin ######################
+
+    @testset "sinh1" begin
+        args = args_list.exp1
+        output = fn_output["sinh1"]
+        coverage["sinh1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-75
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = sinh(big(x))
+            if abs(r) > floatmax(Float64)
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["sinh1"] += 1 # spurious overflow
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+            else
+                @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * r) < ε₀ && continue # underflow
+                abs(u^2 * exp(big(x))) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), x, z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "sinh1 max rel err" err x z r
+        @info "sinh1 avg rel err" avg
+        println()
+    end
+
+    @testset "sinh2" begin
+        args = args_list.exp2
+        output = fn_output["sinh2"]
+        coverage["sinh2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-75
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = sinh(big(xhi) + big(xlo))
+            if abs(r) > floatmax(Float64)
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["sinh2"] += 1 # spurious overflow
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+            else
+                @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * r) < ε₀ && continue # underflow
+                abs(u^2 * exp(big(xhi) + big(xlo))) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "sinh2 max rel err" err x z r
+        @info "sinh2 avg rel err" avg
+        println()
+    end
+
+    @testset "cosh1" begin
+        args = args_list.exp1
+        output = fn_output["cosh1"]
+        coverage["cosh1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-75
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = cosh(big(x))
+            if abs(r) > floatmax(Float64)
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["cosh1"] += 1 # spurious overflow
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+            else
+                @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * r) < ε₀ && continue # underflow
+                abs(u^2 * exp(big(x))) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), x, z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "cosh1 max rel err" err x z r
+        @info "cosh1 avg rel err" avg
+        println()
+    end
+
+    @testset "cosh2" begin
+        args = args_list.exp2
+        output = fn_output["cosh2"]
+        coverage["cosh2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-75
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = cosh(big(xhi) + big(xlo))
+            if abs(r) > floatmax(Float64)
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["cosh2"] += 1 # spurious overflow
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+            else
+                @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * r) < ε₀ && continue # underflow
+                abs(u^2 * exp(big(xhi) + big(xlo))) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "cosh2 max rel err" err x z r
+        @info "cosh2 avg rel err" avg
+        println()
+    end
+
+end
 ###
 
 println()
@@ -1458,4 +1606,5 @@ println()
 end
 
 println()
-@info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflow)...] |> join
+overflowed = filter(((fn , ov_count),) -> ov_count > 0, overflow)
+@info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflowed)...] |> join

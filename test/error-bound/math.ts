@@ -11,6 +11,7 @@ import {
   ln1, ln2, log2_1, log2_2, log10_1, log10_2,
   rem2pi_1, rem2pi_2, rempi_1, rempi_2,
   sin1, sin2, cos1, cos2, tan1, tan2, cot1, cot2, sec1, csc1, sec2, csc2,
+  sinh1, sinh2, cosh1, cosh2
 } from '../../src/index';
 
 import { FnSig, UnionToIntersection, Expand, randomFn } from '../utils';
@@ -27,8 +28,8 @@ const fnBySig = {
   'op2n': {_linpow2, _logpow2, pow2int, nthroot2},
   // e^x and functions defined in terms of e^x have a restricted domain so we
   // test them apart from op1/op2 group
-  'exp1': {exp1, expm1_1},
-  'exp2': {exp2, expm1_2},
+  'exp1': {exp1, expm1_1, sinh1, cosh1},
+  'exp2': {exp2, expm1_2, sinh2, cosh2},
   'op11': {pow11},
   'op12': {pow12},
   'op21': {pow21},

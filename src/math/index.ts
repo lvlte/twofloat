@@ -5,3 +5,4 @@ export * from './roots.js';
 export * from './sign.js';
 export * from './mod.js';
 export * from './trig.js';
+export * from './hyper.js';
