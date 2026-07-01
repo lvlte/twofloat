@@ -1595,7 +1595,137 @@ println()
         println()
     end
 
+    @testset "tanh1" begin
+        args = args_list.exp1
+        output = fn_output["tanh1"]
+        coverage["tanh1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-95
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            x = x % 37
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = tanh(big(x))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), x, z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "tanh1 max rel err" err x z r
+        @info "tanh1 avg rel err" avg
+        println()
+    end
+
+    @testset "tanh2" begin
+        args = args_list.exp2
+        output = fn_output["tanh2"]
+        coverage["tanh2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-95
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            xhi, xlo = twosum(xhi % 37, xlo)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = tanh(big(xhi) + big(xlo))
+            @test abs(z - r) < abs_err_bound(r)
+            abs(u^2 * r) < ε₀ && continue # underflow
+            rel_err = abs((z - r) / r)
+            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+            if rel_err > max_rel_err[1]
+                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "tanh2 max rel err" err x z r
+        @info "tanh2 avg rel err" avg
+        println()
+    end
+
+    @testset "coth1" begin
+        args = args_list.exp1
+        output = fn_output["coth1"]
+        coverage["coth1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            x = x % 37
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = coth(big(x))
+            if abs(r) > floatmax(Float64)
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["coth1"] += 1 # spurious overflow
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+            else
+                # @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * exp(big(x))) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), x, z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "coth1 max rel err" err x z r
+        @info "coth1 avg rel err" avg
+        println()
+    end
+
+    @testset "coth2" begin
+        args = args_list.exp2
+        output = fn_output["coth2"]
+        coverage["coth2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            xhi, xlo = twosum(xhi % 37, xlo)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = coth(big(xhi) + big(xlo))
+            if abs(r) > floatmax(Float64)
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["coth2"] += 1 # spurious overflow
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+            else
+                # @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * exp(big(xhi) + big(xlo))) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "coth2 max rel err" err x z r
+        @info "coth2 avg rel err" avg
+        println()
+    end
 end
+
 ###
 
 println()

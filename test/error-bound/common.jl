@@ -30,3 +30,10 @@ struct TestSet
     argsList::ArgsList
     fnOutput::Dict{String, Vector{TwoF64}}
 end
+
+function twosum(x:: Float64, y:: Float64):: TwoF64
+    hi = x + y;
+    x1 = hi - y;
+    y1 = hi - x1;
+    return (hi, x - x1 + (y - y1))
+end
