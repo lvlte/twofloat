@@ -1669,7 +1669,7 @@ println()
                 overflow["coth1"] += 1 # spurious overflow
                 # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
             else
-                # @test abs(z - r) < abs_err_bound(r)
+                @test abs(z - r) < abs_err_bound(r)
                 abs(u^2 * exp(big(x))) < ε₀ && continue # underflow
                 rel_err = abs((z - r) / r)
                 avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
@@ -1705,7 +1705,7 @@ println()
                 overflow["coth2"] += 1 # spurious overflow
                 # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
             else
-                # @test abs(z - r) < abs_err_bound(r)
+                @test abs(z - r) < abs_err_bound(r)
                 abs(u^2 * exp(big(xhi) + big(xlo))) < ε₀ && continue # underflow
                 rel_err = abs((z - r) / r)
                 avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
