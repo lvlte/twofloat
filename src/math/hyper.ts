@@ -159,3 +159,47 @@ export function coth2([xhi, xlo]: TwoF64): TwoF64 {
   const [ex_m1, ex_p1] = _exp_pm1_2([2*xhi, 2*xlo]);
   return div22(ex_p1, ex_m1);
 }
+
+/**
+ * Computes the hyperbolic secant of `x`, where `x` is expressed in radians,
+ * using extended precision arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function sech1(x: f64): TwoF64 {
+  return inv2(cosh1(x));
+}
+
+/**
+ * Computes the hyperbolic secant of `x`, where `x` is expressed in radians,
+ * using extended precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function sech2(x: TwoF64): TwoF64 {
+  return inv2(cosh2(x));
+}
+
+/**
+ * Computes the hyperbolic cosecant of `x`, where `x` is expressed in radians,
+ * using extended precision arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function csch1(x: f64): TwoF64 {
+  return inv2(sinh1(x));
+}
+
+/**
+ * Computes the hyperbolic cosecant of `x`, where `x` is expressed in radians,
+ * using extended precision arithmetic.
+ *
+ * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
+ * its canonical form).
+ */
+export function csch2(x: TwoF64): TwoF64 {
+  return inv2(sinh2(x));
+}

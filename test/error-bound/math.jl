@@ -1720,6 +1720,146 @@ println()
         @info "coth2 avg rel err" avg
         println()
     end
+
+    @testset "sech1" begin
+        args = args_list.exp1
+        output = fn_output["sech1"]
+        coverage["sech1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = sech(big(x))
+            if abs(r) > floatmax(Float64)
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["sech1"] += 1 # spurious overflow
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+            else
+                @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * r) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), x, z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "sech1 max rel err" err x z r
+        @info "sech1 avg rel err" avg
+        println()
+    end
+
+    @testset "sech2" begin
+        args = args_list.exp2
+        output = fn_output["sech2"]
+        coverage["sech2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = sech(big(xhi) + big(xlo))
+            if abs(r) > floatmax(Float64)
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["sech2"] += 1 # spurious overflow
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+            else
+                @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * r) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "sech2 max rel err" err x z r
+        @info "sech2 avg rel err" avg
+        println()
+    end
+
+    @testset "csch1" begin
+        args = args_list.exp1
+        output = fn_output["csch1"]
+        coverage["csch1"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, (x,)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = csch(big(x))
+            if abs(r) > floatmax(Float64)
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["csch1"] += 1 # spurious overflow
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+            else
+                @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * r) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), x, z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "csch1 max rel err" err x z r
+        @info "csch1 avg rel err" avg
+        println()
+    end
+
+    @testset "csch2" begin
+        args = args_list.exp2
+        output = fn_output["csch2"]
+        coverage["csch2"] = true
+        @test length(args) == length(output)
+        rel_err_bound = big(2.0)^-90
+        abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
+        max_rel_err = (0, 0, 0, 0)
+        avg_psum, avg_n = big(0.0), 0
+        for (i, ((xhi, xlo),)) in enumerate(args)
+            zhi, zlo = output[i]
+            z = big(zhi) + big(zlo)
+            r = csch(big(xhi) + big(xlo))
+            if abs(r) > floatmax(Float64)
+                @test !isfinite(zhi + zlo)
+            elseif isnan(z)
+                overflow["csch2"] += 1 # spurious overflow
+                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
+            else
+                @test abs(z - r) < abs_err_bound(r)
+                abs(u^2 * r) < ε₀ && continue # underflow
+                rel_err = abs((z - r) / r)
+                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
+                if rel_err > max_rel_err[1]
+                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
+                end
+            end
+        end
+        err, x, z, r = max_rel_err
+        avg = Float64(avg_psum / avg_n)
+        @info "csch2 max rel err" err x z r
+        @info "csch2 avg rel err" avg
+        println()
+    end
 end
 
 ###
