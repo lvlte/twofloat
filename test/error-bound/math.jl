@@ -505,10 +505,9 @@ println()
             z = big(zhi) + big(zlo)
             r = exp(big(x))
             if abs(r) > floatmax(Float64)
-                overflow["exp1"] += 1
                 @test !isfinite(zhi + zlo)
             elseif isnan(z)
-                overflow["exp1"] += 1
+                overflow["exp1"] += 1 # spurious overflow
                 # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
             else
                 @test abs(z - r) < abs_err_bound(r)
@@ -541,10 +540,9 @@ println()
             z = big(zhi) + big(zlo)
             r = exp(big(xhi) + big(xlo))
             if abs(r) > floatmax(Float64)
-                overflow["exp2"] += 1
                 @test !isfinite(zhi + zlo)
             elseif isnan(z)
-                overflow["exp2"] += 1
+                overflow["exp2"] += 1 # spurious overflow
                 # @error "NaN (overflow but could be avoided)" (xhi, xlo) (zhi, zlo) r
             else
                 @test abs(z - r) < abs_err_bound(r)
@@ -577,10 +575,9 @@ println()
             z = big(zhi) + big(zlo)
             r = expm1(big(x))
             if abs(r) > floatmax(Float64)
-                overflow["expm1_1"] += 1
                 @test !isfinite(zhi + zlo)
             elseif isnan(z)
-                overflow["expm1_1"] += 1
+                overflow["expm1_1"] += 1 # spurious overflow
                 # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
             else
                 # @test abs(z - r) < abs_err_bound(r)
@@ -613,10 +610,9 @@ println()
             z = big(zhi) + big(zlo)
             r = expm1(big(xhi) + big(xlo))
             if abs(r) > floatmax(Float64)
-                overflow["expm1_2"] += 1
                 @test !isfinite(zhi + zlo)
             elseif isnan(z)
-                overflow["expm1_2"] += 1
+                overflow["expm1_2"] += 1 # spurious overflow
                 # @error "NaN (overflow but could be avoided)" (xhi, xlo) (zhi, zlo) r
             else
                 @test abs(z - r) < abs_err_bound(r)
