@@ -1,5 +1,6 @@
 using Test
 using JSON
+using DataStructures
 
 setprecision(BigFloat, 512)
 
@@ -28,7 +29,7 @@ end
 
 struct TestSet
     argsList::ArgsList
-    fnOutput::Dict{String, Vector{TwoF64}}
+    fnOutput::OrderedDict{String, Vector{TwoF64}}
 end
 
 function twosum(x:: Float64, y:: Float64):: TwoF64

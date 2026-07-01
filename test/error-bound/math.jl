@@ -7,8 +7,8 @@ testset = JSON.parse(json, TestSet; null=NaN)
 args_list = testset.argsList
 fn_output = testset.fnOutput
 
-coverage = Dict(keys(fn_output) .=> false)
-overflow = Dict(keys(fn_output) .=> 0)
+coverage = OrderedDict(keys(fn_output) .=> false)
+overflow = OrderedDict(keys(fn_output) .=> 0)
 
 println()
 @testset verbose = true "Exponentiation ──────────" begin ######################
