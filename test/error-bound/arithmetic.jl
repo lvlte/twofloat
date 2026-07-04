@@ -13,151 +13,60 @@ overflow = Dict(keys(fn_output) .=> 0)
 println()
 @testset verbose = true "Arithmetic (opa1, opa2) ─" begin ######################
     @testset "sum1" begin
-        args = args_list.opa1
-        output = fn_output["sum1"]
-        coverage["sum1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-88
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, 0)
-        for (i, (list,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sum(big.(list))
-            if abs(r) > floatmax(Float64)
-                overflow["sum1"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                rel_err = abs((z - r) / r)
-                if abs(r) ≥ ε₀ && rel_err > max_rel_err[1]
-                  max_rel_err = ((rel_err), length(list))
-                end
-            end
-        end
-        # @info "sum1 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
+        _test(Dict(
+            "fn" => "sum1",
+            "args" => args_list.opa1,
+            "rel_err_bound" => big(2.0)^-88,
+            "compute" => list -> sum(big.(list))
+        ))
     end
 
     @testset "prod1" begin
-        args = args_list.opa1
-        output = fn_output["prod1"]
-        coverage["prod1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-88
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 3ε₀)
-        max_rel_err = (0, 0)
-        for (i, (list,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = prod(big.(list))
-            if abs(r) > floatmax(Float64)
-                overflow["prod1"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                rel_err = abs((z - r) / r)
-                if abs(r) ≥ ε₀ && rel_err > max_rel_err[1]
-                  max_rel_err = ((rel_err), length(list))
-                end
-            end
-        end
-        # @info "prod1 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
-        # println()
+        _test(Dict(
+            "fn" => "prod1",
+            "args" => args_list.opa1,
+            "rel_err_bound" => big(2.0)^-88,
+            "compute" => list -> prod(big.(list))
+        ))
     end
 
     @testset "sum2" begin
-        args = args_list.opa2
-        output = fn_output["sum2"]
-        coverage["sum2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-88
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, 0)
-        for (i, (list,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sum(map(((hi, lo),) -> big(hi) + big(lo), list))
-            if abs(r) > floatmax(Float64)
-                overflow["sum2"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                rel_err = abs((z - r) / r)
-                if abs(r) ≥ ε₀ && rel_err > max_rel_err[1]
-                  max_rel_err = ((rel_err), length(list))
-                end
-            end
-        end
-        # @info "sum2 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
+        _test(Dict(
+            "fn" => "sum2",
+            "args" => args_list.opa2,
+            "rel_err_bound" => big(2.0)^-88,
+            "compute" => list -> sum(map(((hi, lo),) -> big(hi) + big(lo), list))
+        ))
     end
 
     @testset "prod2" begin
-        args = args_list.opa2
-        output = fn_output["prod2"]
-        coverage["prod2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-88
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 3ε₀)
-        max_rel_err = (0, 0)
-        for (i, (list,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = prod(map(((hi, lo),) -> big(hi) + big(lo), list))
-            if abs(r) > floatmax(Float64)
-                overflow["prod2"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                rel_err = abs((z - r) / r)
-                if abs(r) ≥ ε₀ && rel_err > max_rel_err[1]
-                  max_rel_err = ((rel_err), length(list))
-                end
-            end
-        end
-        # @info "prod2 max_rel_err" err=max_rel_err[1] n=max_rel_err[2]
-        # println()
+        _test(Dict(
+            "fn" => "prod2",
+            "args" => args_list.opa2,
+            "rel_err_bound" => big(2.0)^-88,
+            "compute" => list -> prod(map(((hi, lo),) -> big(hi) + big(lo), list))
+        ))
     end
 end
 
 println()
 @testset verbose = true "Arithmetic (op12) ───────" begin ######################
-    args = args_list.op12
 
     @testset "sub12" begin
-        output = fn_output["sub12"]
-        coverage["sub12"] = true
-        @test length(args) == length(output)
-        rel_err = 2u^2
-        abs_err = r -> max(abs(rel_err * r), ε₀)
-        for (i, (x, (yhi, ylo))) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x) - (big(yhi) + big(ylo))
-            if abs(r) > floatmax(Float64)
-                overflow["sub12"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err(r)
-            end
-        end
+        _test(Dict(
+            "fn" => "sub12",
+            "args" => args_list.op12,
+            "rel_err_bound" => 2u^2,
+            "compute" => (x, (yhi, ylo)) -> big(x) - (big(yhi) + big(ylo))
+        ))
     end
     @testset "div12" begin
-        output = fn_output["div12"]
-        coverage["div12"] = true
-        @test length(args) == length(output)
-        rel_err = 15u^2 + 56u^3
-        abs_err = r -> max(abs(rel_err * r), 2.5ε₀)
-        for (i, (x, (yhi, ylo))) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x) / (big(yhi) + big(ylo))
-            if abs(r) > floatmax(Float64)
-                overflow["div12"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err(r)
-            end
-        end
+        _test(Dict(
+            "fn" => "div12",
+            "args" => args_list.op12,
+            "rel_err_bound" => 15u^2 + 56u^3,
+            "compute" => (x, (yhi, ylo)) -> big(x) / (big(yhi) + big(ylo))
+        ))
     end
 end
 ###
@@ -169,5 +78,8 @@ println()
     end
 end
 
-println()
-@info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflow)...] |> join
+overflowed = filter(((fn , ov_count),) -> ov_count > 0, overflow)
+if !isempty(overflowed)
+    println()
+    @info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflowed)...] |> join
+end

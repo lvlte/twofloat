@@ -15,199 +15,100 @@ println()
 @testset verbose = true "Error-Free Transforms ────────────────" begin #########
 
     @testset "split" begin
-        output = fn_output["split"]
-        args = args_list.op1
-        coverage["split"] = true
-        @test length(args) == length(output)
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            if abs(x) > split_max
-                overflow["split"] += 1
-                @test isnan(zhi + zlo)
-            else
-                @test x == zhi + zlo == big(zhi) + big(zlo)
-            end
-        end
+        _test(Dict(
+            "fn" => "split",
+            "args" => args_list.op1,
+            "rel_err_bound" => 0,
+            "compute" => x -> big(x)
+        ))
     end
 
     @testset "normalize (fast2Sum, fast2Diff)" begin
-        output = fn_output["normalize"]
-        args = args_list.op11
-        coverage["normalize"] = true
-        @test length(args) == length(output)
-        for (i, (x, y)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x) + big(y)
-            if abs(z) > floatmax(Float64)
-                overflow["normalize"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test z == r
-            end
-        end
+        _test(Dict(
+            "fn" => "normalize",
+            "args" => args_list.op11,
+            "rel_err_bound" => 0,
+            "compute" => (x, y) -> big(x) + big(y)
+        ))
     end
 
     @testset "twoSum (twoDiff, add11, sub11)" begin
-        output = fn_output["twoSum"]
-        args = args_list.op11
-        coverage["twoSum"] = true
-        @test length(args) == length(output)
-        for (i, (x, y)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x) + big(y)
-            if abs(z) > floatmax(Float64)
-                overflow["twoSum"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test z == r
-            end
-        end
+        _test(Dict(
+            "fn" => "twoSum",
+            "args" => args_list.op11,
+            "rel_err_bound" => 0,
+            "compute" => (x, y) -> big(x) + big(y)
+        ))
     end
 
     @testset "twoProd (mul11, twoSquare, square1)" begin
-        output = fn_output["twoProd"]
-        args = args_list.op11
-        coverage["twoProd"] = true
-        @test length(args) == length(output)
-        for (i, (x, y)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x) * big(y)
-            if abs(r) > floatmax(Float64) || abs(x) > split_max || abs(y) > split_max
-                overflow["twoProd"] += 1
-                @test !isfinite(zhi + zlo)
-            elseif abs(zlo) < floatmin(Float64)
-                # most likely underflow
-                @test abs(z - r) < 1.5ε₀
-            else
-                @test z == r
-            end
-        end
+        _test(Dict(
+            "fn" => "twoProd",
+            "args" => args_list.op11,
+            "rel_err_bound" => 0,
+            "compute" => (x, y) -> big(x) * big(y)
+        ))
     end
 end
 
 println()
 @testset verbose = true "Error bounds op21 ────────────────────" begin #########
-    args = args_list.op21
 
     @testset "DWPlusFP (add21, sub21)" begin
-        output = fn_output["DWPlusFP"]
-        coverage["DWPlusFP"] = true
-        @test length(args) == length(output)
-        rel_err = 2u^2
-        abs_err = r -> max(abs(rel_err * r), ε₀)
-        for (i, ((xhi, xlo), y)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(xhi) + big(y) + big(xlo)
-            if abs(r) > floatmax(Float64)
-                overflow["DWPlusFP"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err(r)
-            end
-        end
+        _test(Dict(
+            "fn" => "DWPlusFP",
+            "args" => args_list.op21,
+            "rel_err_bound" => 2u^2,
+            "compute" => ((xhi, xlo), y) -> big(y) + big(xhi) + big(xlo)
+        ))
     end
 
     @testset "DWTimesFP1 (mul21)" begin
-        output = fn_output["DWTimesFP1"]
-        coverage["DWTimesFP1"] = true
-        @test length(args) == length(output)
-        rel_err = 1.5u^2 + 4u^3
-        abs_err = r -> max(abs(rel_err * r), 2ε₀)
-        for (i, ((xhi, xlo), y)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(xhi)*big(y) + big(xlo)*big(y)
-            if abs(r) > floatmax(Float64)
-                overflow["DWTimesFP1"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err(r)
-            end
-        end
+        _test(Dict(
+            "fn" => "DWTimesFP1",
+            "args" => args_list.op21,
+            "rel_err_bound" => 1.5u^2 + 4u^3,
+            "compute" => ((xhi, xlo), y) -> big(xhi)*big(y) + big(xlo)*big(y)
+        ))
     end
     @testset "DWDivFP3 (div11, div21, inv1)" begin
-        output = fn_output["DWDivFP3"]
-        coverage["DWDivFP3"] = true
-        @test length(args) == length(output)
-        rel_err = 3u^2
-        abs_err = r -> max(abs(rel_err * r), 2ε₀)
-        for (i, ((xhi, xlo), y)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(xhi)/big(y) + big(xlo)/big(y)
-            if abs(r) > floatmax(Float64)
-                overflow["DWDivFP3"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err(r)
-            end
-        end
+        _test(Dict(
+            "fn" => "DWDivFP3",
+            "args" => args_list.op21,
+            "rel_err_bound" => 3u^2,
+            "compute" => ((xhi, xlo), y) -> big(xhi)/big(y) + big(xlo)/big(y)
+        ))
     end
 end
 
 println()
 @testset verbose = true "Error bounds op22 ────────────────────" begin #########
-    args = args_list.op22
 
     @testset "AccurateDWPlusDW (add22, sub22)" begin
-        output = fn_output["AccurateDWPlusDW"]
-        coverage["AccurateDWPlusDW"] = true
-        @test length(args) == length(output)
-        rel_err = 3u^2 + 13u^3
-        abs_err = r -> max(abs(rel_err * r), ε₀)
-        for (i, ((xhi, xlo), (yhi, ylo))) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(xhi) + big(yhi) + big(xlo) + big(ylo)
-            if abs(r) > floatmax(Float64)
-                overflow["AccurateDWPlusDW"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err(r)
-            end
-        end
+        _test(Dict(
+            "fn" => "AccurateDWPlusDW",
+            "args" => args_list.op22,
+            "rel_err_bound" => 3u^2 + 13u^3,
+            "compute" => ((xhi,xlo),(yhi,ylo)) -> big(xhi) + big(yhi) + big(xlo) + big(ylo)
+        ))
     end
 
     @testset "DWTimesDW1 (mul22, square2)" begin
-        output = fn_output["DWTimesDW1"]
-        coverage["DWTimesDW1"] = true
-        @test length(args) == length(output)
-        rel_err = 5u^2
-        abs_err = r -> max(abs(rel_err * r), 2.5ε₀)
-        for (i, ((xhi, xlo), (yhi, ylo))) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = (big(xhi) + big(xlo)) * (big(yhi) + big(ylo))
-            if abs(r) > floatmax(Float64)
-                overflow["DWTimesDW1"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err(r)
-            end
-        end
+        _test(Dict(
+            "fn" => "DWTimesDW1",
+            "args" => args_list.op22,
+            "rel_err_bound" => 5u^2,
+            "compute" => ((xhi,xlo),(yhi,ylo)) -> (big(xhi) + big(xlo)) * (big(yhi) + big(ylo))
+        ))
     end
 
-    @testset "DWDivDW2 (div22, inv2)" begin
-        output = fn_output["DWDivDW2"]
-        coverage["DWDivDW2"] = true
-        @test length(args) == length(output)
-        rel_err = 15u^2 + 56u^3
-        abs_err = r -> max(abs(rel_err * r), 2.5ε₀)
-        for (i, ((xhi, xlo), (yhi, ylo))) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = (big(xhi) + big(xlo)) / (big(yhi) + big(ylo))
-            if abs(r) > floatmax(Float64)
-                overflow["DWDivDW2"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err(r)
-            end
-        end
+    @testset " (div22, inv2)" begin
+        _test(Dict(
+            "fn" => "DWDivDW2",
+            "args" => args_list.op22,
+            "rel_err_bound" => 15u^2 + 56u^3,
+            "compute" => ((xhi,xlo),(yhi,ylo)) -> (big(xhi) + big(xlo)) / (big(yhi) + big(ylo))
+        ))
     end
 end
 
@@ -220,5 +121,8 @@ println()
     end
 end
 
-println()
-@info ["Overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflow)...] |> join
+overflowed = filter(((fn , ov_count),) -> ov_count > 0, overflow)
+if !isempty(overflowed)
+    println()
+    @info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflowed)...] |> join
+end

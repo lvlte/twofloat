@@ -14,621 +14,197 @@ println()
 @testset verbose = true "Exponentiation ──────────" begin ######################
 
     @testset "square1 (EFT)" begin
-        args = args_list.op1
-        output = fn_output["square1"]
-        coverage["square1"] = true
-        @test length(args) == length(output)
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x)^2
-            if abs(r) > floatmax(Float64)
-                overflow["square1"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test z == r
-            end
-        end
+        _test(Dict(
+            "fn" => "square1",
+            "args" => args_list.op1,
+            "rel_err_bound" => 0,
+            "compute" => x -> big(x)^2,
+        ))
     end
 
     @testset "square2" begin
-        args = args_list.op2
-        output = fn_output["square2"]
-        coverage["square2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 5u^2
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = (big(xhi) + big(xlo))^2
-            if abs(r) > floatmax(Float64)
-                overflow["square2"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err_bound(r)
-            end
-        end
+        _test(Dict(
+            "fn" => "square2",
+            "args" => args_list.op2,
+            "rel_err_bound" => 5u^2,
+            "compute" => ((xhi, xlo),) -> (big(xhi) + big(xlo))^2
+        ))
     end
 
     @testset "cube1" begin
-        args = args_list.op1
-        output = fn_output["cube1"]
-        coverage["cube1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 3u^2/2 + 4u^3 # (3u^2 if underflow)
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x)^3
-            if abs(r) > floatmax(Float64)
-                overflow["cube1"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err_bound(r)
-            end
-        end
+        _test(Dict(
+            "fn" => "cube1",
+            "args" => args_list.op1,
+            "rel_err_bound" => 3u^2/2 + 4u^3,
+            "compute" => x -> big(x)^3
+        ))
     end
 
     @testset "cube2" begin
-        args = args_list.op2
-        output = fn_output["cube2"]
-        coverage["cube2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 10u^2 + 25u^4
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = (big(xhi) + big(xlo))^3
-            if abs(r) > floatmax(Float64)
-                overflow["cube2"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err_bound(r)
-            end
-        end
+        _test(Dict(
+            "fn" => "cube2",
+            "args" => args_list.op2,
+            "rel_err_bound" => 10u^2 + 25u^4,
+            "compute" => ((xhi, xlo),) -> (big(xhi) + big(xlo))^3
+        ))
     end
 
     @testset "_linpow" begin
-        args = args_list.op1n
-        output = fn_output["_linpow"]
-        coverage["_linpow"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x, n)) in enumerate(args)
-            n = abs(n)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x)^n
-            if abs(r) > floatmax(Float64)
-                overflow["_linpow"] += 1
-                @test !isfinite(zhi + zlo)
-            elseif abs(z - r) >= abs_err_bound(r)
-                @error "_linpow" x n (zhi, zlo) z r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                  max_rel_err = (Float64(rel_err), x, n)
-                end
-            end
-        end
-        err, x, n = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "_linpow max rel err" err x n
-        @info "_linpow avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "_linpow",
+            "args" => args_list.op1n,
+            "rel_err_bound_uf" => big(2.0)^-78,
+            "rel_err_bound" => big(2.0)^-95,
+            "process_args" => (x, n) -> (x, abs(n)),
+            "compute" => (x, n) -> big(x)^n
+        ))
     end
 
 
     @testset "_logpow" begin
-        args = args_list.op1n
-        output = fn_output["_logpow"]
-        coverage["_logpow"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x, n)) in enumerate(args)
-            n = abs(n)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x)^n
-            if abs(r) > floatmax(Float64)
-                overflow["_logpow"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                  max_rel_err = (Float64(rel_err), x, n)
-                end
-            end
-        end
-        err, x, n = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "_logpow max rel err" err x n
-        @info "_logpow avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "_logpow",
+            "args" => args_list.op1n,
+            "rel_err_bound_uf" => big(2.0)^-78,
+            "rel_err_bound" => big(2.0)^-95,
+            "process_args" => (x, n) -> (x, abs(n)),
+            "compute" => (x, n) -> big(x)^n
+        ))
     end
 
     @testset "_logpowltr" begin
-        args = args_list.op1n
-        output = fn_output["_logpowltr"]
-        coverage["_logpowltr"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x, n)) in enumerate(args)
-            n = abs(n)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x)^n
-            if abs(r) > floatmax(Float64)
-                overflow["_logpowltr"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                  max_rel_err = (Float64(rel_err), x, n)
-                end
-            end
-        end
-        err, x, n = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "_logpowltr max rel err" err x n
-        @info "_logpowltr avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "_logpowltr",
+            "args" => args_list.op1n,
+            "rel_err_bound_uf" => big(2.0)^-78,
+            "rel_err_bound" => big(2.0)^-95,
+            "process_args" => (x, n) -> (x, abs(n)),
+            "compute" => (x, n) -> big(x)^n
+        ))
     end
 
     @testset "_linpow2" begin
-        args = args_list.op2n
-        output = fn_output["_linpow2"]
-        coverage["_linpow2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, (0, 0), 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo), n)) in enumerate(args)
-            n = abs(n)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = (big(xhi) + big(xlo))^n
-            if abs(r) > floatmax(Float64)
-                overflow["_linpow2"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                  max_rel_err = (Float64(rel_err), (xhi, xlo), n)
-                end
-            end
-        end
-        err, x, n = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "_linpow2 max rel err" err x n
-        @info "_linpow2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "_linpow2",
+            "args" => args_list.op2n,
+            "rel_err_bound_uf" => big(2.0)^-78,
+            "rel_err_bound" => big(2.0)^-95,
+            "process_args" => ((xhi, xlo), n) -> ((xhi, xlo), abs(n)),
+            "compute" => ((xhi, xlo), n) -> (big(xhi) + big(xlo))^n
+        ))
     end
 
     @testset "_logpow2" begin
-        args = args_list.op2n
-        output = fn_output["_logpow2"]
-        coverage["_logpow2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, (0, 0), 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo), n)) in enumerate(args)
-            n = abs(n)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = (big(xhi) + big(xlo))^n
-            if abs(r) > floatmax(Float64)
-                overflow["_logpow2"] += 1
-                @test !isfinite(zhi + zlo)
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                  max_rel_err = (Float64(rel_err), (xhi, xlo), n)
-                end
-            end
-        end
-        err, x, n = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "_logpow2 max rel err" err x n
-        @info "_logpow2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "_logpow2",
+            "args" => args_list.op2n,
+            "rel_err_bound_uf" => big(2.0)^-78,
+            "rel_err_bound" => big(2.0)^-95,
+            "process_args" => ((xhi, xlo), n) -> ((xhi, xlo), abs(n)),
+            "compute" => ((xhi, xlo), n) -> (big(xhi) + big(xlo))^n
+        ))
     end
 
     @testset "pow1int" begin
-        args = args_list.op1n
-        output = fn_output["pow1int"]
-        coverage["pow1int"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x, n)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x)^n
-            if abs(r) > floatmax(Float64)
-                overflow["pow1int"] += 1
-                @test !isfinite(zhi + zlo)
-            elseif abs(r) > 2^916 && isnan(z)
-                overflow["pow1int"] += 1
-                @error "NaN (overflow but could be avoided)" x n (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                n < 0 && abs(u^2 / r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                  max_rel_err = (Float64(rel_err), x, n)
-                end
-            end
-        end
-        err, x, n = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "pow1int max rel err" err x n
-        @info "pow1int avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "pow1int",
+            "args" => args_list.op1n,
+            "rel_err_bound_uf" => big(2.0)^-78,
+            "rel_err_bound" => big(2.0)^-95,
+            "compute" => (x, n) -> big(x)^n,
+            "underflow" => (r, (x, n)) -> n < 0 && abs(u^2/r) < ε₀
+        ))
     end
 
     @testset "pow2int" begin
-        args = args_list.op2n
-        output = fn_output["pow2int"]
-        coverage["pow2int"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, (0, 0), 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo), n)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            x = big(xhi) + big(xlo)
-            r = x^n
-            if abs(r) > floatmax(Float64)
-                overflow["pow2int"] += 1
-                @test !isfinite(zhi + zlo)
-            elseif abs(r) > 2^916 && isnan(z)
-                overflow["pow2int"] += 1
-                @error "NaN (overflow but could be avoided)" (xhi, xlo) n (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                n < 0 && abs(u^2 / r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                  max_rel_err = (Float64(rel_err), (xhi, xlo), n)
-                end
-            end
-        end
-        err, x, n = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "pow2int max rel err" err x n
-        @info "pow2int avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "pow2int",
+            "args" => args_list.op2n,
+            "rel_err_bound_uf" => big(2.0)^-78,
+            "rel_err_bound" => big(2.0)^-95,
+            "compute" => ((xhi, xlo), n) -> (big(xhi) + big(xlo))^n,
+            "underflow" => (r, (x, n)) -> n < 0 && abs(u^2/r) < ε₀
+        ))
     end
 
     @testset "pow11" begin
-        args = args_list.op11
-        output = fn_output["pow11"]
-        coverage["pow11"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 3ε₀)
-        max_rel_err = (0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x, p)) in enumerate(args)
-            x = abs(x)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x)^p
-            if abs(r) > floatmax(Float64)
-                overflow["pow11"] += 1
-                @test !isfinite(zhi + zlo)
-            elseif abs(r) > 2^916 && isnan(z)
-                overflow["pow11"] += 1
-                @error "NaN (overflow but could be avoided)" x p (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                  max_rel_err = (Float64(rel_err), x, p)
-                end
-            end
-        end
-        err, x, p = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "pow11 max rel err" err x p
-        @info "pow11 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "pow11",
+            "args" => args_list.op11,
+            "rel_err_bound_uf" => big(2.0)^-78, # 3ε₀
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => (x, p) -> (abs(x), p),
+            "compute" => (x, p) -> big(x)^p
+        ))
     end
 
     @testset "pow12" begin
-        args = args_list.op12
-        output = fn_output["pow12"]
-        coverage["pow12"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 3ε₀)
-        max_rel_err = (0, 0, (0, 0))
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x, (phi, plo))) in enumerate(args)
-            x = abs(x)
-            p = big(phi) + big(plo)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = big(x)^p
-            if abs(r) > floatmax(Float64)
-                overflow["pow12"] += 1
-                @test !isfinite(zhi + zlo)
-            elseif abs(r) > 2^916 && isnan(z)
-                overflow["pow12"] += 1
-                @error "NaN (overflow but could be avoided)" x (phi, plo) (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                  max_rel_err = (Float64(rel_err), x, (phi, plo))
-                end
-            end
-        end
-        err, x, p = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "pow12 max rel err" err x p
-        @info "pow12 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "pow12",
+            "args" => args_list.op12,
+            "rel_err_bound_uf" => big(2.0)^-78,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => (x, p) -> (abs(x), p),
+            "compute" => (x, (phi, plo)) -> big(x)^(big(phi) + big(plo))
+        ))
     end
 
     @testset "pow21" begin
-        args = args_list.op21
-        output = fn_output["pow21"]
-        coverage["pow21"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 3ε₀)
-        max_rel_err = (0, (0, 0), 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo), p)) in enumerate(args)
-            xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
-            x = abs(big(xhi) + big(xlo))
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = x^p
-            if abs(r) > floatmax(Float64)
-                overflow["pow21"] += 1
-                @test !isfinite(zhi + zlo)
-            elseif abs(r) > 2^916 && isnan(z)
-                overflow["pow21"] += 1
-                @error "NaN (overflow but could be avoided)" (xhi, xlo) p (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                  max_rel_err = (Float64(rel_err), (xhi, xlo), p)
-                end
-            end
-        end
-        err, x, p = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "pow21 max rel err" err x p
-        @info "pow21 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "pow21",
+            "args" => args_list.op21,
+            "rel_err_bound_uf" => big(2.0)^-78,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => ((xhi, xlo), p) -> xhi < 0 ? ((-xhi, -xlo), p) : ((xhi, xlo), p),
+            "compute" => ((xhi, xlo), p) -> (big(xhi) + big(xlo))^p
+        ))
     end
 
     @testset "pow22" begin
-        args = args_list.op22
-        output = fn_output["pow22"]
-        coverage["pow22"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-78
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 3ε₀)
-        max_rel_err = (0, (0, 0), (0, 0))
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo), (phi, plo))) in enumerate(args)
-            xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
-            x = abs(big(xhi) + big(xlo))
-            p = big(phi) + big(plo)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = x^p
-            if abs(r) > floatmax(Float64)
-                overflow["pow22"] += 1
-                @test !isfinite(zhi + zlo)
-            elseif abs(r) > 2^916 && isnan(z)
-                overflow["pow22"] += 1
-                @error "NaN (overflow but could be avoided)" (xhi, xlo) (phi, plo) (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                  max_rel_err = (Float64(rel_err), (xhi, xlo), (phi, plo))
-                end
-            end
-        end
-        err, x, p = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "pow22 max rel err" err x p
-        @info "pow22 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "pow22",
+            "args" => args_list.op22,
+            "rel_err_bound_uf" => big(2.0)^-78,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => ((xhi, xlo), p) -> xhi < 0 ? ((-xhi, -xlo), p) : ((xhi, xlo), p),
+            "compute" => ((xhi, xlo), (phi, plo)) -> (big(xhi) + big(xlo))^(big(phi) + big(plo))
+        ))
     end
 
     @testset "exp1" begin
-        args = args_list.exp1
-        output = fn_output["exp1"]
-        coverage["exp1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 10u^2
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = exp(big(x))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["exp1"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), x, z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "exp1 max rel err" err x # z r
-        @info "exp1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "exp1",
+            "args" => args_list.exp1,
+            "rel_err_bound" => 10u^2,
+            "compute" => x -> exp(big(x))
+        ))
     end
 
     @testset "exp2" begin
-        args = args_list.exp2
-        output = fn_output["exp2"]
-        coverage["exp2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 10u^2
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
-        max_rel_err = (0, 0, 0,0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = exp(big(xhi) + big(xlo))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["exp2"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" (xhi, xlo) (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "exp2 max rel err" err x # z r
-        @info "exp2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "exp2",
+            "args" => args_list.exp2,
+            "rel_err_bound" => 10u^2,
+            "compute" => ((xhi, xlo),) -> exp(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "expm1_1" begin
-        args = args_list.exp1
-        output = fn_output["expm1_1"]
-        coverage["expm1_1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 10u^2
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = expm1(big(x))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["expm1_1"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                # @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), x, z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "expm1_1 max rel err" err x # z r
-        @info "expm1_1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "expm1_1",
+            "args" => args_list.exp1,
+            "rel_err_bound" => 10u^2,
+            "compute" => x -> expm1(big(x))
+        ))
     end
 
     @testset "expm1_2" begin
-        args = args_list.exp2
-        output = fn_output["expm1_2"]
-        coverage["expm1_2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 10u^2
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
-        max_rel_err = (0, 0, 0,0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = expm1(big(xhi) + big(xlo))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["expm1_2"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" (xhi, xlo) (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "expm1_2 max rel err" err x # z r
-        @info "expm1_2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "expm1_2",
+            "args" => args_list.exp2,
+            "rel_err_bound" => 10u^2,
+            "compute" => ((xhi, xlo),) -> expm1(big(xhi) + big(xlo))
+        ))
     end
 end
 
@@ -636,177 +212,63 @@ println()
 @testset verbose = true "Logarithms ──────────────" begin ######################
 
     @testset "ln1" begin
-        args = args_list.op1
-        output = fn_output["ln1"]
-        coverage["ln1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-85
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            x = abs(x)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = log(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "ln1 max rel err" err x z r
-        @info "ln1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "ln1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => x -> abs(x),
+            "compute" => x -> log(big(x))
+        ))
     end
 
     @testset "ln2" begin
-        args = args_list.op2
-        output = fn_output["ln2"]
-        coverage["ln2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-85
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0,0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = log(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "ln2 max rel err" err x z r
-        @info "ln2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "ln2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => ((xhi, xlo),) -> xhi < 0 ? ((-xhi, -xlo),) : ((xhi, xlo),),
+            "compute" => ((xhi, xlo),) -> log(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "log2_1" begin
-        args = args_list.op1
-        output = fn_output["log2_1"]
-        coverage["log2_1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-85
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            x = abs(x)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = log2(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "log2_1 max rel err" err x z r
-        @info "log2_1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "log2_1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => x -> abs(x),
+            "compute" => x -> log2(big(x))
+        ))
     end
 
     @testset "log2_2" begin
-        args = args_list.op2
-        output = fn_output["log2_2"]
-        coverage["log2_2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-85
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0,0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = log2(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "log2_2 max rel err" err x z r
-        @info "log2_2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "log2_2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => ((xhi, xlo),) -> xhi < 0 ? ((-xhi, -xlo),) : ((xhi, xlo),),
+            "compute" => ((xhi, xlo),) -> log2(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "log10_1" begin
-        args = args_list.op1
-        output = fn_output["log10_1"]
-        coverage["log10_1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-85
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            x = abs(x)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = log10(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "log10_1 max rel err" err x z r
-        @info "log10_1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "log10_1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => x -> abs(x),
+            "compute" => x -> log10(big(x))
+        ))
     end
 
     @testset "log10_2" begin
-        args = args_list.op2
-        output = fn_output["log10_2"]
-        coverage["log10_2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-85
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0,0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = log10(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "log10_2 max rel err" err x z r
-        @info "log10_2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "log10_2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => ((xhi, xlo),) -> xhi < 0 ? ((-xhi, -xlo),) : ((xhi, xlo),),
+            "compute" => ((xhi, xlo),) -> log10(big(xhi) + big(xlo))
+        ))
     end
 end
 
@@ -814,178 +276,64 @@ println()
 @testset verbose = true "Roots ───────────────────" begin ######################
 
     @testset "sqrt1" begin
-        args = args_list.op1
-        output = fn_output["sqrt1"]
-        coverage["sqrt1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 25u^2/8
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            x = abs(x)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sqrt(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "sqrt1 max rel err" err x z r
-        @info "sqrt1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "sqrt1",
+            "args" => args_list.op1,
+            "rel_err_bound" => 25u^2/8,
+            "process_args" => x -> abs(x),
+            "compute" => x -> sqrt(big(x))
+        ))
     end
 
     @testset "sqrt2" begin
-        args = args_list.op2
-        output = fn_output["sqrt2"]
-        coverage["sqrt2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 25u^2/8
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sqrt(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "sqrt2 max rel err" err x z r
-        @info "sqrt2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "sqrt2",
+            "args" => args_list.op2,
+            "rel_err_bound" => 25u^2/8,
+            "process_args" => ((xhi, xlo),) -> xhi < 0 ? ((-xhi, -xlo),) : ((xhi, xlo),),
+            "compute" => ((xhi, xlo),) -> sqrt(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "cbrt1" begin
-        args = args_list.op1
-        output = fn_output["cbrt1"]
-        coverage["cbrt1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 25u^2
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = cbrt(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "cbrt1 max rel err" err x z r
-        @info "cbrt1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "cbrt1",
+            "args" => args_list.op1,
+            "rel_err_bound" => 25u^2,
+            "compute" => x -> cbrt(big(x))
+        ))
     end
 
     @testset "cbrt2" begin
-        args = args_list.op2
-        output = fn_output["cbrt2"]
-        coverage["cbrt2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 25u^2
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = cbrt(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "cbrt2 max rel err" err x z r
-        @info "cbrt2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "cbrt2",
+            "args" => args_list.op2,
+            "rel_err_bound" => 25u^2,
+            "compute" => ((xhi, xlo),) -> cbrt(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "nthroot1" begin
-        args = args_list.op1n
-        output = fn_output["nthroot1"]
-        coverage["nthroot1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-95
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x, n)) in enumerate(args)
-            n = abs(n)
-            x = x < 0 && iseven(n) ? -x : x
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sign(x) * big(abs(x))^inv(big(n))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, n)
-            end
-        end
-        err, x, n = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "nthroot1 max rel err" err x n
-        @info "nthroot1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "nthroot1",
+            "args" => args_list.op1n,
+            "rel_err_bound" => big(2.0)^-95,
+            "process_args" => (x, n) -> (x < 0 && iseven(n) ? -x : x, abs(n)),
+            "compute" => (x, n) -> sign(x) * big(abs(x))^inv(big(n))
+        ))
     end
 
     @testset "nthroot2" begin
-        args = args_list.op2n
-        output = fn_output["nthroot2"]
-        coverage["nthroot2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-95
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2ε₀)
-        max_rel_err = (0, (0, 0), 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo), n)) in enumerate(args)
-            n = abs(n)
-            (xhi, xlo) = xhi < 0 && iseven(n) ? (-xhi, -xlo) : (xhi, xlo)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            x = big(xhi) + big(xlo)
-            r = sign(x) * abs(x)^inv(big(n))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), n)
+        _test(Dict(
+            "fn" => "nthroot2",
+            "args" => args_list.op2n,
+            "rel_err_bound" => big(2.0)^-95,
+            "process_args" => ((xhi,xlo), n) -> (xhi<0 && iseven(n) ? (-xhi,-xlo) : (xhi,xlo), abs(n)),
+            "compute" => function((xhi, xlo), n)
+                x = big(xhi) + big(xlo)
+                sign(x) * big(abs(x))^inv(big(n))
             end
-        end
-        err, x, n = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "nthroot2 max rel err" err x n
-        @info "nthroot2 avg rel err" avg
-        println()
+        ))
     end
 end
 
@@ -993,114 +341,38 @@ println()
 @testset verbose = true "Modular Arithmetic ──────" begin ######################
 
     @testset "rempi_1" begin
-        args = args_list.op1
-        output = fn_output["rempi_1"]
-        coverage["rempi_1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 10u^2
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = rem(big(x), big(pi), RoundToZero)
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "rempi_1 max rel err" err x z r
-        @info "rempi_1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "rempi_1",
+            "args" => args_list.op1,
+            "rel_err_bound" => 10u^2,
+            "compute" => x -> rem(big(x), big(pi), RoundToZero)
+        ))
     end
 
     @testset "rempi_2" begin
-        args = args_list.op2
-        output = fn_output["rempi_2"]
-        coverage["rempi_2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 25u^2
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = rem(big(xhi) + big(xlo), big(pi), RoundToZero)
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "rempi_2 max rel err" err x z r
-        @info "rempi_2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "rempi_2",
+            "args" => args_list.op2,
+            "rel_err_bound" => 25u^2,
+            "compute" => ((xhi, xlo),) -> rem(big(xhi) + big(xlo), big(pi), RoundToZero)
+        ))
     end
     @testset "rem2pi_1" begin
-        args = args_list.op1
-        output = fn_output["rem2pi_1"]
-        coverage["rem2pi_1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 10u^2
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = rem2pi(big(x), RoundToZero)
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "rem2pi_1 max rel err" err x z r
-        @info "rem2pi_1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "rem2pi_1",
+            "args" => args_list.op1,
+            "rel_err_bound" => 10u^2,
+            "compute" => x -> rem2pi(big(x), RoundToZero)
+        ))
     end
 
     @testset "rem2pi_2" begin
-        args = args_list.op2
-        output = fn_output["rem2pi_2"]
-        coverage["rem2pi_2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = 25u^2
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = rem2pi(big(xhi) + big(xlo), RoundToZero)
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "rem2pi_2 max rel err" err x z r
-        @info "rem2pi_2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "rem2pi_2",
+            "args" => args_list.op2,
+            "rel_err_bound" => 25u^2,
+            "compute" => ((xhi, xlo),) -> rem2pi(big(xhi) + big(xlo), RoundToZero)
+        ))
     end
 end
 
@@ -1108,339 +380,111 @@ println()
 @testset verbose = true "Trigonometric functions ─" begin ######################
 
     @testset "sin1" begin
-        args = args_list.op1
-        output = fn_output["sin1"]
-        coverage["sin1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sin(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "sin1 max rel err" err x z r
-        @info "sin1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "sin1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => x -> sin(big(x))
+        ))
     end
 
     @testset "sin2" begin
-        args = args_list.op2
-        output = fn_output["sin2"]
-        coverage["sin2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sin(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "sin2 max rel err" err x z r
-        @info "sin2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "sin2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => ((xhi, xlo),) -> sin(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "cos1" begin
-        args = args_list.op1
-        output = fn_output["cos1"]
-        coverage["cos1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = cos(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "cos1 max rel err" err x z r
-        @info "cos1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "cos1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => x -> cos(big(x))
+        ))
     end
 
     @testset "cos2" begin
-        args = args_list.op2
-        output = fn_output["cos2"]
-        coverage["cos2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = cos(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "cos2 max rel err" err x z r
-        @info "cos2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "cos2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => ((xhi, xlo),) -> cos(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "tan1" begin
-        args = args_list.op1
-        output = fn_output["tan1"]
-        coverage["tan1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = tan(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "tan1 max rel err" err x z r
-        @info "tan1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "tan1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => x -> tan(big(x))
+        ))
     end
 
     @testset "tan2" begin
-        args = args_list.op2
-        output = fn_output["tan2"]
-        coverage["tan2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = tan(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "tan2 max rel err" err x z r
-        @info "tan2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "tan2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => ((xhi, xlo),) -> tan(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "cot1" begin
-        args = args_list.op1
-        output = fn_output["cot1"]
-        coverage["cot1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = cot(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "cot1 max rel err" err x z r
-        @info "cot1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "cot1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => x -> cot(big(x))
+        ))
     end
 
     @testset "cot2" begin
-        args = args_list.op2
-        output = fn_output["cot2"]
-        coverage["cot2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = cot(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "cot2 max rel err" err x z r
-        @info "cot2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "cot2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => ((xhi, xlo),) -> cot(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "sec1" begin
-        args = args_list.op1
-        output = fn_output["sec1"]
-        coverage["sec1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sec(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "sec1 max rel err" err x z r
-        @info "sec1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "sec1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => x -> sec(big(x))
+        ))
     end
 
     @testset "sec2" begin
-        args = args_list.op2
-        output = fn_output["sec2"]
-        coverage["sec2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sec(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "sec2 max rel err" err x z r
-        @info "sec2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "sec2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => ((xhi, xlo),) -> sec(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "csc1" begin
-        args = args_list.op1
-        output = fn_output["csc1"]
-        coverage["csc1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = csc(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "csc1 max rel err" err x z r
-        @info "csc1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "csc1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => x -> csc(big(x))
+        ))
     end
 
     @testset "csc2" begin
-        args = args_list.op2
-        output = fn_output["csc2"]
-        coverage["csc2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = csc(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "csc2 max rel err" err x z r
-        @info "csc2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "csc2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "compute" => ((xhi, xlo),) -> csc(big(xhi) + big(xlo))
+        ))
     end
 end
 
@@ -1448,417 +492,114 @@ println()
 @testset verbose = true "Hyperbolic functions ────" begin ######################
 
     @testset "sinh1" begin
-        args = args_list.exp1
-        output = fn_output["sinh1"]
-        coverage["sinh1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-75
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sinh(big(x))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["sinh1"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                abs(u^2 * exp(big(x))) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), x, z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "sinh1 max rel err" err x z r
-        @info "sinh1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "sinh1",
+            "args" => args_list.exp1,
+            "rel_err_bound_uf" => big(2.0)^-75,
+            "compute" => x -> sinh(big(x)),
+            "underflow" => (r, (x,)) -> abs(u^2 * exp(big(x))) < ε₀
+        ))
     end
 
     @testset "sinh2" begin
-        args = args_list.exp2
-        output = fn_output["sinh2"]
-        coverage["sinh2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-75
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sinh(big(xhi) + big(xlo))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["sinh2"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                abs(u^2 * exp(big(xhi) + big(xlo))) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "sinh2 max rel err" err x z r
-        @info "sinh2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "sinh2",
+            "args" => args_list.exp2,
+            "rel_err_bound_uf" => big(2.0)^-75,
+            "compute" => ((xhi, xlo),) -> sinh(big(xhi) + big(xlo)),
+            "underflow" => (r, ((xhi, xlo),)) -> abs(u^2 * exp(big(xhi) + big(xlo))) < ε₀
+        ))
     end
 
     @testset "cosh1" begin
-        args = args_list.exp1
-        output = fn_output["cosh1"]
-        coverage["cosh1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-75
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = cosh(big(x))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["cosh1"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                abs(u^2 * exp(big(x))) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), x, z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "cosh1 max rel err" err x z r
-        @info "cosh1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "cosh1",
+            "args" => args_list.exp1,
+            "rel_err_bound_uf" => big(2.0)^-75,
+            "compute" => x -> cosh(big(x)),
+            "underflow" => (r, (x,)) -> abs(u^2 * exp(big(x))) < ε₀
+        ))
     end
 
     @testset "cosh2" begin
-        args = args_list.exp2
-        output = fn_output["cosh2"]
-        coverage["cosh2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-75
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = cosh(big(xhi) + big(xlo))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["cosh2"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                abs(u^2 * exp(big(xhi) + big(xlo))) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "cosh2 max rel err" err x z r
-        @info "cosh2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "cosh2",
+            "args" => args_list.exp2,
+            "rel_err_bound_uf" => big(2.0)^-75,
+            "compute" => ((xhi, xlo),) -> cosh(big(xhi) + big(xlo)),
+            "underflow" => (r, ((xhi, xlo),)) -> abs(u^2 * exp(big(xhi) + big(xlo))) < ε₀
+        ))
     end
 
     @testset "tanh1" begin
-        args = args_list.exp1
-        output = fn_output["tanh1"]
-        coverage["tanh1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-95
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            x = x % 37
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = tanh(big(x))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), x, z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "tanh1 max rel err" err x z r
-        @info "tanh1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "tanh1",
+            "args" => args_list.exp1,
+            # "rel_err_bound" => big(2.0)^-95,
+            "process_args" => x -> x % 37,
+            "compute" => x -> tanh(big(x))
+        ))
     end
 
     @testset "tanh2" begin
-        args = args_list.exp2
-        output = fn_output["tanh2"]
-        coverage["tanh2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-95
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            xhi, xlo = twosum(xhi % 37, xlo)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = tanh(big(xhi) + big(xlo))
-            @test abs(z - r) < abs_err_bound(r)
-            abs(u^2 * r) < ε₀ && continue # underflow
-            rel_err = abs((z - r) / r)
-            avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-            if rel_err > max_rel_err[1]
-                max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "tanh2 max rel err" err x z r
-        @info "tanh2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "tanh2",
+            "args" => args_list.exp2,
+            "process_args" => ((xhi, xlo),) -> (twosum(xhi % 37, xlo),),
+            "compute" => ((xhi, xlo),) -> tanh(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "coth1" begin
-        args = args_list.exp1
-        output = fn_output["coth1"]
-        coverage["coth1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            x = x % 37
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = coth(big(x))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["coth1"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * exp(big(x))) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), x, z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "coth1 max rel err" err x z r
-        @info "coth1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "coth1",
+            "args" => args_list.exp1,
+            "process_args" => x -> x % 37,
+            "compute" => x -> coth(big(x)),
+            "underflow" => (r, (x,)) -> abs(u^2 * exp(big(x))) < ε₀
+        ))
     end
 
     @testset "coth2" begin
-        args = args_list.exp2
-        output = fn_output["coth2"]
-        coverage["coth2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            xhi, xlo = twosum(xhi % 37, xlo)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = coth(big(xhi) + big(xlo))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["coth2"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * exp(big(xhi) + big(xlo))) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "coth2 max rel err" err x z r
-        @info "coth2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "coth2",
+            "args" => args_list.exp2,
+            "process_args" => ((xhi, xlo),) -> (twosum(xhi % 37, xlo),),
+            "compute" => ((xhi, xlo),) -> coth(big(xhi) + big(xlo)),
+            "underflow" => (r, ((xhi, xlo),)) -> abs(u^2 * exp(big(xhi) + big(xlo))) < ε₀
+        ))
     end
 
     @testset "sech1" begin
-        args = args_list.exp1
-        output = fn_output["sech1"]
-        coverage["sech1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sech(big(x))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["sech1"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), x, z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "sech1 max rel err" err x z r
-        @info "sech1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "sech1",
+            "args" => args_list.exp1,
+            "compute" => x -> sech(big(x))
+        ))
     end
 
     @testset "sech2" begin
-        args = args_list.exp2
-        output = fn_output["sech2"]
-        coverage["sech2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = sech(big(xhi) + big(xlo))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["sech2"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "sech2 max rel err" err x z r
-        @info "sech2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "sech2",
+            "args" => args_list.exp2,
+            "compute" => ((xhi, xlo),) -> sech(big(xhi) + big(xlo))
+        ))
     end
 
     @testset "csch1" begin
-        args = args_list.exp1
-        output = fn_output["csch1"]
-        coverage["csch1"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, (x,)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = csch(big(x))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["csch1"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), x, z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "csch1 max rel err" err x z r
-        @info "csch1 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "csch1",
+            "args" => args_list.exp1,
+            "compute" => x -> csch(big(x))
+        ))
     end
 
     @testset "csch2" begin
-        args = args_list.exp2
-        output = fn_output["csch2"]
-        coverage["csch2"] = true
-        @test length(args) == length(output)
-        rel_err_bound = big(2.0)^-90
-        abs_err_bound = r -> max(abs(rel_err_bound * r), 2.5ε₀)
-        max_rel_err = (0, 0, 0, 0)
-        avg_psum, avg_n = big(0.0), 0
-        for (i, ((xhi, xlo),)) in enumerate(args)
-            zhi, zlo = output[i]
-            z = big(zhi) + big(zlo)
-            r = csch(big(xhi) + big(xlo))
-            if abs(r) > floatmax(Float64)
-                @test !isfinite(zhi + zlo)
-            elseif isnan(z)
-                overflow["csch2"] += 1 # spurious overflow
-                # @error "NaN (overflow but could be avoided)" x (zhi, zlo) r
-            else
-                @test abs(z - r) < abs_err_bound(r)
-                abs(u^2 * r) < ε₀ && continue # underflow
-                rel_err = abs((z - r) / r)
-                avg_psum, avg_n = avg_psum + rel_err, avg_n + 1
-                if rel_err > max_rel_err[1]
-                    max_rel_err = (Float64(rel_err), (xhi, xlo), z, r)
-                end
-            end
-        end
-        err, x, z, r = max_rel_err
-        avg = Float64(avg_psum / avg_n)
-        @info "csch2 max rel err" err x z r
-        @info "csch2 avg rel err" avg
-        println()
+        _test(Dict(
+            "fn" => "csch2",
+            "args" => args_list.exp2,
+            "compute" => ((xhi, xlo),) -> csch(big(xhi) + big(xlo))
+        ))
     end
 end
 
@@ -1871,6 +612,8 @@ println()
     end
 end
 
-println()
 overflowed = filter(((fn , ov_count),) -> ov_count > 0, overflow)
-@info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflowed)...] |> join
+if !isempty(overflowed)
+    println()
+    @info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflowed)...] |> join
+end
