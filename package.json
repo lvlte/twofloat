@@ -29,11 +29,10 @@
     "dist"
   ],
   "scripts": {
-    "pretest": "rimraf ./test/error-bound/testset && make-dir ./test/error-bound/testset",
+    "pretest": "rm -Rf ./test/error-bound/testset && mkdir \"./test/error-bound/testset\"",
     "posttest": "tsx ./test/error-bound/prerun.ts && julia ./test/error-bound/runtest.jl",
     "test": "jest",
-    "tsc": "tsc",
-    "prebuild": "rimraf dist && make-dir dist",
+    "prebuild": "rm -Rf dist && mkdir dist",
     "build": "tsc && tsc -p tsconfig-cjs.json",
     "postbuild": "(echo { && echo   \"type\": \"commonjs\" && echo }) > ./dist/cjs/package.json",
     "prepublishOnly": "npm test && npm run build && tsc --emitDeclarationOnly true --removeComments false && tsc -p tsconfig-cjs.json --emitDeclarationOnly true --removeComments false"
@@ -54,8 +53,6 @@
     "@lvlte/ulp": "^1.2.1",
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
-    "make-dir-cli": "^4.0.0",
-    "rimraf": "^6.0.1",
     "ts-jest": "29.2.5",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
