@@ -1,13 +1,13 @@
 /**
- * @file Trigonometry
+ * @file Trigonometric functions
  */
 
-import { type f64, type int, type TwoF64 } from "../base/common.js";
+import { type f64, type TwoF64 } from "../base/common.js";
 import { add21, add22, div22, mul21, mul22, sub22 } from "../arithmetic/index.js";
 import { ge22, lt22 } from "../base/compare.js";
 import { sin_pade, cos_pade, tan_pade_int } from "../pre/trig.js";
 import { PI } from "./constants.js";
-import { square1, square2 } from "./exp.js";
+import { square_1, square_2 } from "./exp.js";
 import { rem2pi_1, rem2pi_2, rempi_1, rempi_2 } from "./mod.js";
 import { abs2, neg2 } from "./sign.js";
 
@@ -23,12 +23,12 @@ const PI_HALF: TwoF64 = [1.5707963267948966, 6.123233995736766e-17];
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function sin1(x: f64): TwoF64 {
+export function sin_1(x: f64): TwoF64 {
   let sign = Math.sign(x);
   const xabs = Math.abs(x);
 
   if (xabs <= PI_HALF[0]) {
-    return _sin1(x);
+    return _sin_1(x);
   }
 
   let r = rem2pi_1(xabs);
@@ -43,7 +43,7 @@ export function sin1(x: f64): TwoF64 {
     return sign < 0 ? neg2(_cos(r)) : _cos(r);
   }
 
-  return sign < 0 ? _sin2(neg2(r)) : _sin2(r);
+  return sign < 0 ? _sin_2(neg2(r)) : _sin_2(r);
 }
 
 /**
@@ -53,12 +53,12 @@ export function sin1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function sin2(x: TwoF64): TwoF64 {
+export function sin_2(x: TwoF64): TwoF64 {
   let sign = Math.sign(x[0]);
   const xabs = abs2(x);
 
   if (lt22(xabs, PI_HALF)) {
-    return _sin2(x);
+    return _sin_2(x);
   }
 
   let r = rem2pi_2(xabs);
@@ -73,15 +73,15 @@ export function sin2(x: TwoF64): TwoF64 {
     return sign < 0 ? neg2(_cos(r)) : _cos(r);
   }
 
-  return sign < 0 ? _sin2(neg2(r)) : _sin2(r);
+  return sign < 0 ? _sin_2(neg2(r)) : _sin_2(r);
 }
 
 /**
  * Compute the sine of `x` using Padé approximant. Accurate for `|x| < π/2`
  * (the relative error grows significantly as `x` moves away from that range).
  */
-export function _sin1(x: f64): TwoF64 {
-  const [p, q] = _sin1_padé(x);
+export function _sin_1(x: f64): TwoF64 {
+  const [p, q] = _sin_padé_1(x);
   return div22(p, q);
 }
 
@@ -89,14 +89,14 @@ export function _sin1(x: f64): TwoF64 {
  * Return a Padé approximant of `sin(x)`, where `|x| < π/2`, as a rational `p/q`
  * represented as `[p, q]`.
  */
-export function _sin1_padé(x: f64): [TwoF64, TwoF64] {
+export function _sin_padé_1(x: f64): [TwoF64, TwoF64] {
   // Padé [n/n] -> if n is odd, |P| = |Q|, otherwise |P| = |Q| - 1
   //
   //  p = P₀x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹
   //  q =   1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
 
   const [P, Q] = sin_pade[17];
-  let xpow = square1(x);
+  let xpow = square_1(x);
 
   if (P.length < Q.length) {
     let p = [x, 0] as TwoF64;
@@ -125,22 +125,22 @@ export function _sin1_padé(x: f64): [TwoF64, TwoF64] {
  * Compute the sine of `x` using Padé approximant. Accurate for `|x| < π/2`
  * (the relative error grows significantly as `x` moves away from that range).
  */
-export function _sin2(x: TwoF64): TwoF64 {
-  const [p, q] = _sin2_padé(x);
+export function _sin_2(x: TwoF64): TwoF64 {
+  const [p, q] = _sin_2_padé(x);
   return div22(p, q);
 }
 /**
  * Return a Padé approximant of `sin(x)`, where `|x| < π/2`, as a rational `p/q`
  * represented as `[p, q]`.
  */
-export function _sin2_padé(x: TwoF64): [TwoF64, TwoF64] {
+export function _sin_2_padé(x: TwoF64): [TwoF64, TwoF64] {
   // Padé [n/n] -> if n is odd, |P| = |Q|, otherwise |P| = |Q| - 1
   //
   //  p = P₀x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹
   //  q =   1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
 
   const [P, Q] = sin_pade[17];
-  let xpow = square2(x);
+  let xpow = square_2(x);
 
   if (P.length < Q.length) {
     let p = x;
@@ -172,7 +172,7 @@ export function _sin2_padé(x: TwoF64): [TwoF64, TwoF64] {
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function cos1(x: f64): TwoF64 {
+export function cos_1(x: f64): TwoF64 {
   const xabs = Math.abs(x);
   let sign = 1;
 
@@ -189,7 +189,7 @@ export function cos1(x: f64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? _sin2(r) : _sin2(neg2(r));
+    return sign < 0 ? _sin_2(r) : _sin_2(neg2(r));
   }
 
   return sign < 0 ? neg2(_cos(r)) : _cos(r);
@@ -202,7 +202,7 @@ export function cos1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function cos2(x: TwoF64): TwoF64 {
+export function cos_2(x: TwoF64): TwoF64 {
   const xabs = abs2(x);
   let sign = 1;
 
@@ -219,7 +219,7 @@ export function cos2(x: TwoF64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? _sin2(r) : _sin2(neg2(r));
+    return sign < 0 ? _sin_2(r) : _sin_2(neg2(r));
   }
 
   return sign < 0 ? neg2(_cos(r)) : _cos(r);
@@ -240,7 +240,7 @@ export function _cos(x: f64 | TwoF64): TwoF64 {
  */
 export function _cos_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
   const [P, Q] = cos_pade[16];
-  const x2 = typeof x === 'number' ? square1(x) : square2(x);
+  const x2 = typeof x === 'number' ? square_1(x) : square_2(x);
 
   let p = mul22(P[1], x2)   // p = 1 + P₁x² + P₂x⁴ + ... + Pₖ*x²ᵏ
   let q = mul22(Q[1], x2);  // q = 1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
@@ -261,7 +261,7 @@ export function _cos_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function tan1(x: f64): TwoF64 {
+export function tan_1(x: f64): TwoF64 {
   let sign = Math.sign(x);
   const xabs = Math.abs(x);
 
@@ -287,7 +287,7 @@ export function tan1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function tan2(x: TwoF64): TwoF64 {
+export function tan_2(x: TwoF64): TwoF64 {
   let sign = Math.sign(x[0]);
   const xabs = abs2(x);
 
@@ -313,8 +313,8 @@ export function tan2(x: TwoF64): TwoF64 {
 function _tan_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
   const [P, Q] = tan_pade_int[18]; // (17, 18, 19)
   const [x2, pmulx] = typeof x === 'number'
-    ? [square1(x), mul21 as ((x:TwoF64, y:f64 | TwoF64) => TwoF64)]
-    : [square2(x), mul22 as ((x:TwoF64, y:f64 | TwoF64) => TwoF64)];
+    ? [square_1(x), mul21 as ((x:TwoF64, y:f64 | TwoF64) => TwoF64)]
+    : [square_2(x), mul22 as ((x:TwoF64, y:f64 | TwoF64) => TwoF64)];
 
   let p = add22(mul22(x2, P[0]), P[1]);
   let q = add22(mul22(x2, Q[0]), Q[1]);
@@ -349,7 +349,7 @@ function _tan(x: f64 | TwoF64): TwoF64 {
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function cot1(x: f64): TwoF64 {
+export function cot_1(x: f64): TwoF64 {
   let sign = Math.sign(x);
   const xabs = Math.abs(x);
 
@@ -375,7 +375,7 @@ export function cot1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function cot2(x: TwoF64): TwoF64 {
+export function cot_2(x: TwoF64): TwoF64 {
   let sign = Math.sign(x[0]);
   const xabs = abs2(x);
 
@@ -409,7 +409,7 @@ function _cot(x: f64 | TwoF64): TwoF64 {
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function sec1(x: f64): TwoF64 {
+export function sec_1(x: f64): TwoF64 {
   const xabs = Math.abs(x);
   let sign = 1;
 
@@ -426,7 +426,7 @@ export function sec1(x: f64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? _csc2(r) : neg2(_csc2(r));
+    return sign < 0 ? _csc_2(r) : neg2(_csc_2(r));
   }
 
   return sign < 0 ? neg2(_sec(r)) : _sec(r);
@@ -439,7 +439,7 @@ export function sec1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function sec2(x: TwoF64): TwoF64 {
+export function sec_2(x: TwoF64): TwoF64 {
   const xabs = abs2(x);
   let sign = 1;
 
@@ -456,7 +456,7 @@ export function sec2(x: TwoF64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? _csc2(r) : neg2(_csc2(r));
+    return sign < 0 ? _csc_2(r) : neg2(_csc_2(r));
   }
 
   return sign < 0 ? neg2(_sec(r)) : _sec(r);
@@ -477,12 +477,12 @@ function _sec(x: f64 | TwoF64): TwoF64 {
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function csc1(x: f64): TwoF64 {
+export function csc_1(x: f64): TwoF64 {
   let sign = Math.sign(x);
   const xabs = Math.abs(x);
 
   if (xabs <= PI_HALF[0]) {
-    return _csc1(x);
+    return _csc_1(x);
   }
 
   let r = rem2pi_1(xabs);
@@ -497,7 +497,7 @@ export function csc1(x: f64): TwoF64 {
     return sign < 0 ? neg2(_sec(r)) : _sec(r);
   }
 
-  return sign < 0 ? neg2(_csc2(r)) : _csc2(r);
+  return sign < 0 ? neg2(_csc_2(r)) : _csc_2(r);
 }
 
 /**
@@ -507,12 +507,12 @@ export function csc1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function csc2(x: TwoF64): TwoF64 {
+export function csc_2(x: TwoF64): TwoF64 {
   let sign = Math.sign(x[0]);
   const xabs = abs2(x);
 
   if (lt22(xabs, PI_HALF)) {
-    return _csc2(x);
+    return _csc_2(x);
   }
 
   let r = rem2pi_2(xabs);
@@ -527,22 +527,21 @@ export function csc2(x: TwoF64): TwoF64 {
     return sign < 0 ? neg2(_sec(r)) : _sec(r);
   }
 
-  return sign < 0 ? neg2(_csc2(r)) : _csc2(r);
+  return sign < 0 ? neg2(_csc_2(r)) : _csc_2(r);
 }
-
 
 /**
  * Compute the cosecant of `x` using Padé approximant, where `|x| < π/2`.
  */
-function _csc1(x: f64): TwoF64 {
-  const [p, q] = _sin1_padé(x);
+function _csc_1(x: f64): TwoF64 {
+  const [p, q] = _sin_padé_1(x);
   return div22(q, p);
 }
 
 /**
  * Compute the cosecant of `x` using Padé approximant, where `|x| < π/2`.
  */
-function _csc2(x: TwoF64): TwoF64 {
-  const [p, q] = _sin2_padé(x);
+function _csc_2(x: TwoF64): TwoF64 {
+  const [p, q] = _sin_2_padé(x);
   return div22(q, p);
 }

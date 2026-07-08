@@ -4,8 +4,8 @@
 
 import { type f64, type TwoF64 } from "../base/common.js";
 import { add21, add22, div22, inv2, sub21, sub22 } from "../arithmetic/index.js";
-import { exp1, exp2, expm1_1, expm1_2} from "./exp.js";
-import { sqrt2 } from "./roots.js";
+import { exp_1, exp_2, expm1_1, expm1_2} from "./exp.js";
+import { sqrt_2 } from "./roots.js";
 
 /**
  * Computes the hyperbolic sine of `x`, where `x` is expressed in radians, using
@@ -14,16 +14,16 @@ import { sqrt2 } from "./roots.js";
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function sinh1(x: f64): TwoF64 {
+export function sinh_1(x: f64): TwoF64 {
   if (Math.abs(x) < Math.LN2) {
     // (e²ˣ - 1) / 2eˣ
     const e2xm1 = expm1_1(2*x);
-    const [rhi, rlo] = sqrt2(add21(e2xm1, 1));
+    const [rhi, rlo] = sqrt_2(add21(e2xm1, 1));
     return div22(e2xm1, [2*rhi, 2*rlo]);
   }
 
   // (eˣ - e⁻ˣ) / 2
-  const ex = exp1(x);
+  const ex = exp_1(x);
   const [yhi, ylo] = sub22(ex, inv2(ex));
   return [yhi/2, ylo/2];
 }
@@ -35,15 +35,15 @@ export function sinh1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function sinh2(x: TwoF64): TwoF64;
-export function sinh2([xhi, xlo]: TwoF64): TwoF64 {
+export function sinh_2(x: TwoF64): TwoF64;
+export function sinh_2([xhi, xlo]: TwoF64): TwoF64 {
   if (Math.abs(xhi) < Math.LN2) {
     const e2xm1 = expm1_2([2*xhi, 2*xlo]);
-    const [rhi, rlo] = sqrt2(add21(e2xm1, 1));
+    const [rhi, rlo] = sqrt_2(add21(e2xm1, 1));
     return div22(e2xm1, [2*rhi, 2*rlo]);
   }
 
-  const ex = exp2([xhi, xlo]);
+  const ex = exp_2([xhi, xlo]);
   const [yhi, ylo] = sub22(ex, inv2(ex));
   return [yhi/2, ylo/2];
 }
@@ -55,8 +55,8 @@ export function sinh2([xhi, xlo]: TwoF64): TwoF64 {
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function cosh1(x: f64): TwoF64 {
-  const ex = exp1(x);
+export function cosh_1(x: f64): TwoF64 {
+  const ex = exp_1(x);
   const [yhi, ylo] = add22(ex, inv2(ex));
   return [yhi/2, ylo/2];
 }
@@ -68,8 +68,8 @@ export function cosh1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function cosh2(x: TwoF64): TwoF64 {
-  const ex = exp2(x);
+export function cosh_2(x: TwoF64): TwoF64 {
+  const ex = exp_2(x);
   const [yhi, ylo] = add22(ex, inv2(ex));
   return [yhi/2, ylo/2];
 }
@@ -85,7 +85,7 @@ function _exp_pm1_1(x: f64): [TwoF64, TwoF64]{
     ex_p1 = add21(ex_m1, 2);
   }
   else {
-    const ex = exp1(x);
+    const ex = exp_1(x);
     ex_m1 = sub21(ex, 1);
     ex_p1 = add21(ex, 1);
   }
@@ -103,7 +103,7 @@ function _exp_pm1_2(x: TwoF64): [TwoF64, TwoF64]{
     ex_p1 = add21(ex_m1, 2);
   }
   else {
-    const ex = exp2(x);
+    const ex = exp_2(x);
     ex_m1 = sub21(ex, 1);
     ex_p1 = add21(ex, 1);
   }
@@ -117,7 +117,7 @@ function _exp_pm1_2(x: TwoF64): [TwoF64, TwoF64]{
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function tanh1(x: f64): TwoF64 {
+export function tanh_1(x: f64): TwoF64 {
   const [ex_m1, ex_p1] = _exp_pm1_1(2*x);
   return div22(ex_m1, ex_p1);
 }
@@ -129,8 +129,8 @@ export function tanh1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function tanh2(x: TwoF64): TwoF64;
-export function tanh2([xhi, xlo]: TwoF64): TwoF64 {
+export function tanh_2(x: TwoF64): TwoF64;
+export function tanh_2([xhi, xlo]: TwoF64): TwoF64 {
   const [ex_m1, ex_p1] = _exp_pm1_2([2*xhi, 2*xlo]);
   return div22(ex_m1, ex_p1);
 }
@@ -142,7 +142,7 @@ export function tanh2([xhi, xlo]: TwoF64): TwoF64 {
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function coth1(x: f64): TwoF64 {
+export function coth_1(x: f64): TwoF64 {
   const [ex_m1, ex_p1] = _exp_pm1_1(2*x);
   return div22(ex_p1, ex_m1);
 }
@@ -154,8 +154,8 @@ export function coth1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function coth2(x: TwoF64): TwoF64;
-export function coth2([xhi, xlo]: TwoF64): TwoF64 {
+export function coth_2(x: TwoF64): TwoF64;
+export function coth_2([xhi, xlo]: TwoF64): TwoF64 {
   const [ex_m1, ex_p1] = _exp_pm1_2([2*xhi, 2*xlo]);
   return div22(ex_p1, ex_m1);
 }
@@ -167,8 +167,8 @@ export function coth2([xhi, xlo]: TwoF64): TwoF64 {
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function sech1(x: f64): TwoF64 {
-  return inv2(cosh1(x));
+export function sech_1(x: f64): TwoF64 {
+  return inv2(cosh_1(x));
 }
 
 /**
@@ -178,8 +178,8 @@ export function sech1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function sech2(x: TwoF64): TwoF64 {
-  return inv2(cosh2(x));
+export function sech_2(x: TwoF64): TwoF64 {
+  return inv2(cosh_2(x));
 }
 
 /**
@@ -189,8 +189,8 @@ export function sech2(x: TwoF64): TwoF64 {
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function csch1(x: f64): TwoF64 {
-  return inv2(sinh1(x));
+export function csch_1(x: f64): TwoF64 {
+  return inv2(sinh_1(x));
 }
 
 /**
@@ -200,6 +200,6 @@ export function csch1(x: f64): TwoF64 {
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
  */
-export function csch2(x: TwoF64): TwoF64 {
-  return inv2(sinh2(x));
+export function csch_2(x: TwoF64): TwoF64 {
+  return inv2(sinh_2(x));
 }

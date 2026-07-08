@@ -4,14 +4,14 @@
 
 import {
   F64_SPLITTER, normalize, abs2, add11,
-  square1, square2, cube1, cube2,
-  exp1, exp2, expm1_1, expm1_2, pow1int, pow2int, pow11, pow12, pow21, pow22,
-  _linpow, _logpow, _logpowltr, _linpow2, _logpow2,
-  sqrt1, sqrt2, cbrt1, cbrt2, nthroot1, nthroot2,
-  ln1, ln2, log2_1, log2_2, log10_1, log10_2,
+  square_1, square_2, cube_1, cube_2,
+  exp_1, exp_2, expm1_1, expm1_2, powint_1, powint_2, pow_11, pow_12, pow_21, pow_22,
+  _linpow_1, _logpow_1, _logpowltr, _linpow_2, _logpow_2,
+  sqrt_1, sqrt_2, cbrt_1, cbrt_2, nthroot_1, nthroot_2,
+  ln_1, ln_2, log2_1, log2_2, log10_1, log10_2,
   rem2pi_1, rem2pi_2, rempi_1, rempi_2,
-  sin1, sin2, cos1, cos2, tan1, tan2, cot1, cot2, sec1, csc1, sec2, csc2,
-  sinh1, sinh2, cosh1, cosh2, tanh1, tanh2, coth1, coth2, sech1, sech2, csch1, csch2
+  sin_1, sin_2, cos_1, cos_2, tan_1, tan_2, cot_1, cot_2, sec_1, csc_1, sec_2, csc_2,
+  sinh_1, sinh_2, cosh_1, cosh_2, tanh_1, tanh_2, coth_1, coth_2, sech_1, sech_2, csch_1, csch_2,
 } from '../../src/index';
 
 import { FnSig, UnionToIntersection, Expand, randomFn } from '../utils';
@@ -20,20 +20,20 @@ import fs from 'node:fs';
 
 // Functions to test grouped by signature
 const fnBySig = {
-  'op1': {square1, cube1, sqrt1, cbrt1, ln1, log2_1, log10_1, rempi_1, rem2pi_1,
-    sin1, cos1, tan1, cot1, sec1, csc1},
-  'op2': {square2, cube2, sqrt2, cbrt2, ln2, log2_2, log10_2, rempi_2, rem2pi_2,
-    sin2, cos2, tan2, cot2, sec2, csc2},
-  'op1n': {_linpow, _logpow, _logpowltr, pow1int, nthroot1},
-  'op2n': {_linpow2, _logpow2, pow2int, nthroot2},
+  'op1': {square_1, cube_1, sqrt_1, cbrt_1, ln_1, log2_1, log10_1, rempi_1, rem2pi_1,
+          sin_1, cos_1, tan_1, cot_1, sec_1, csc_1},
+  'op2': {square_2, cube_2, sqrt_2, cbrt_2, ln_2, log2_2, log10_2, rempi_2, rem2pi_2,
+          sin_2, cos_2, tan_2, cot_2, sec_2, csc_2},
+  'op1n': {_linpow_1, _logpow_1, _logpowltr, powint_1, nthroot_1},
+  'op2n': {_linpow_2, _logpow_2, powint_2, nthroot_2},
   // e^x and functions defined in terms of e^x have a restricted domain so we
   // test them apart from op1/op2 group
-  'exp1': {exp1, expm1_1, sinh1, cosh1, tanh1, coth1, sech1, csch1},
-  'exp2': {exp2, expm1_2, sinh2, cosh2, tanh2, coth2, sech2, csch2},
-  'op11': {pow11},
-  'op12': {pow12},
-  'op21': {pow21},
-  'op22': {pow22}
+  'exp1': {exp_1, expm1_1, sinh_1, cosh_1, tanh_1, coth_1, sech_1, csch_1},
+  'exp2': {exp_2, expm1_2, sinh_2, cosh_2, tanh_2, coth_2, sech_2, csch_2},
+  'op11': {pow_11},
+  'op12': {pow_12},
+  'op21': {pow_21},
+  'op22': {pow_22}
 } satisfies Partial<{
   [K in keyof FnSig]: { [fnName: string]: FnSig[K] }
 }>;
@@ -50,30 +50,30 @@ type FnArgs = { [K in FnName]: Parameters<TestedFunctions[K]> };
 // of the callback is to make the function parameters fit its domain if needed.
 function processArgsFn(fnName: FnName): Function {
   switch (fnName) {
-    case 'sqrt1':
-    case 'ln1':
+    case 'sqrt_1':
+    case 'ln_1':
     case 'log2_1':
     case 'log10_1':
-    case 'pow11':
-    case 'pow12':
+    case 'pow_11':
+    case 'pow_12':
       return (...args: FnArgs[typeof fnName]) => (args[0] = Math.abs(args[0]), args);
 
-    case 'sqrt2':
-    case 'ln2':
+    case 'sqrt_2':
+    case 'ln_2':
     case 'log2_2':
     case 'log10_2':
-    case 'pow21':
-    case 'pow22':
+    case 'pow_21':
+    case 'pow_22':
       return (...args: FnArgs[typeof fnName]) => (args[0] = abs2(args[0]), args);
 
-    case '_linpow':
-    case '_logpow':
+    case '_linpow_1':
+    case '_logpow_1':
     case '_logpowltr':
-    case '_linpow2':
-    case '_logpow2':
+    case '_linpow_2':
+    case '_logpow_2':
       return (...args: FnArgs[typeof fnName]) => (args[1] = Math.abs(args[1]), args);
 
-    case 'nthroot1':
+    case 'nthroot_1':
       return (...args: FnArgs[typeof fnName]) => {
         const [x, n] = args;
         args[1] = Math.abs(n);
@@ -83,7 +83,7 @@ function processArgsFn(fnName: FnName): Function {
         return args;
       }
 
-    case 'nthroot2':
+    case 'nthroot_2':
       return (...args: FnArgs[typeof fnName]) => {
         const [[xhi, xlo], n] = args;
         args[1] = Math.abs(n);
@@ -93,18 +93,28 @@ function processArgsFn(fnName: FnName): Function {
         return args;
       }
 
-    case 'tanh1':
-    case 'coth1':
+    case 'tanh_1':
+    case 'coth_1':
       // f(x) = 1 + ε with |ε| < u² for |x| > 37.09
       return (...args: FnArgs[typeof fnName]) => (args[0] = args[0] % 37, args);
 
-    case 'tanh2':
-    case 'coth2':
+    case 'tanh_2':
+    case 'coth_2':
       return (...args: FnArgs[typeof fnName]) => {
         const [xhi, xlo] = args[0];
         args[0] = add11(xhi % 37, xlo);
         return args;
       }
+
+    // case 'asin_1':
+    //   return (...args: FnArgs[typeof fnName]) => {
+    //     if (Math.abs(args[0]) > 1) {
+    //       const e = exponent(args[0]);
+    //       const p = 1 + e + (e % 2);
+    //       args[0] = args[0] / 2**p;
+    //     }
+    //     return args;
+    //   }
   }
 
   return (...args: FnArgs[typeof fnName]) => args;

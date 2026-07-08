@@ -41,7 +41,7 @@ println()
         ))
     end
 
-    @testset "twoProd (mul11, twoSquare, square1)" begin
+    @testset "twoProd (mul11, twoSquare, square_1)" begin
         _test(Dict(
             "fn" => "twoProd",
             "args" => args_list.op11,
@@ -93,7 +93,7 @@ println()
         ))
     end
 
-    @testset "DWTimesDW1 (mul22, square2)" begin
+    @testset "DWTimesDW1 (mul22, square_2)" begin
         _test(Dict(
             "fn" => "DWTimesDW1",
             "args" => args_list.op22,

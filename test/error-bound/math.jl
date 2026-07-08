@@ -13,45 +13,45 @@ overflow = OrderedDict(keys(fn_output) .=> 0)
 println()
 @testset verbose = true "Exponentiation ──────────" begin ######################
 
-    @testset "square1 (EFT)" begin
+    @testset "square_1 (EFT)" begin
         _test(Dict(
-            "fn" => "square1",
+            "fn" => "square_1",
             "args" => args_list.op1,
             "rel_err_bound" => 0,
             "compute" => x -> big(x)^2,
         ))
     end
 
-    @testset "square2" begin
+    @testset "square_2" begin
         _test(Dict(
-            "fn" => "square2",
+            "fn" => "square_2",
             "args" => args_list.op2,
             "rel_err_bound" => 5u^2,
             "compute" => ((xhi, xlo),) -> (big(xhi) + big(xlo))^2
         ))
     end
 
-    @testset "cube1" begin
+    @testset "cube_1" begin
         _test(Dict(
-            "fn" => "cube1",
+            "fn" => "cube_1",
             "args" => args_list.op1,
             "rel_err_bound" => 3u^2/2 + 4u^3,
             "compute" => x -> big(x)^3
         ))
     end
 
-    @testset "cube2" begin
+    @testset "cube_2" begin
         _test(Dict(
-            "fn" => "cube2",
+            "fn" => "cube_2",
             "args" => args_list.op2,
             "rel_err_bound" => 10u^2 + 25u^4,
             "compute" => ((xhi, xlo),) -> (big(xhi) + big(xlo))^3
         ))
     end
 
-    @testset "_linpow" begin
+    @testset "_linpow_1" begin
         _test(Dict(
-            "fn" => "_linpow",
+            "fn" => "_linpow_1",
             "args" => args_list.op1n,
             "rel_err_bound_uf" => big(2.0)^-78,
             "rel_err_bound" => big(2.0)^-95,
@@ -61,9 +61,9 @@ println()
     end
 
 
-    @testset "_logpow" begin
+    @testset "_logpow_1" begin
         _test(Dict(
-            "fn" => "_logpow",
+            "fn" => "_logpow_1",
             "args" => args_list.op1n,
             "rel_err_bound_uf" => big(2.0)^-78,
             "rel_err_bound" => big(2.0)^-95,
@@ -83,9 +83,9 @@ println()
         ))
     end
 
-    @testset "_linpow2" begin
+    @testset "_linpow_2" begin
         _test(Dict(
-            "fn" => "_linpow2",
+            "fn" => "_linpow_2",
             "args" => args_list.op2n,
             "rel_err_bound_uf" => big(2.0)^-78,
             "rel_err_bound" => big(2.0)^-95,
@@ -94,9 +94,9 @@ println()
         ))
     end
 
-    @testset "_logpow2" begin
+    @testset "_logpow_2" begin
         _test(Dict(
-            "fn" => "_logpow2",
+            "fn" => "_logpow_2",
             "args" => args_list.op2n,
             "rel_err_bound_uf" => big(2.0)^-78,
             "rel_err_bound" => big(2.0)^-95,
@@ -105,9 +105,9 @@ println()
         ))
     end
 
-    @testset "pow1int" begin
+    @testset "powint_1" begin
         _test(Dict(
-            "fn" => "pow1int",
+            "fn" => "powint_1",
             "args" => args_list.op1n,
             "rel_err_bound_uf" => big(2.0)^-78,
             "rel_err_bound" => big(2.0)^-95,
@@ -116,9 +116,9 @@ println()
         ))
     end
 
-    @testset "pow2int" begin
+    @testset "powint_2" begin
         _test(Dict(
-            "fn" => "pow2int",
+            "fn" => "powint_2",
             "args" => args_list.op2n,
             "rel_err_bound_uf" => big(2.0)^-78,
             "rel_err_bound" => big(2.0)^-95,
@@ -127,9 +127,9 @@ println()
         ))
     end
 
-    @testset "pow11" begin
+    @testset "pow_11" begin
         _test(Dict(
-            "fn" => "pow11",
+            "fn" => "pow_11",
             "args" => args_list.op11,
             "rel_err_bound_uf" => big(2.0)^-78, # 3ε₀
             "rel_err_bound" => big(2.0)^-90,
@@ -138,9 +138,9 @@ println()
         ))
     end
 
-    @testset "pow12" begin
+    @testset "pow_12" begin
         _test(Dict(
-            "fn" => "pow12",
+            "fn" => "pow_12",
             "args" => args_list.op12,
             "rel_err_bound_uf" => big(2.0)^-78,
             "rel_err_bound" => big(2.0)^-90,
@@ -149,9 +149,9 @@ println()
         ))
     end
 
-    @testset "pow21" begin
+    @testset "pow_21" begin
         _test(Dict(
-            "fn" => "pow21",
+            "fn" => "pow_21",
             "args" => args_list.op21,
             "rel_err_bound_uf" => big(2.0)^-78,
             "rel_err_bound" => big(2.0)^-90,
@@ -160,9 +160,9 @@ println()
         ))
     end
 
-    @testset "pow22" begin
+    @testset "pow_22" begin
         _test(Dict(
-            "fn" => "pow22",
+            "fn" => "pow_22",
             "args" => args_list.op22,
             "rel_err_bound_uf" => big(2.0)^-78,
             "rel_err_bound" => big(2.0)^-90,
@@ -171,18 +171,18 @@ println()
         ))
     end
 
-    @testset "exp1" begin
+    @testset "exp_1" begin
         _test(Dict(
-            "fn" => "exp1",
+            "fn" => "exp_1",
             "args" => args_list.exp1,
             "rel_err_bound" => 10u^2,
             "compute" => x -> exp(big(x))
         ))
     end
 
-    @testset "exp2" begin
+    @testset "exp_2" begin
         _test(Dict(
-            "fn" => "exp2",
+            "fn" => "exp_2",
             "args" => args_list.exp2,
             "rel_err_bound" => 10u^2,
             "compute" => ((xhi, xlo),) -> exp(big(xhi) + big(xlo))
@@ -211,9 +211,9 @@ end
 println()
 @testset verbose = true "Logarithms ──────────────" begin ######################
 
-    @testset "ln1" begin
+    @testset "ln_1" begin
         _test(Dict(
-            "fn" => "ln1",
+            "fn" => "ln_1",
             "args" => args_list.op1,
             "rel_err_bound" => big(2.0)^-90,
             "process_args" => x -> abs(x),
@@ -221,9 +221,9 @@ println()
         ))
     end
 
-    @testset "ln2" begin
+    @testset "ln_2" begin
         _test(Dict(
-            "fn" => "ln2",
+            "fn" => "ln_2",
             "args" => args_list.op2,
             "rel_err_bound" => big(2.0)^-90,
             "process_args" => ((xhi, xlo),) -> xhi < 0 ? ((-xhi, -xlo),) : ((xhi, xlo),),
@@ -275,9 +275,9 @@ end
 println()
 @testset verbose = true "Roots ───────────────────" begin ######################
 
-    @testset "sqrt1" begin
+    @testset "sqrt_1" begin
         _test(Dict(
-            "fn" => "sqrt1",
+            "fn" => "sqrt_1",
             "args" => args_list.op1,
             "rel_err_bound" => 25u^2/8,
             "process_args" => x -> abs(x),
@@ -285,9 +285,9 @@ println()
         ))
     end
 
-    @testset "sqrt2" begin
+    @testset "sqrt_2" begin
         _test(Dict(
-            "fn" => "sqrt2",
+            "fn" => "sqrt_2",
             "args" => args_list.op2,
             "rel_err_bound" => 25u^2/8,
             "process_args" => ((xhi, xlo),) -> xhi < 0 ? ((-xhi, -xlo),) : ((xhi, xlo),),
@@ -295,27 +295,27 @@ println()
         ))
     end
 
-    @testset "cbrt1" begin
+    @testset "cbrt_1" begin
         _test(Dict(
-            "fn" => "cbrt1",
+            "fn" => "cbrt_1",
             "args" => args_list.op1,
             "rel_err_bound" => 25u^2,
             "compute" => x -> cbrt(big(x))
         ))
     end
 
-    @testset "cbrt2" begin
+    @testset "cbrt_2" begin
         _test(Dict(
-            "fn" => "cbrt2",
+            "fn" => "cbrt_2",
             "args" => args_list.op2,
             "rel_err_bound" => 25u^2,
             "compute" => ((xhi, xlo),) -> cbrt(big(xhi) + big(xlo))
         ))
     end
 
-    @testset "nthroot1" begin
+    @testset "nthroot_1" begin
         _test(Dict(
-            "fn" => "nthroot1",
+            "fn" => "nthroot_1",
             "args" => args_list.op1n,
             "rel_err_bound" => big(2.0)^-95,
             "process_args" => (x, n) -> (x < 0 && iseven(n) ? -x : x, abs(n)),
@@ -323,9 +323,9 @@ println()
         ))
     end
 
-    @testset "nthroot2" begin
+    @testset "nthroot_2" begin
         _test(Dict(
-            "fn" => "nthroot2",
+            "fn" => "nthroot_2",
             "args" => args_list.op2n,
             "rel_err_bound" => big(2.0)^-95,
             "process_args" => ((xhi,xlo), n) -> (xhi<0 && iseven(n) ? (-xhi,-xlo) : (xhi,xlo), abs(n)),
@@ -379,108 +379,108 @@ end
 println()
 @testset verbose = true "Trigonometric functions ─" begin ######################
 
-    @testset "sin1" begin
+    @testset "sin_1" begin
         _test(Dict(
-            "fn" => "sin1",
+            "fn" => "sin_1",
             "args" => args_list.op1,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => x -> sin(big(x))
         ))
     end
 
-    @testset "sin2" begin
+    @testset "sin_2" begin
         _test(Dict(
-            "fn" => "sin2",
+            "fn" => "sin_2",
             "args" => args_list.op2,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => ((xhi, xlo),) -> sin(big(xhi) + big(xlo))
         ))
     end
 
-    @testset "cos1" begin
+    @testset "cos_1" begin
         _test(Dict(
-            "fn" => "cos1",
+            "fn" => "cos_1",
             "args" => args_list.op1,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => x -> cos(big(x))
         ))
     end
 
-    @testset "cos2" begin
+    @testset "cos_2" begin
         _test(Dict(
-            "fn" => "cos2",
+            "fn" => "cos_2",
             "args" => args_list.op2,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => ((xhi, xlo),) -> cos(big(xhi) + big(xlo))
         ))
     end
 
-    @testset "tan1" begin
+    @testset "tan_1" begin
         _test(Dict(
-            "fn" => "tan1",
+            "fn" => "tan_1",
             "args" => args_list.op1,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => x -> tan(big(x))
         ))
     end
 
-    @testset "tan2" begin
+    @testset "tan_2" begin
         _test(Dict(
-            "fn" => "tan2",
+            "fn" => "tan_2",
             "args" => args_list.op2,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => ((xhi, xlo),) -> tan(big(xhi) + big(xlo))
         ))
     end
 
-    @testset "cot1" begin
+    @testset "cot_1" begin
         _test(Dict(
-            "fn" => "cot1",
+            "fn" => "cot_1",
             "args" => args_list.op1,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => x -> cot(big(x))
         ))
     end
 
-    @testset "cot2" begin
+    @testset "cot_2" begin
         _test(Dict(
-            "fn" => "cot2",
+            "fn" => "cot_2",
             "args" => args_list.op2,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => ((xhi, xlo),) -> cot(big(xhi) + big(xlo))
         ))
     end
 
-    @testset "sec1" begin
+    @testset "sec_1" begin
         _test(Dict(
-            "fn" => "sec1",
+            "fn" => "sec_1",
             "args" => args_list.op1,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => x -> sec(big(x))
         ))
     end
 
-    @testset "sec2" begin
+    @testset "sec_2" begin
         _test(Dict(
-            "fn" => "sec2",
+            "fn" => "sec_2",
             "args" => args_list.op2,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => ((xhi, xlo),) -> sec(big(xhi) + big(xlo))
         ))
     end
 
-    @testset "csc1" begin
+    @testset "csc_1" begin
         _test(Dict(
-            "fn" => "csc1",
+            "fn" => "csc_1",
             "args" => args_list.op1,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => x -> csc(big(x))
         ))
     end
 
-    @testset "csc2" begin
+    @testset "csc_2" begin
         _test(Dict(
-            "fn" => "csc2",
+            "fn" => "csc_2",
             "args" => args_list.op2,
             "rel_err_bound" => big(2.0)^-90,
             "compute" => ((xhi, xlo),) -> csc(big(xhi) + big(xlo))
@@ -491,9 +491,9 @@ end
 println()
 @testset verbose = true "Hyperbolic functions ────" begin ######################
 
-    @testset "sinh1" begin
+    @testset "sinh_1" begin
         _test(Dict(
-            "fn" => "sinh1",
+            "fn" => "sinh_1",
             "args" => args_list.exp1,
             "rel_err_bound_uf" => big(2.0)^-75,
             "compute" => x -> sinh(big(x)),
@@ -501,9 +501,9 @@ println()
         ))
     end
 
-    @testset "sinh2" begin
+    @testset "sinh_2" begin
         _test(Dict(
-            "fn" => "sinh2",
+            "fn" => "sinh_2",
             "args" => args_list.exp2,
             "rel_err_bound_uf" => big(2.0)^-75,
             "compute" => ((xhi, xlo),) -> sinh(big(xhi) + big(xlo)),
@@ -511,9 +511,9 @@ println()
         ))
     end
 
-    @testset "cosh1" begin
+    @testset "cosh_1" begin
         _test(Dict(
-            "fn" => "cosh1",
+            "fn" => "cosh_1",
             "args" => args_list.exp1,
             "rel_err_bound_uf" => big(2.0)^-75,
             "compute" => x -> cosh(big(x)),
@@ -521,9 +521,9 @@ println()
         ))
     end
 
-    @testset "cosh2" begin
+    @testset "cosh_2" begin
         _test(Dict(
-            "fn" => "cosh2",
+            "fn" => "cosh_2",
             "args" => args_list.exp2,
             "rel_err_bound_uf" => big(2.0)^-75,
             "compute" => ((xhi, xlo),) -> cosh(big(xhi) + big(xlo)),
@@ -531,9 +531,9 @@ println()
         ))
     end
 
-    @testset "tanh1" begin
+    @testset "tanh_1" begin
         _test(Dict(
-            "fn" => "tanh1",
+            "fn" => "tanh_1",
             "args" => args_list.exp1,
             # "rel_err_bound" => big(2.0)^-95,
             "process_args" => x -> x % 37,
@@ -541,18 +541,18 @@ println()
         ))
     end
 
-    @testset "tanh2" begin
+    @testset "tanh_2" begin
         _test(Dict(
-            "fn" => "tanh2",
+            "fn" => "tanh_2",
             "args" => args_list.exp2,
             "process_args" => ((xhi, xlo),) -> (twosum(xhi % 37, xlo),),
             "compute" => ((xhi, xlo),) -> tanh(big(xhi) + big(xlo))
         ))
     end
 
-    @testset "coth1" begin
+    @testset "coth_1" begin
         _test(Dict(
-            "fn" => "coth1",
+            "fn" => "coth_1",
             "args" => args_list.exp1,
             "process_args" => x -> x % 37,
             "compute" => x -> coth(big(x)),
@@ -560,9 +560,9 @@ println()
         ))
     end
 
-    @testset "coth2" begin
+    @testset "coth_2" begin
         _test(Dict(
-            "fn" => "coth2",
+            "fn" => "coth_2",
             "args" => args_list.exp2,
             "process_args" => ((xhi, xlo),) -> (twosum(xhi % 37, xlo),),
             "compute" => ((xhi, xlo),) -> coth(big(xhi) + big(xlo)),
@@ -570,40 +570,40 @@ println()
         ))
     end
 
-    @testset "sech1" begin
+    @testset "sech_1" begin
         _test(Dict(
-            "fn" => "sech1",
+            "fn" => "sech_1",
             "args" => args_list.exp1,
             "compute" => x -> sech(big(x))
         ))
     end
 
-    @testset "sech2" begin
+    @testset "sech_2" begin
         _test(Dict(
-            "fn" => "sech2",
+            "fn" => "sech_2",
             "args" => args_list.exp2,
             "compute" => ((xhi, xlo),) -> sech(big(xhi) + big(xlo))
         ))
     end
 
-    @testset "csch1" begin
+    @testset "csch_1" begin
         _test(Dict(
-            "fn" => "csch1",
+            "fn" => "csch_1",
             "args" => args_list.exp1,
             "compute" => x -> csch(big(x))
         ))
     end
 
-    @testset "csch2" begin
+    @testset "csch_2" begin
         _test(Dict(
-            "fn" => "csch2",
+            "fn" => "csch_2",
             "args" => args_list.exp2,
             "compute" => ((xhi, xlo),) -> csch(big(xhi) + big(xlo))
         ))
     end
 end
 
-###
+##
 
 println()
 @testset "Math functions coverage ─" begin
