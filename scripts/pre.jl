@@ -127,6 +127,15 @@ pre_trig = OrderedDict(
     "tan_pade_int" => tan_pade_int_TwoF64,
 )
 
+# Padé [n/n] asin(x) (same remarks as above for sin(x))
+N = UnitRange{BigInt}(12, 30)
+MN = map(n -> (div(n-1, 2), div(n, 2)), N)
+asin_pade = OrderedDict(m+n+1 => taylor_to_pade(taylor_asin, m, n) for (m,n) in MN)
+asin_pade_TwoF64 = OrderedDict(n => [TwoF64.(asin_pade[n][1]), TwoF64.(asin_pade[n][2])] for n in N)
+
+pre_arctrig = OrderedDict(
+    "arcsin_pade" => asin_pade_TwoF64,
+)
 
 ### Output
 
@@ -134,7 +143,8 @@ filemap = (
     "constants" => OrderedDict("TwoF64" => two_const, "ThreeF64" => three_const),
     "exp"       => pre_exp,
     "log"       => pre_log,
-    "trig"      => pre_trig
+    "trig"      => pre_trig,
+    "arctrig"   => pre_arctrig,
 )
 
 for (name, content) in filemap

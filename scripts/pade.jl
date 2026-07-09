@@ -105,15 +105,15 @@ const Tan = tangent_numbers(big(30))
 # Taylor series are represented below with functions that return the coefficient
 # `cₙ` (in the expansion of the series) given some integer `n ≥ 0`.
 
-taylor_ln1p(n::Integer) = iszero(n) ? zero(n)//one(n) : (-one(n))^(n+1)//n
-taylor_ln1m(n::Integer) = iszero(n) ? zero(n)//one(n) : -one(n)//n
-taylor_exp(n::Integer) = one(n)//factorial(n)
-taylor_expm1(n::Integer) = iszero(n) ? zero(n)//one(n) : one(n)//factorial(n)
+taylor_ln1p(n::T) where T<:Integer = iszero(n) ? T(0)//T(1) : (-1)^(n+1)//n
+taylor_ln1m(n::T) where T<:Integer = iszero(n) ? T(0)//T(1) : -1//n
 
-# taylor_sin(n::Integer) = isodd(n) ? oftype(n,(-1)^((n-1)/2))//factorial(n) : zero(n)//one(n)
-# taylor_cos(n::Integer) = iseven(n) ? oftype(n,(-1)^(n/2))//factorial(n) : zero(n)//one(n)
+taylor_exp(n::T) where T<:Integer = 1//factorial(n)
+taylor_expm1(n::T) where T<:Integer = iszero(n) ? T(0)//T(1) : 1//factorial(n)
 
 # sin/cos/tan - skip zero coefficients (n maps to 2n+1 for sin, 2n for cos, 2n-1 for tan)
-taylor_sin(n::T) where {T<:Integer} = T(-1)^n//factorial(T(2n+1))
-taylor_cos(n::T) where {T<:Integer} = T(-1)^n//factorial(T(2n))
-taylor_tan(n::T) where {T<:Integer} = iszero(n) ? T(0)//T(1) : T(Tan[n])//factorial(2n-1)
+taylor_sin(n::T) where T<:Integer = (-1)^n//factorial(2n+1)
+taylor_cos(n::T) where T<:Integer = (-1)^n//factorial(2n)
+taylor_tan(n::T) where T<:Integer = iszero(n) ? 0//T(1) : T(Tan[n])//factorial(2n-1)
+
+taylor_asin(n::T) where T<:Integer = factorial(2n)//(4^n*factorial(n)^2*(2n+1))
