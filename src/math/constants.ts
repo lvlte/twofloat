@@ -53,6 +53,11 @@ export const SQRT1_2: TwoF64 = [0.7071067811865476, -4.833646656726457e-17];
 export const SQRT2: TwoF64 = [1.4142135623730951, -9.667293313452913e-17];
 
 /**
+ * `TwoF64` representation of `√3`, the square root of `3`.
+ */
+export const SQRT3: TwoF64 = [1.7320508075688772, 1.0035084221806903e-16];
+
+/**
  * `TwoF64` representation of `∞` (positive infinity).
  */
 export const INF: TwoF64 = [Infinity, Infinity];
@@ -140,6 +145,13 @@ export const THREE = {
     1.4142135623730951,
     -9.667293313452913e-17,
     4.1386753086994136e-33
+  ],
+
+  /**
+   * `ThreeF64` representation of `√3`, the square root of `3`.
+   */
+  SQRT3: <ThreeF64>[
+    1.7320508075688772, 1.0035084221806903e-16, -1.4959542475733896e-33
   ],
 
   /**
