@@ -128,13 +128,23 @@ pre_trig = OrderedDict(
 )
 
 # Padé [n/n] asin(x) (same remarks as above for sin(x))
-N = UnitRange{BigInt}(12, 30)
+N = UnitRange{BigInt}(25, 30)
 MN = map(n -> (div(n-1, 2), div(n, 2)), N)
 asin_pade = OrderedDict(m+n+1 => taylor_to_pade(taylor_asin, m, n) for (m,n) in MN)
 asin_pade_TwoF64 = OrderedDict(n => [TwoF64.(asin_pade[n][1]), TwoF64.(asin_pade[n][2])] for n in N)
 
+# Padé [n/n] atan(x) (same remarks as above for sin(x))
+N = UnitRange{BigInt}(25, 30)
+MN = map(n -> (div(n-1, 2), div(n, 2)), N)
+atan_pade = OrderedDict(m+n+1 => taylor_to_pade(taylor_atan, m, n) for (m,n) in MN)
+atan_pade_TwoF64 = OrderedDict(n => [TwoF64.(atan_pade[n][1]), TwoF64.(atan_pade[n][2])] for n in N)
+atan_pade_int = OrderedDict(n => reverse.(pade_int(atan_pade[n]...)) for n in N)
+atan_pade_int_TwoF64 = OrderedDict(n => [TwoF64Int.(atan_pade_int[n][1]), TwoF64Int.(atan_pade_int[n][2])] for n in N)
+
 pre_arctrig = OrderedDict(
     "arcsin_pade" => asin_pade_TwoF64,
+    "arctan_pade" => atan_pade_TwoF64,
+    "arctan_pade_int" => atan_pade_int_TwoF64,
 )
 
 ### Output

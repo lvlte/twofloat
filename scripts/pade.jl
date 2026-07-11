@@ -116,4 +116,6 @@ taylor_sin(n::T) where T<:Integer = (-1)^n//factorial(2n+1)
 taylor_cos(n::T) where T<:Integer = (-1)^n//factorial(2n)
 taylor_tan(n::T) where T<:Integer = iszero(n) ? 0//T(1) : T(Tan[n])//factorial(2n-1)
 
+# asin/atan - skip zeros (n maps to degree 2n+1)
 taylor_asin(n::T) where T<:Integer = factorial(2n)//(4^n*factorial(n)^2*(2n+1))
+taylor_atan(n::T) where T<:Integer = (-1)^n//(2n+1)
