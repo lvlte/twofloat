@@ -509,7 +509,6 @@ println()
         _test(Dict(
             "fn" => "asin_2",
             "args" => args_list.op2,
-            "rel_err_bound" => big(2.0)^-90,
             "process_args" => function((xhi, xlo),)
                 x = big(xhi) + big(xlo)
                 abs(x) <= 1 && return ((xhi, xlo),)
