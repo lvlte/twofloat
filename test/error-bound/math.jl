@@ -520,6 +520,37 @@ println()
             "compute" => ((xhi, xlo),) -> asin(big(xhi) + big(xlo))
         ))
     end
+
+    @testset "acos_1" begin
+        _test(Dict(
+            "fn" => "acos_1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-95,
+            "process_args" => function(x)
+                abs(x) <= 1 && return (x,)
+                e = exponent(x)
+                p = 1 + e + (e % 2)
+                return (x/2^p,)
+            end,
+            "compute" => x -> acos(big(x))
+        ))
+    end
+
+    @testset "acos_2" begin
+        _test(Dict(
+            "fn" => "acos_2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-95,
+            "process_args" => function((xhi, xlo),)
+                x = big(xhi) + big(xlo)
+                abs(x) <= 1 && return ((xhi, xlo),)
+                e = exponent(x)
+                p = 1 + e + (e % 2)
+                return ((xhi/2^p, xlo/2^p),)
+            end,
+            "compute" => ((xhi, xlo),) -> acos(big(xhi) + big(xlo))
+        ))
+    end
 end
 
 println()

@@ -219,3 +219,27 @@ function _asin_padé_2(x: TwoF64): [TwoF64, TwoF64] {
 
   return [add22(p, x), add21(q, 1)];
 }
+
+/**
+ * Computes the inverse cosine of `x` using extended precision arithmetic. The
+ * output is expressed in radians.
+ *
+ * @param {f64} x A `f64` number in the domain `[-1, 1]`
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[0, π]`
+ */
+export function acos_1(x: f64): TwoF64 {
+  // acos(x) = π/2 − asin(x)
+  return sub22(PI$2, asin_1(x));
+}
+
+/**
+ * Computes the inverse cosine of `x` using extended precision arithmetic. The
+ * output is expressed in radians.
+ *
+ * @param {TwoF64} x A `TwoF64` number in the domain `[-1, 1]`
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[0, π]`
+ */
+export function acos_2(x: TwoF64): TwoF64 {
+  // acos(x) = π/2 − asin(x)
+  return sub22(PI$2, asin_2(x));
+}
