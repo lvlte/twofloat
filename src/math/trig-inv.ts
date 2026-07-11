@@ -42,7 +42,7 @@ const SQRT3_$2: TwoF64 = [0.8660254037844386, 5.0175421109034514e-17];
  * output is expressed in radians.
  *
  * @param {f64} x A `f64` number in the domain `[-1, 1]`
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range [-π/2, +π/2]
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
  */
 export function asin_1(x: f64): TwoF64 {
 
@@ -81,19 +81,19 @@ export function asin_1(x: f64): TwoF64 {
     if (xabs > 0.8090169943749473) {
       // asin(x) = π/2 − 2asin(√((1 − x)/2))
       const y = sqrt_1((1 - xabs)/2);
-      const [hi, lo] = div22(..._asin_padé(y));
+      const [hi, lo] = div22(..._asin_padé_2(y));
       return x > 0 ? sub22(PI$2, [2*hi, 2*lo]) : sub22([2*hi, 2*lo], PI$2);
     }
 
     // asin(x) = π/4 + asin(2x² - 1)/2
     const [x2h, x2l] = mul11(2*xabs, xabs);
     const y = normalize(x2h - 1, x2l);
-    const [hi, lo] = div22(..._asin_padé(y));
+    const [hi, lo] = div22(..._asin_padé_2(y));
     const r = add22(PI$4, [0.5*hi, 0.5*lo]);
     return x > 0 ? r : neg2(r);
   }
 
-  const [p, q] = _asin_padé(x);
+  const [p, q] = _asin_padé_1(x);
   return div22(p, q);
 }
 
@@ -136,65 +136,86 @@ export function asin_2(x: TwoF64): TwoF64 {
       // asin(x) = π/2 − 2asin(√((1 − x)/2))
       const [shi, slo] = sub12(1, xabs);
       const y = sqrt_2([shi/2, slo/2]);
-      const [hi, lo] = div22(..._asin_padé(y));
+      const [hi, lo] = div22(..._asin_padé_2(y));
       return xhi > 0 ? sub22(PI$2, [2*hi, 2*lo]) : sub22([2*hi, 2*lo], PI$2);
     }
 
     // asin(x) = π/4 + asin(2x² - 1)/2
     const [shi, slo] = square_2(xabs);
     const y = normalize(2*shi - 1, 2*slo);
-    const [hi, lo] = div22(..._asin_padé(y));
+    const [hi, lo] = div22(..._asin_padé_2(y));
     const r = add22(PI$4, [0.5*hi, 0.5*lo]);
     return xhi > 0 ? r : neg2(r);
   }
 
-  const [p, q] = _asin_padé(x);
+  const [p, q] = _asin_padé_2(x);
   return div22(p, q);
 }
 
 /**
  * Return a Padé approximant of `asin(x)`, where `|x| ≤ 1`, as a rational `p/q`
  * represented as `[p, q]`.
- * NB. Accurate for `|x| < 0.5` (~31-33 digits precision), above this value the
+ * NB. Accurate for `|x| ≤ 0.5` (~31-33 digits precision), above this value the
  * relative error starts to grow significantly.
  */
-export function _asin_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
-  type Fn2_ = ((x:TwoF64, y:f64 | TwoF64) => TwoF64);
-
-  // Padé order > 27 won't bring much more accuracy and are subject to spurious
-  // overflow.
-  const [P, Q] = asin_pade[27];
-
+function _asin_padé_1(x: f64): [TwoF64, TwoF64] {
   // Padé [n/n] -> if n is odd, |P| = |Q|, otherwise |P| = |Q| - 1
   //
-  //  p = P₀x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹
-  //  q =   1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
+  //  p = x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹
+  //  q = 1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
 
-  const [x2, mul2_, add2_] = typeof x === 'number'
-    ? [square_1(x), mul21 as Fn2_, add21 as Fn2_]
-    : [square_2(x), mul22 as Fn2_, add22 as Fn2_];
-
-  let xpow = x2;
+  const [P, Q] = asin_pade[27];
+  let xpow = square_1(x);
 
   if (P.length < Q.length) {
-    let p = [x, 0] as TwoF64;
+    let p: TwoF64 = [x, 0];
     let q = mul22(Q[1], xpow);
 
     for (let k = 1; k < P.length; k++) {
-      p = add22(p, mul22(P[k], xpow = mul2_(xpow, x)));
-      q = add22(q, mul22(Q[k+1], xpow = mul2_(xpow, x)));
+      p = add22(p, mul22(P[k], xpow = mul21(xpow, x)));
+      q = add22(q, mul22(Q[k+1], xpow = mul21(xpow, x)));
     }
 
     return [p, add21(q, 1)];
   }
 
   let q = mul22(Q[1], xpow);
-  let p = mul22(P[1], xpow = mul2_(xpow, x));
+  let p = mul22(P[1], xpow = mul21(xpow, x));
 
   for (let k = 2; k < P.length; k++) {
-    q = add22(q, mul22(Q[k], xpow = mul2_(xpow, x)));
-    p = add22(p, mul22(P[k], xpow = mul2_(xpow, x)));
+    q = add22(q, mul22(Q[k], xpow = mul21(xpow, x)));
+    p = add22(p, mul22(P[k], xpow = mul21(xpow, x)));
   }
 
-  return [add2_(p, x), add21(q, 1)];
+  return [add21(p, x), add21(q, 1)];
+}
+
+/**
+ * @see _asin_padé_1
+ */
+function _asin_padé_2(x: TwoF64): [TwoF64, TwoF64] {
+  const [P, Q] = asin_pade[27];
+  let xpow = square_2(x);
+
+  if (P.length < Q.length) {
+    let p: TwoF64 = x;
+    let q = mul22(Q[1], xpow);
+
+    for (let k = 1; k < P.length; k++) {
+      p = add22(p, mul22(P[k], xpow = mul22(xpow, x)));
+      q = add22(q, mul22(Q[k+1], xpow = mul22(xpow, x)));
+    }
+
+    return [p, add21(q, 1)];
+  }
+
+  let q = mul22(Q[1], xpow);
+  let p = mul22(P[1], xpow = mul22(xpow, x));
+
+  for (let k = 2; k < P.length; k++) {
+    q = add22(q, mul22(Q[k], xpow = mul22(xpow, x)));
+    p = add22(p, mul22(P[k], xpow = mul22(xpow, x)));
+  }
+
+  return [add22(p, x), add21(q, 1)];
 }
