@@ -550,6 +550,22 @@ println()
             "compute" => ((xhi, xlo),) -> acos(big(xhi) + big(xlo))
         ))
     end
+
+    @testset "atan_1" begin
+        _test(Dict(
+            "fn" => "atan_1",
+            "args" => args_list.op1,
+            "compute" => x -> atan(big(x))
+        ))
+    end
+
+    @testset "atan_2" begin
+        _test(Dict(
+            "fn" => "atan_2",
+            "args" => args_list.op2,
+            "compute" => ((xhi, xlo),) -> atan(big(xhi) + big(xlo))
+        ))
+    end
 end
 
 println()

@@ -12,7 +12,7 @@ import {
   rem2pi_1, rem2pi_2, rempi_1, rempi_2,
   sin_1, sin_2, cos_1, cos_2, tan_1, tan_2, cot_1, cot_2, sec_1, csc_1, sec_2, csc_2,
   sinh_1, sinh_2, cosh_1, cosh_2, tanh_1, tanh_2, coth_1, coth_2, sech_1, sech_2, csch_1, csch_2,
-  asin_1, asin_2, acos_1, acos_2,
+  asin_1, asin_2, acos_1, acos_2, atan_1, atan_2,
 } from '../../src/index';
 
 import { FnSig, UnionToIntersection, Expand, randomFn } from '../utils';
@@ -22,9 +22,9 @@ import fs from 'node:fs';
 // Functions to test grouped by signature
 const fnBySig = {
   'op1': {square_1, cube_1, sqrt_1, cbrt_1, ln_1, log2_1, log10_1, rempi_1, rem2pi_1,
-          sin_1, cos_1, tan_1, cot_1, sec_1, csc_1, asin_1, acos_1},
+          sin_1, cos_1, tan_1, cot_1, sec_1, csc_1, asin_1, acos_1, atan_1},
   'op2': {square_2, cube_2, sqrt_2, cbrt_2, ln_2, log2_2, log10_2, rempi_2, rem2pi_2,
-          sin_2, cos_2, tan_2, cot_2, sec_2, csc_2, asin_2, acos_2},
+          sin_2, cos_2, tan_2, cot_2, sec_2, csc_2, asin_2, acos_2, atan_2},
   'op1n': {_linpow_1, _logpow_1, _logpowltr, powint_1, nthroot_1},
   'op2n': {_linpow_2, _logpow_2, powint_2, nthroot_2},
   // e^x and functions defined in terms of e^x have a restricted domain so we

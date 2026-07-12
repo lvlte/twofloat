@@ -3,13 +3,13 @@
  */
 
 import { NaN2, type f64, type TwoF64 } from "../base/common.js";
-import { add21, add22, div22, mul11, mul21, mul22, sub12, sub22 } from "../arithmetic/index.js";
+import { add21, add22, div12, div22, mul11, mul21, mul22, sub12, sub22 } from "../arithmetic/index.js";
 import { abs2, neg2 } from "./sign.js";
-import { asin_pade } from "../pre/trig-inv.js";
+import { asin_pade, atan_pade } from "../pre/trig-inv.js";
 import { square_1, square_2 } from "./exp.js";
 import { sqrt_1, sqrt_2 } from "./roots.js";
 import { normalize } from "../base/eft.js";
-import { eq21, eq22, gt21, isNaN2 } from "../base/compare.js";
+import { eq21, eq22, gt21, isNaN2, lt21 } from "../base/compare.js";
 import { SQRT1_2 } from "./constants.js";
 
 /**
@@ -161,8 +161,8 @@ export function asin_2(x: TwoF64): TwoF64 {
 function _asin_padé_1(x: f64): [TwoF64, TwoF64] {
   // Padé [n/n] -> if n is odd, |P| = |Q|, otherwise |P| = |Q| - 1
   //
-  //  p = x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹
-  //  q = 1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
+  //  p = x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹ + ...
+  //  q = 1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ   + ...
 
   const [P, Q] = asin_pade[27];
   let xpow = square_1(x);
@@ -242,4 +242,110 @@ export function acos_1(x: f64): TwoF64 {
 export function acos_2(x: TwoF64): TwoF64 {
   // acos(x) = π/2 − asin(x)
   return sub22(PI$2, asin_2(x));
+}
+
+/**
+ * Computes the inverse tangent of `x` using extended precision arithmetic. The
+ * output is expressed in radians.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
+ */
+export function atan_1(x: f64): TwoF64 {
+  if (Math.abs(x) <= 0.6) {
+    const [p, q] = _atan_padé_1(x);
+    return div22(p, q);
+  }
+
+  // atan(x) = 2*atan( x / (1 + √(1 + x²)) )
+  // -> for x ∈ ℝ, x/(1 + √(1 + x²)) ∈ [-1, 1]
+  const x2p1 = add21(square_1(x), 1);
+  const s = add21(sqrt_2(x2p1), 1);
+  const [hi, lo] = atan_2(div12(x, s));
+
+  return [2*hi, 2*lo];
+}
+
+/**
+ * Computes the inverse tangent of `x` using extended precision arithmetic. The
+ * output is expressed in radians.
+ *
+ * @param {TwoF64} x A `TwoF64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
+ */
+export function atan_2(x: TwoF64): TwoF64 {
+  if (lt21(abs2(x), 0.6)) {
+    const [p, q] = _atan_padé_2(x);
+    return div22(p, q);
+  }
+
+  const x2p1 = add21(square_2(x), 1);
+  const s = add21(sqrt_2(x2p1), 1);
+  const [hi, lo] = atan_2(div22(x, s));
+
+  return [2*hi, 2*lo];
+}
+
+/**
+ * Return a Padé approximant of `atan(x)` as a rational `p/q` represented as
+ * `[p, q]`.
+ * NB. Accurate for `|x| ≤ 0.6` (~31-33 digits precision), above this value the
+ * relative error starts to grow significantly.
+ */
+function _atan_padé_1(x: f64): [TwoF64, TwoF64] {
+  // NB. Coefficients aside, the expansion is the same as for asin(x)
+  const [P, Q] = atan_pade[28];
+  let xpow = square_1(x);
+
+  if (P.length < Q.length) {
+    let p: TwoF64 = [x, 0];
+    let q = mul22(Q[1], xpow);
+
+    for (let k = 1; k < P.length; k++) {
+      p = add22(p, mul22(P[k], xpow = mul21(xpow, x)));
+      q = add22(q, mul22(Q[k+1], xpow = mul21(xpow, x)));
+    }
+
+    return [p, add21(q, 1)];
+  }
+
+  let q = mul22(Q[1], xpow);
+  let p = mul22(P[1], xpow = mul21(xpow, x));
+
+  for (let k = 2; k < P.length; k++) {
+    q = add22(q, mul22(Q[k], xpow = mul21(xpow, x)));
+    p = add22(p, mul22(P[k], xpow = mul21(xpow, x)));
+  }
+
+  return [add21(p, x), add21(q, 1)];
+}
+
+/**
+ * @see _atan_padé_1
+ */
+function _atan_padé_2(x: TwoF64): [TwoF64, TwoF64] {
+  const [P, Q] = atan_pade[28];
+  let xpow = square_2(x);
+
+  if (P.length < Q.length) {
+    let p = x;
+    let q = mul22(Q[1], xpow);
+
+    for (let k = 1; k < P.length; k++) {
+      p = add22(p, mul22(P[k], xpow = mul22(xpow, x)));
+      q = add22(q, mul22(Q[k+1], xpow = mul22(xpow, x)));
+    }
+
+    return [p, add21(q, 1)];
+  }
+
+  let q = mul22(Q[1], xpow);
+  let p = mul22(P[1], xpow = mul22(xpow, x));
+
+  for (let k = 2; k < P.length; k++) {
+    q = add22(q, mul22(Q[k], xpow = mul22(xpow, x)));
+    p = add22(p, mul22(P[k], xpow = mul22(xpow, x)));
+  }
+
+  return [add22(p, x), add21(q, 1)];
 }
