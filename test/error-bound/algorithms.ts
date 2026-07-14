@@ -35,7 +35,8 @@ import {
   signCombinations,
   E_SPLIT_MAX,
   collectOutputs,
-  initArgsList
+  initArgsList,
+  FnBySigOpt
 } from '../utils';
 
 // Wrap normalize so it is tested with the |x| ≥ |y| condition satisfied
@@ -49,9 +50,7 @@ const fnBySig = {
   'op11': {normalize, twoSum, twoProd},
   'op21': {DWPlusFP, DWTimesFP1, DWDivFP3},
   'op22': {AccurateDWPlusDW, DWTimesDW1, DWDivDW2},
-} satisfies Partial<{
-  [K in keyof FnSig]: { [fnName: string]: FnSig[K] }
-}>;
+} satisfies FnBySigOpt;
 
 type FnBySig = typeof fnBySig;
 type TestedFunctions = UnionToIntersection<FnBySig[keyof FnBySig]>;

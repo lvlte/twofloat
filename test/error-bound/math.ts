@@ -1,50 +1,49 @@
 /**
  * @file Pre-test for math functions
+ *
+ *  - exponentiation
+ *  - logarithms
+ *  - roots
+ *  - hyperbolic fn
  */
 
 import {
-  normalize, abs2, add11, gt21,
+  normalize, abs2, add11,
   square_1, square_2, cube_1, cube_2,
   exp_1, exp_2, expm1_1, expm1_2, powint_1, powint_2, pow_11, pow_12, pow_21, pow_22,
   _linpow_1, _logpow_1, _logpowltr, _linpow_2, _logpow_2,
   sqrt_1, sqrt_2, cbrt_1, cbrt_2, nthroot_1, nthroot_2,
   ln_1, ln_2, log2_1, log2_2, log10_1, log10_2,
   rem2pi_1, rem2pi_2, rempi_1, rempi_2,
-  sin_1, sin_2, cos_1, cos_2, tan_1, tan_2, cot_1, cot_2, sec_1, csc_1, sec_2, csc_2,
-  sinh_1, sinh_2, cosh_1, cosh_2, tanh_1, tanh_2, coth_1, coth_2, sech_1, sech_2, csch_1, csch_2,
-  asin_1, asin_2, acos_1, acos_2, atan_1, atan_2,
 } from '../../src/index';
 
-import { FnSig, UnionToIntersection, randomFn, E_SPLIT_MAX, collectOutputs, initArgsList } from '../utils';
+import {
+  FnSig, UnionToIntersection, randomFn, E_SPLIT_MAX, collectOutputs, initArgsList,
+  FnBySigOpt
+} from '../utils';
+
 import { exponent } from '@lvlte/ulp';
 import fs from 'node:fs';
 
 // Functions to test grouped by signature
 const fnBySig = {
-  'op1': {square_1, cube_1, sqrt_1, cbrt_1, ln_1, log2_1, log10_1, rempi_1, rem2pi_1,
-          sin_1, cos_1, tan_1, cot_1, sec_1, csc_1, asin_1, acos_1, atan_1},
-  'op2': {square_2, cube_2, sqrt_2, cbrt_2, ln_2, log2_2, log10_2, rempi_2, rem2pi_2,
-          sin_2, cos_2, tan_2, cot_2, sec_2, csc_2, asin_2, acos_2, atan_2},
+  'op1': {square_1, cube_1, sqrt_1, cbrt_1, ln_1, log2_1, log10_1, rempi_1, rem2pi_1},
+  'op2': {square_2, cube_2, sqrt_2, cbrt_2, ln_2, log2_2, log10_2, rempi_2, rem2pi_2},
   'op1n': {_linpow_1, _logpow_1, _logpowltr, powint_1, nthroot_1},
   'op2n': {_linpow_2, _logpow_2, powint_2, nthroot_2},
-  // e^x and functions defined in terms of e^x have a restricted domain so we
-  // test them apart from op1/op2 group
-  'exp1': {exp_1, expm1_1, sinh_1, cosh_1, tanh_1, coth_1, sech_1, csch_1},
-  'exp2': {exp_2, expm1_2, sinh_2, cosh_2, tanh_2, coth_2, sech_2, csch_2},
+  'exp1': {exp_1, expm1_1},
+  'exp2': {exp_2, expm1_2},
   'op11': {pow_11},
   'op12': {pow_12},
   'op21': {pow_21},
   'op22': {pow_22}
-} satisfies Partial<{
-  [K in keyof FnSig]: { [fnName: string]: FnSig[K] }
-}>;
+} satisfies FnBySigOpt;
 
 type FnBySig = typeof fnBySig;
 type TestedFunctions = UnionToIntersection<FnBySig[keyof FnBySig]>;
 type FnName = keyof TestedFunctions;
-
 type ArgsListBySig = { [K in keyof FnBySig]: Parameters<FnSig[K]>[] };
-type FnOutputList = { [K in FnName]: ReturnType<TestedFunctions[K]>[] }
+type FnOutputList = { [K in FnName]: ReturnType<TestedFunctions[K]>[] };
 type FnArgs = { [K in FnName]: Parameters<TestedFunctions[K]> };
 
 // Return the appropriate processArgs callback for the given function. The role
@@ -90,42 +89,6 @@ function processArgsFn(fnName: FnName): Function {
         args[1] = Math.abs(n);
         if (xhi < 0 && n % 2 === 0) {
           args[0] = [-xhi, -xlo];
-        }
-        return args;
-      }
-
-    case 'tanh_1':
-    case 'coth_1':
-      // f(x) = 1 + ε with |ε| < u² for |x| > 37.09
-      return (...args: FnArgs[typeof fnName]) => (args[0] = args[0] % 37, args);
-
-    case 'tanh_2':
-    case 'coth_2':
-      return (...args: FnArgs[typeof fnName]) => {
-        const [xhi, xlo] = args[0];
-        args[0] = add11(xhi % 37, xlo);
-        return args;
-      }
-
-    case 'asin_1':
-    case 'acos_1':
-      return (...args: FnArgs[typeof fnName]) => {
-        if (Math.abs(args[0]) > 1) {
-          const e = exponent(args[0]);
-          const p = 1 + e + (e % 2);
-          args[0] = args[0] / 2**p;
-        }
-        return args;
-      }
-
-    case 'asin_2':
-    case 'acos_2':
-      return (...args: FnArgs[typeof fnName]) => {
-        const [xhi, xlo] = args[0];
-        if (gt21(abs2([xhi, xlo]), 1)) {
-          const e = exponent(xhi);
-          const p = 1 + e + (e % 2);
-          args[0] = [xhi/2**p, xlo/2**p];
         }
         return args;
       }

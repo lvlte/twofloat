@@ -8,3 +8,4 @@
 import './algorithms';
 import './arithmetic';
 import './math';
+import './trig-hyp';

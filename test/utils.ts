@@ -39,7 +39,7 @@ export interface FnSig {
 }
 
 type FnBySig = {[K in keyof FnSig]: {[fnName: string]: FnSig[K]}};
-type FnBySigOpt = Partial<FnBySig>;
+export type FnBySigOpt = Partial<FnBySig>;
 type ArgsListBySig = Partial<{[K in keyof FnBySig]: Parameters<FnSig[K]>[]}>;
 type FnOutputList = Partial<{[key: string]: ReturnType<FnBySig[keyof FnBySig][string]>[]}>;
 

@@ -26,6 +26,7 @@ import {
   E_SPLIT_MAX,
   initArgsList,
   collectOutputs,
+  FnBySigOpt,
 } from '../utils';
 
 // Functions to test grouped by signature
@@ -33,9 +34,7 @@ const fnBySig = {
   'opa1': {sum1, prod1},
   'opa2': {sum2, prod2},
   'op12': {sub12, div12},
-} satisfies Partial<{
-  [K in keyof FnSig]: { [fnName: string]: FnSig[K] }
-}>;
+} satisfies FnBySigOpt;
 
 type FnBySig = typeof fnBySig;
 type TestedFunctions = UnionToIntersection<FnBySig[keyof FnBySig]>;
