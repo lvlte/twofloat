@@ -200,6 +200,22 @@ println()
             "compute" => ((xhi, xlo),) -> atan(big(xhi) + big(xlo))
         ))
     end
+
+    @testset "acot_1" begin
+        _test(Dict(
+            "fn" => "acot_1",
+            "args" => args_list.op1,
+            "compute" => x -> acot(big(x))
+        ))
+    end
+
+    @testset "acot_2" begin
+        _test(Dict(
+            "fn" => "acot_2",
+            "args" => args_list.op2,
+            "compute" => ((xhi, xlo),) -> acot(big(xhi) + big(xlo))
+        ))
+    end
 end
 
 println()

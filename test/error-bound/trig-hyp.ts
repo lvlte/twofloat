@@ -9,7 +9,7 @@ import {
   sinh_1, sinh_2, tanh_1, tanh_2, sech_1, sech_2,
   cosh_1, cosh_2, coth_1, coth_2, csch_1, csch_2,
   asin_1, asin_2, atan_1, atan_2,
-  acos_1, acos_2,
+  acos_1, acos_2, acot_1, acot_2,
 } from '../../src/index';
 
 import {
@@ -22,9 +22,9 @@ import fs from 'node:fs';
 // Functions to test grouped by signature
 const fnBySig = {
   'op1': {sin_1, cos_1, tan_1, cot_1, sec_1, csc_1,
-          asin_1, acos_1, atan_1},
+          asin_1, acos_1, atan_1, acot_1},
   'op2': {sin_2, cos_2, tan_2, cot_2, sec_2, csc_2,
-          asin_2, acos_2, atan_2},
+          asin_2, acos_2, atan_2, acot_2},
   // functions defined in terms of e^x are tested apart from op1/op2 group
   'exp1': {sinh_1, cosh_1, tanh_1, coth_1, sech_1, csch_1},
   'exp2': {sinh_2, cosh_2, tanh_2, coth_2, sech_2, csch_2},
