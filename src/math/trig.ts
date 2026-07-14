@@ -80,7 +80,7 @@ export function sin_2(x: TwoF64): TwoF64 {
  * Compute the sine of `x` using Padé approximant. Accurate for `|x| < π/2`
  * (the relative error grows significantly as `x` moves away from that range).
  */
-export function _sin_1(x: f64): TwoF64 {
+function _sin_1(x: f64): TwoF64 {
   const [p, q] = _sin_padé_1(x);
   return div22(p, q);
 }
@@ -89,11 +89,11 @@ export function _sin_1(x: f64): TwoF64 {
  * Return a Padé approximant of `sin(x)`, where `|x| < π/2`, as a rational `p/q`
  * represented as `[p, q]`.
  */
-export function _sin_padé_1(x: f64): [TwoF64, TwoF64] {
+function _sin_padé_1(x: f64): [TwoF64, TwoF64] {
   // Padé [n/n] -> if n is odd, |P| = |Q|, otherwise |P| = |Q| - 1
   //
-  //  p = P₀x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹
-  //  q =   1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
+  //  p = x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹ + ...
+  //  q = 1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ   + ...
 
   const [P, Q] = sin_pade[17];
   let xpow = square_1(x);
@@ -125,20 +125,15 @@ export function _sin_padé_1(x: f64): [TwoF64, TwoF64] {
  * Compute the sine of `x` using Padé approximant. Accurate for `|x| < π/2`
  * (the relative error grows significantly as `x` moves away from that range).
  */
-export function _sin_2(x: TwoF64): TwoF64 {
-  const [p, q] = _sin_2_padé(x);
+function _sin_2(x: TwoF64): TwoF64 {
+  const [p, q] = _sin_padé_2(x);
   return div22(p, q);
 }
-/**
- * Return a Padé approximant of `sin(x)`, where `|x| < π/2`, as a rational `p/q`
- * represented as `[p, q]`.
- */
-export function _sin_2_padé(x: TwoF64): [TwoF64, TwoF64] {
-  // Padé [n/n] -> if n is odd, |P| = |Q|, otherwise |P| = |Q| - 1
-  //
-  //  p = P₀x + P₁x³ + P₂x⁵ + ... + Pₖ*x²ᵏ⁺¹
-  //  q =   1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
 
+/**
+ * @see _sin_padé_1
+ */
+function _sin_padé_2(x: TwoF64): [TwoF64, TwoF64] {
   const [P, Q] = sin_pade[17];
   let xpow = square_2(x);
 
@@ -229,7 +224,7 @@ export function cos_2(x: TwoF64): TwoF64 {
  * Compute the cosine of `x` using Padé approximant. Accurate for `|x| < π/2`
  * (the relative error grows significantly as `x` moves away from that range).
  */
-export function _cos(x: f64 | TwoF64): TwoF64 {
+function _cos(x: f64 | TwoF64): TwoF64 {
   const [p, q] = _cos_padé(x);
   return div22(p, q);
 }
@@ -238,7 +233,7 @@ export function _cos(x: f64 | TwoF64): TwoF64 {
  * Return a Padé approximant of `cos(x)`, where `|x| < π/2`, as a rational `p/q`
  * represented as `[p, q]`.
  */
-export function _cos_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
+function _cos_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
   const [P, Q] = cos_pade[16];
   const x2 = typeof x === 'number' ? square_1(x) : square_2(x);
 
@@ -542,6 +537,6 @@ function _csc_1(x: f64): TwoF64 {
  * Compute the cosecant of `x` using Padé approximant, where `|x| < π/2`.
  */
 function _csc_2(x: TwoF64): TwoF64 {
-  const [p, q] = _sin_2_padé(x);
+  const [p, q] = _sin_padé_2(x);
   return div22(q, p);
 }

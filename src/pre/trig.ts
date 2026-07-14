@@ -7,7 +7,7 @@ import type { TwoF64 } from "../base/common.js";
 
 /**
  * Coefficients (from lowest to highest degree) of the Padé (n,n) approximant
- * for sin(x). Trivial zeros are skipped, which means :
+ * for `sin(x)`. Trivial zeros are skipped, which means :
  * - for the numerator:   index `k` maps to degree `2k + 1`
  * - for the denominator: index `k` maps to degree `2k`
  */
@@ -163,7 +163,7 @@ export const sin_pade = {
 
 /**
  * Coefficients (from lowest to highest degree) of the Padé (n,n) approximant
- * for cos(x). Trivial zeros are skipped, which means index `k` maps to degree
+ * for `cos(x)`. Trivial zeros are skipped, which means index `k` maps to degree
  * `2k` for both the numerator and denominator. For odd `n`, approximants are
  * the same as for `n - 1`.
  */
