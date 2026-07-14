@@ -10,7 +10,6 @@ import {
   prod1,
   sum2,
   prod2,
-  F64_SPLITTER,
   sub12,
   div12,
 } from '../../src/index';
@@ -21,10 +20,12 @@ import fs from 'node:fs';
 import {
   FnSig,
   UnionToIntersection,
-  Expand,
   randomFn,
   pairsInRange,
   signCombinations,
+  E_SPLIT_MAX,
+  initArgsList,
+  collectOutputs,
 } from '../utils';
 
 // Functions to test grouped by signature
@@ -51,7 +52,7 @@ function randWithin(min: number, max: number) {
 }
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
-const argsList: ArgsListBySig = {'opa1': [], 'opa2': [], 'op12': []};
+const argsList = initArgsList<ArgsListBySig>(fnBySig);
 
 // Fill argsList with number sequences of increasing length
 for (let len = 3; len < 1e4; len = Math.floor(len*1.5)) {
@@ -75,7 +76,6 @@ for (let len = 3; len < 1e4; len = Math.floor(len*1.5)) {
   }
 }
 
-const E_SPLIT_MAX = exponent(Number.MAX_VALUE/F64_SPLITTER);
 const e_shift = 0; // decrease to shift the window towards subnormals
 const emin = Math.floor(exponent(FLOAT64_MIN)/2) + e_shift;
 const emax = Math.min(0, emin) + E_SPLIT_MAX;
@@ -96,28 +96,9 @@ for (const [e1, e2] of pairsInRange(emin, emax, 5)) {
   }
 }
 
-
-// Produce the list of outputs keyed by function given argsList
-const fnOutput = {} as FnOutputList;
-for (const sid in fnBySig) {
-  const fnGroup = fnBySig[sid as keyof FnBySig];
-  const argsGroup = argsList[sid as keyof FnBySig]
-  for (const fnName in fnGroup) {
-    fnOutput[fnName as FnName] = [];
-    const fn = (fnGroup as TestedFunctions)[fnName as FnName];
-    const fnOut = fnOutput[fnName as FnName]!;
-    for (const args of argsGroup) {
-      // @ts-ignore (TS doesn't understand correlated unions)
-      const result = fn(...args);
-      fnOut.push(result);
-    }
-  }
-}
-
-// Inputs/Outputs object
-const testset = { argsList, fnOutput} as Expand<{
-  argsList: ArgsListBySig, fnOutput: FnOutputList
-}>;
+// Produce the list of outputs keyed by function
+const fnOutput = collectOutputs<FnOutputList>(fnBySig, argsList);
+const testset = { argsList, fnOutput };
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);

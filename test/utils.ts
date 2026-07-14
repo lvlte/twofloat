@@ -3,7 +3,7 @@
  */
 
 import { exponent } from '@lvlte/ulp';
-import { f64, int, TwoF64 } from '../src';
+import { f64, F64_SPLITTER, int, TwoF64 } from '../src';
 
 type _UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   (k: infer I) => void
@@ -13,7 +13,7 @@ export type UnionToIntersection<U> = _UnionToIntersection<U> extends infer O
   ? { [K in keyof O]: O[K] }
   : never;
 
-export type Expand<T> = {} & { [P in keyof T]: Expand<T[P]> };
+export type Expand<T> = {} & T extends TwoF64 ? T : { [P in keyof T]: Expand<T[P]> };
 
 type RandomFnDefault = () => number;
 type RandomFnWithDomainOpt = (exp: number, sign: number) => number;
@@ -37,6 +37,17 @@ export interface FnSig {
   'exp1': (x: f64) => TwoF64;
   'exp2': (x: TwoF64) => TwoF64;
 }
+
+type FnBySig = {[K in keyof FnSig]: {[fnName: string]: FnSig[K]}};
+type FnBySigOpt = Partial<FnBySig>;
+type ArgsListBySig = Partial<{[K in keyof FnBySig]: Parameters<FnSig[K]>[]}>;
+type FnOutputList = Partial<{[key: string]: ReturnType<FnBySig[keyof FnBySig][string]>[]}>;
+
+/**
+ * Exponent of the maximum absolute value that can be splitted by `F64_SPLITTER`
+ * (split is not immune to overflow).
+ */
+export const E_SPLIT_MAX = exponent(Number.MAX_VALUE/F64_SPLITTER);
 
 /**
  * Computes x * 2^n.
@@ -83,3 +94,50 @@ export function pairsInRange(emin: f64, emax: f64, step: f64): Array<[f64, f64]>
  */
 export const signCombinations = [[1, 1], [1, -1], [-1, 1], [-1, -1]] as const;
 
+/**
+ * Creates an empty argsList object (ie. with signature keys mapped to an empty
+ * array) given `fnBySig`.
+ */
+export function initArgsList<T extends ArgsListBySig>(fnBySig: FnBySigOpt): Expand<T> {
+  return Object.fromEntries(Object.keys(fnBySig).map(op => [op, []])) as Expand<T>;
+}
+
+/**
+ * Produce the list of outputs keyed by function name given `fnBySig` and
+ * `argsList`. A `processArgsFn` callback can be used to alter the arguments
+ * for some specific function(s), in which case it needs to be replicated on
+ * the julia side via "process_args".
+ */
+export function collectOutputs<T extends FnOutputList>(fnBySig: FnBySigOpt, argsList: ArgsListBySig, processArgsFn?: Function): Expand<T> {
+  const fnOutput = {} as FnOutputList;
+
+  for (const sid in fnBySig) {
+    const fnGroup = fnBySig[sid as keyof FnBySigOpt];
+    const argsGroup = argsList[sid as keyof FnBySigOpt]!;
+
+    for (const fnName in fnGroup) {
+      fnOutput[fnName] = [];
+      const fn = fnGroup[fnName];
+      const fnOut = fnOutput[fnName];
+
+      if (processArgsFn) {
+        const processArgs = processArgsFn(fnName);
+        for (const args of argsGroup) {
+          const _args = processArgs(...args) as typeof args;
+          // @ts-ignore
+          const result = fn(..._args);
+          fnOut.push(result);
+        }
+      }
+      else {
+        for (const args of argsGroup) {
+          // @ts-ignore
+          const result = fn(...args);
+          fnOut.push(result);
+        }
+      }
+    }
+  }
+
+  return fnOutput as Expand<T>;
+}

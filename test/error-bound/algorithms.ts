@@ -9,7 +9,6 @@
  */
 
 import {
-  F64_SPLITTER,
   normalize as _normalize,
   split,
   twoSum,
@@ -31,10 +30,12 @@ import {
 import {
   FnSig,
   UnionToIntersection,
-  Expand,
   randomFn,
   pairsInRange,
-  signCombinations
+  signCombinations,
+  E_SPLIT_MAX,
+  collectOutputs,
+  initArgsList
 } from '../utils';
 
 // Wrap normalize so it is tested with the |x| ≥ |y| condition satisfied
@@ -55,21 +56,15 @@ const fnBySig = {
 type FnBySig = typeof fnBySig;
 type TestedFunctions = UnionToIntersection<FnBySig[keyof FnBySig]>;
 type FnName = keyof TestedFunctions;
-
 type ArgsListBySig = { [K in keyof FnBySig]: Parameters<FnSig[K]>[] };
-type FnOutputList = { [K in FnName]: ReturnType<TestedFunctions[K]>[] }
+type FnOutputList = { [K in FnName]: ReturnType<TestedFunctions[K]>[] };
 
 // Pseudo-random number generator
 const SEED = Math.sqrt(2);
 const random = randomFn(SEED, true);
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
-const argsList: ArgsListBySig = {
-  'op1': [], 'op11': [], 'op21': [], 'op22': []
-};
-
-// split is not immune to overflow
-const E_SPLIT_MAX = exponent(Number.MAX_VALUE/F64_SPLITTER);
+const argsList = initArgsList<ArgsListBySig>(fnBySig);
 
 // Exponent range for the generated numbers (roughly the largest window for
 // which the error bounds can be checked properly since they assume no overflow
@@ -100,27 +95,9 @@ for (const [e1, e2] of pairsInRange(emin, emax, 5)) {
   }
 }
 
-// Produce the list of outputs keyed by function given argsList
-const fnOutput = {} as FnOutputList;
-for (const sid in fnBySig) {
-  const fnGroup = fnBySig[sid as keyof FnBySig];
-  const argsGroup = argsList[sid as keyof FnBySig]
-  for (const fnName in fnGroup) {
-    fnOutput[fnName as FnName] = [];
-    const fn = (fnGroup as TestedFunctions)[fnName as FnName];
-    const fnOut = fnOutput[fnName as FnName]!;
-    for (const args of argsGroup) {
-      // @ts-ignore (TS doesn't understand correlated unions)
-      const result = fn(...args);
-      fnOut.push(result);
-    }
-  }
-}
-
-// Inputs/Outputs object
-const testset = { argsList, fnOutput} as Expand<{
-  argsList: ArgsListBySig, fnOutput: FnOutputList
-}>;
+// Produce the list of outputs keyed by function
+const fnOutput = collectOutputs<FnOutputList>(fnBySig, argsList);
+const testset = { argsList, fnOutput };
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);

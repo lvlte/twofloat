@@ -3,7 +3,7 @@
  */
 
 import {
-  F64_SPLITTER, normalize, abs2, add11, gt21,
+  normalize, abs2, add11, gt21,
   square_1, square_2, cube_1, cube_2,
   exp_1, exp_2, expm1_1, expm1_2, powint_1, powint_2, pow_11, pow_12, pow_21, pow_22,
   _linpow_1, _logpow_1, _logpowltr, _linpow_2, _logpow_2,
@@ -15,7 +15,7 @@ import {
   asin_1, asin_2, acos_1, acos_2, atan_1, atan_2,
 } from '../../src/index';
 
-import { FnSig, UnionToIntersection, Expand, randomFn } from '../utils';
+import { FnSig, UnionToIntersection, randomFn, E_SPLIT_MAX, collectOutputs, initArgsList } from '../utils';
 import { exponent } from '@lvlte/ulp';
 import fs from 'node:fs';
 
@@ -140,13 +140,8 @@ const random = randomFn(SEED, true);
 const rand = randomFn(SEED, false);
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
-const argsList: ArgsListBySig = {
-  'op1': [], 'op2': [], 'op1n': [], 'op2n': [], 'exp1': [], 'exp2': [],
-  'op11': [], 'op12': [], 'op21': [], 'op22': []
-};
+const argsList = initArgsList<ArgsListBySig>(fnBySig);
 
-// split is not immune to overflow
-const E_SPLIT_MAX = exponent(Number.MAX_VALUE/F64_SPLITTER);
 const emin = -106;
 const emax = 53;
 
@@ -207,29 +202,8 @@ for (const [sign, emax] of [[1, e_posx], [-1, e_negx]]) {
   }
 }
 
-// Produce the list of outputs keyed by function given argsList
-const fnOutput = {} as FnOutputList;
-for (const sid in fnBySig) {
-  const fnGroup = fnBySig[sid as keyof FnBySig];
-  const argsGroup = argsList[sid as keyof FnBySig]
-  for (const fnName in fnGroup) {
-    fnOutput[fnName as FnName] = [];
-    const fn = (fnGroup as TestedFunctions)[fnName as FnName];
-    const processArgs = processArgsFn(fnName as FnName);
-    const fnOut = fnOutput[fnName as FnName];
-    for (const args of argsGroup) {
-      const _args = processArgs(...args) as typeof args;
-      // @ts-ignore (TS doesn't understand correlated unions)
-      const result = fn(..._args);
-      fnOut.push(result);
-    }
-  }
-}
-
-// Inputs/Outputs object
-const testset = { argsList, fnOutput} as Expand<{
-  argsList: ArgsListBySig, fnOutput: FnOutputList
-}>;
+const fnOutput = collectOutputs<FnOutputList>(fnBySig, argsList, processArgsFn);
+const testset = { argsList, fnOutput };
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
