@@ -253,8 +253,15 @@ export function acos_2(x: TwoF64): TwoF64 {
  */
 export function atan_1(x: f64): TwoF64 {
   if (Math.abs(x) <= 0.6) {
+    if (x === 0) {
+      return ZERO;
+    }
     const [p, q] = _atan_padé_1(x);
     return div22(p, q);
+  }
+
+  if (!Number.isFinite(x)) {
+    return Number.isNaN(x) ? NaN2 : x >= 0 ? PI$2 : neg2(PI$2);
   }
 
   // atan(x) = 2*atan( x / (1 + √(1 + x²)) )
@@ -275,8 +282,15 @@ export function atan_1(x: f64): TwoF64 {
  */
 export function atan_2(x: TwoF64): TwoF64 {
   if (lt21(abs2(x), 0.6)) {
+    if (isZero(x)) {
+      return ZERO;
+    }
     const [p, q] = _atan_padé_2(x);
     return div22(p, q);
+  }
+
+  if (!isFinite2(x)) {
+    return isNaN2(x) ? NaN2 : ge21(x, 0) ? PI$2 : neg2(PI$2);
   }
 
   const x2p1 = add21(square_2(x), 1);
