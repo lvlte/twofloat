@@ -439,3 +439,41 @@ export function asec_2(x: TwoF64): TwoF64 {
 
   return acos_2(inv2(x));
 }
+
+/**
+ * Computes the inverse cosecant of `x` using extended precision arithmetic.
+ * The output is expressed in radians.
+ *
+ * @param {f64} x A `f64` number in the domain `ℝ ∖ (-1, 1)`
+ * @returns {TwoF64} A `TwoF64` number in the range `[-π/2, +π/2]`
+ */
+export function acsc_1(x: f64): TwoF64 {
+  if (Math.abs(x) < 1 || Number.isNaN(x)) {
+    return NaN2;
+  }
+
+  if (!Number.isFinite(x)) {
+    return ZERO;
+  }
+
+  return asin_2(inv1(x));
+}
+
+/**
+ * Computes the inverse cosecant of `x` using extended precision arithmetic.
+ * The output is expressed in radians.
+ *
+ * @param {TwoF64} x A `TwoF64` number in the domain `ℝ ∖ (-1, 1)`
+ * @returns {TwoF64} A `TwoF64` number in the range `[-π/2, +π/2]`
+ */
+export function acsc_2(x: TwoF64): TwoF64 {
+  if (lt21(abs2(x), 1) || isNaN2(x)) {
+    return NaN2;
+  }
+
+  if (!isFinite2(x)) {
+    return ZERO;
+  }
+
+  return asin_2(inv2(x));
+}

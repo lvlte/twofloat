@@ -238,6 +238,31 @@ println()
             "compute" => ((xhi, xlo),) -> asec(big(xhi) + big(xlo))
         ))
     end
+
+    @testset "acsc_1" begin
+        _test(Dict(
+            "fn" => "acsc_1",
+            "args" => args_list.op1,
+            "process_args" => function(x)
+                abs(x) ≥ 1 && return (x,)
+                return (ldexp(x, -exponent(x)),)
+            end,
+            "compute" => x -> acsc(big(x))
+        ))
+    end
+
+    @testset "acsc_2" begin
+        _test(Dict(
+            "fn" => "acsc_2",
+            "args" => args_list.op2,
+            "process_args" => function((xhi, xlo),)
+                abs(big(xhi) + big(xlo)) ≥ 1 && return ((xhi, xlo),)
+                p = -exponent(xhi)
+                return ((ldexp(xhi, p), ldexp(xlo, p)),)
+            end,
+            "compute" => ((xhi, xlo),) -> acsc(big(xhi) + big(xlo))
+        ))
+    end
 end
 
 println()
