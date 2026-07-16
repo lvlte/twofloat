@@ -266,8 +266,7 @@ println()
 end
 
 println()
-@testset verbose = true "Hyperbolic functions ────" begin ######################
-
+@testset verbose = true "Hyperbolic functions ────────────" begin ##############
     @testset "sinh_1" begin
         _test(Dict(
             "fn" => "sinh_1",
@@ -376,6 +375,25 @@ println()
             "fn" => "csch_2",
             "args" => args_list.exp2,
             "compute" => ((xhi, xlo),) -> csch(big(xhi) + big(xlo))
+        ))
+    end
+end
+
+println()
+@testset verbose = true "Inverse Hyperbolic functions ────" begin ##############
+    @testset "asinh_1" begin
+        _test(Dict(
+            "fn" => "asinh_1",
+            "args" => args_list.op1,
+            "compute" => x -> asinh(big(x)),
+        ))
+    end
+
+    @testset "asinh_2" begin
+        _test(Dict(
+            "fn" => "asinh_2",
+            "args" => args_list.op2,
+            "compute" => ((xhi, xlo),) -> asinh(big(xhi) + big(xlo))
         ))
     end
 end

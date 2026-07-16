@@ -7,3 +7,4 @@ export * from './mod.js';
 export * from './trig.js';
 export * from './trig-inv.js';
 export * from './hyper.js';
+export * from './hyp-inv.js';
