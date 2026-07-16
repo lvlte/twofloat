@@ -102,6 +102,14 @@ end
 
 const Tan = tangent_numbers(big(30))
 
+function dblfact(n::Integer)
+    if iseven(n)
+        k = div(n, 2)
+        return 2^k * factorial(k)
+    end
+    return prod(n:-2:1)
+end
+
 # Taylor series are represented below with functions that return the coefficient
 # `cₙ` (in the expansion of the series) given some integer `n ≥ 0`.
 
@@ -119,3 +127,6 @@ taylor_tan(n::T) where T<:Integer = iszero(n) ? 0//T(1) : T(Tan[n])//factorial(2
 # asin/atan - skip zeros (n maps to degree 2n+1)
 taylor_asin(n::T) where T<:Integer = factorial(2n)//(4^n*factorial(n)^2*(2n+1))
 taylor_atan(n::T) where T<:Integer = (-1)^n//(2n+1)
+
+# asinh/atanh - skip zeros (n maps to degree 2n+1)
+taylor_asinh(n::T) where T<:Integer = ((-1)^n * dblfact(2n - 1))//((2n + 1)*dblfact(2n))

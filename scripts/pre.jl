@@ -142,9 +142,21 @@ atan_pade_int = OrderedDict(n => reverse.(pade_int(atan_pade[n]...)) for n in N)
 atan_pade_int_TwoF64 = OrderedDict(n => [TwoF64Int.(atan_pade_int[n][1]), TwoF64Int.(atan_pade_int[n][2])] for n in N)
 
 pre_arctrig = OrderedDict(
-    "arcsin_pade" => asin_pade_TwoF64,
-    "arctan_pade" => atan_pade_TwoF64,
-    "arctan_pade_int" => atan_pade_int_TwoF64,
+    "asin_pade" => asin_pade_TwoF64,
+    "atan_pade" => atan_pade_TwoF64,
+    "atan_pade_int" => atan_pade_int_TwoF64,
+)
+
+# Padé [n/n] asinh(x) (same remarks as above for sin(x))
+# NB. coefficients are absolute values of those for asin(x) (the needed range
+# for n might be different in the end though)
+N = UnitRange{BigInt}(20, 30)
+MN = map(n -> (div(n-1, 2), div(n, 2)), N)
+asinh_pade = OrderedDict(m+n+1 => taylor_to_pade(taylor_asinh, m, n) for (m,n) in MN)
+asinh_pade_TwoF64 = OrderedDict(n => [TwoF64.(asinh_pade[n][1]), TwoF64.(asinh_pade[n][2])] for n in N)
+
+pre_archyp = OrderedDict(
+    "asinh_pade" => asinh_pade_TwoF64,
 )
 
 ### Output
@@ -155,6 +167,7 @@ filemap = (
     "log"       => pre_log,
     "trig"      => pre_trig,
     "arctrig"   => pre_arctrig,
+    "archyp"    => pre_archyp,
 )
 
 for (name, content) in filemap
