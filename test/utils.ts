@@ -57,6 +57,13 @@ export function ldexp(x: number, n: number) {
 }
 
 /**
+ * Computes x * 2^n.
+ */
+export function ldexp2([xhi, xlo]: TwoF64, n: number): TwoF64 {
+  return [xhi * 2**n, xlo * 2**n];
+}
+
+/**
  * Return a function that returns pseudo-random numbers using the given `seed`.
  * If `domainOpt` is `true`, the function expects two arguments `exp` and `sign`
  * that define its output range `[sign*2^exp, sign*2^(exp+1)]`, otherwise the

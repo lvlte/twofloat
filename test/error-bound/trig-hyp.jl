@@ -216,6 +216,33 @@ println()
             "compute" => ((xhi, xlo),) -> acot(big(xhi) + big(xlo))
         ))
     end
+
+    @testset "asec_1" begin
+        _test(Dict(
+            "fn" => "asec_1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => function(x)
+                abs(x) ≥ 1 && return (x,)
+                return (ldexp(x, -exponent(x)),)
+            end,
+            "compute" => x -> asec(big(x))
+        ))
+    end
+
+    @testset "asec_2" begin
+        _test(Dict(
+            "fn" => "asec_2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => function((xhi, xlo),)
+                abs(big(xhi) + big(xlo)) ≥ 1 && return ((xhi, xlo),)
+                p = -exponent(xhi)
+                return ((ldexp(xhi, p), ldexp(xlo, p)),)
+            end,
+            "compute" => ((xhi, xlo),) -> asec(big(xhi) + big(xlo))
+        ))
+    end
 end
 
 println()
