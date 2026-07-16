@@ -11,8 +11,7 @@ coverage = OrderedDict(keys(fn_output) .=> false)
 overflow = OrderedDict(keys(fn_output) .=> 0)
 
 println()
-@testset verbose = true "Trigonometric functions ─" begin ######################
-
+@testset verbose = true "Trigonometric functions ─────────" begin ##############
     @testset "sin_1" begin
         _test(Dict(
             "fn" => "sin_1",
@@ -123,17 +122,16 @@ println()
 end
 
 println()
-@testset verbose = true "Inverse Trigonometric functions ─" begin ######################
+@testset verbose = true "Inverse Trigonometric functions ─" begin ##############
 
     @testset "asin_1" begin
         _test(Dict(
             "fn" => "asin_1",
             "args" => args_list.op1,
             "process_args" => function(x)
-                abs(x) <= 1 && return (x,)
+                abs(x) ≤ 1 && return (x,)
                 e = exponent(x)
-                p = -(1 + e + (e % 2))
-                return (x*2.0^p,)
+                return (ldexp(x, -(1 + e + (e % 2))),)
             end,
             "compute" => x -> asin(big(x))
         ))
@@ -144,11 +142,10 @@ println()
             "fn" => "asin_2",
             "args" => args_list.op2,
             "process_args" => function((xhi, xlo),)
-                x = big(xhi) + big(xlo)
-                abs(x) <= 1 && return ((xhi, xlo),)
-                e = exponent(x)
+                abs(big(xhi) + big(xlo)) ≤ 1 && return ((xhi, xlo),)
+                e = exponent(xhi)
                 p = -(1 + e + (e % 2))
-                return ((xhi*2.0^p, xlo*2.0^p),)
+                return ((ldexp(xhi, p), ldexp(xlo, p)),)
             end,
             "compute" => ((xhi, xlo),) -> asin(big(xhi) + big(xlo))
         ))
@@ -160,10 +157,9 @@ println()
             "args" => args_list.op1,
             "rel_err_bound" => big(2.0)^-95,
             "process_args" => function(x)
-                abs(x) <= 1 && return (x,)
+                abs(x) ≤ 1 && return (x,)
                 e = exponent(x)
-                p = -(1 + e + (e % 2))
-                return (x*2.0^p,)
+                return (ldexp(x, -(1 + e + (e % 2))),)
             end,
             "compute" => x -> acos(big(x))
         ))
@@ -175,11 +171,10 @@ println()
             "args" => args_list.op2,
             "rel_err_bound" => big(2.0)^-95,
             "process_args" => function((xhi, xlo),)
-                x = big(xhi) + big(xlo)
-                abs(x) <= 1 && return ((xhi, xlo),)
-                e = exponent(x)
+                abs(big(xhi) + big(xlo)) ≤ 1 && return ((xhi, xlo),)
+                e = exponent(xhi)
                 p = -(1 + e + (e % 2))
-                return ((xhi*2.0^p, xlo*2.0^p),)
+                return ((ldexp(xhi, p), ldexp(xlo, p)),)
             end,
             "compute" => ((xhi, xlo),) -> acos(big(xhi) + big(xlo))
         ))

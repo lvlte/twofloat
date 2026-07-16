@@ -52,8 +52,7 @@ function processArgsFn(fnName: FnName): Function {
       return (...args: FnArgs[typeof fnName]) => {
         if (Math.abs(args[0]) > 1) {
           const e = exponent(args[0]);
-          const p = -(1 + e + (e % 2));
-          args[0] = args[0] * 2**p;
+          args[0] = ldexp(args[0], -(1 + e + (e % 2)));
         }
         return args;
       }
@@ -61,11 +60,10 @@ function processArgsFn(fnName: FnName): Function {
     case 'asin_2':
     case 'acos_2':
       return (...args: FnArgs[typeof fnName]) => {
-        const [xhi, xlo] = args[0];
-        if (gt21(abs2([xhi, xlo]), 1)) {
-          const e = exponent(xhi);
-          const p = -(1 + e + (e % 2));
-          args[0] = [xhi*2**p, xlo*2**p];
+        const x = args[0];
+        if (gt21(abs2(x), 1)) {
+          const e = exponent(x[0]);
+          args[0] = ldexp2(x, -(1 + e + (e % 2)));
         }
         return args;
       }
