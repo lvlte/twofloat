@@ -396,6 +396,40 @@ println()
             "compute" => ((xhi, xlo),) -> asinh(big(xhi) + big(xlo))
         ))
     end
+
+    @testset "acosh_1" begin
+        _test(Dict(
+            "fn" => "acosh_1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-95,
+            "process_args" => function(x)
+                x = abs(x)
+                if x < 1
+                    x = ldexp(x, -exponent(x));
+                end
+                return (x,)
+            end,
+            "compute" => x -> acosh(big(x)),
+        ))
+    end
+
+    @testset "acosh_2" begin
+        _test(Dict(
+            "fn" => "acosh_2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => function((xhi, xlo),)
+                xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
+                if abs(big(xhi) + big(xlo)) < 1
+                    p = -exponent(xhi)
+                    xhi = ldexp(xhi, p);
+                    xlo = ldexp(xlo, p);
+                end
+                return ((xhi, xlo),)
+            end,
+            "compute" => ((xhi, xlo),) -> acosh(big(xhi) + big(xlo))
+        ))
+    end
 end
 
 ##

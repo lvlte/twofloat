@@ -2,8 +2,8 @@
  * @file Inverse Hyperbolic functions
  */
 
-import { type f64, type TwoF64 } from "../base/common.js";
-import { add21, add22, div22, mul21, mul22 } from "../arithmetic/index.js";
+import { NaN2, type f64, type TwoF64 } from "../base/common.js";
+import { add21, add22, div22, mul21, mul22, sub21 } from "../arithmetic/index.js";
 import { square_1, square_2 } from "./exp.js";
 import { sqrt_2 } from "./roots.js";
 import { ln_2 } from "./log.js";
@@ -124,4 +124,49 @@ function _asinh_padé_2(x: TwoF64): [TwoF64, TwoF64] {
   }
 
   return [add22(p, x), add21(q, 1)];
+}
+
+/**
+ * Computes the inverse hyperbolic cosine of `x` using extended precision
+ * arithmetic.
+ *
+ * @param {f64} x A `f64` number in the domain `[1, ∞]`
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
+ */
+export function acosh_1(x: f64): TwoF64 {
+  if (!Number.isFinite(x)) {
+    return [x, x];
+  }
+
+  if (x < 1) {
+    return NaN2;
+  }
+
+  // acosh(x) = ln(x + √(x² - 1))
+  const x2m1 = sub21(square_1(x), 1);
+  const y = add21(sqrt_2(x2m1), x);
+
+  return ln_2(y);
+}
+
+/**
+ * Computes the inverse hyperbolic cosine of `x` using extended precision
+ * arithmetic.
+ *
+ * @param {TwoF64} x A `TwoF64` number in the domain `[1, ∞]`
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
+ */
+export function acosh_2(x: TwoF64): TwoF64 {
+  if (!isFinite2(x)) {
+    return [...x];
+  }
+
+  if (lt21(x, 1)) {
+    return NaN2;
+  }
+
+  const x2m1 = sub21(square_2(x), 1);
+  const y = add22(sqrt_2(x2m1), x);
+
+  return ln_2(y);
 }
