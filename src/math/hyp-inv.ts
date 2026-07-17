@@ -3,13 +3,13 @@
  */
 
 import { NaN2, type f64, type TwoF64 } from "../base/common.js";
-import { add21, add22, div22, mul21, mul22, sub21 } from "../arithmetic/index.js";
+import { add21, add22, div12, div22, mul21, mul22, sub12, sub21 } from "../arithmetic/index.js";
 import { square_1, square_2 } from "./exp.js";
 import { sqrt_2 } from "./roots.js";
 import { ln_2 } from "./log.js";
 import { abs2, neg2 } from "./sign.js";
 import { asinh_pade } from "../pre/hyp-inv.js";
-import { isFinite2, lt21 } from "../base/compare.js";
+import { isFinite2, le21, lt21 } from "../base/compare.js";
 
 /**
  * Computes the inverse hyperbolic sine of `x` using extended precision
@@ -169,4 +169,40 @@ export function acosh_2(x: TwoF64): TwoF64 {
   const y = add22(sqrt_2(x2m1), x);
 
   return ln_2(y);
+}
+
+/**
+ * Computes the inverse hyperbolic tangent of `x` using extended precision
+ * arithmetic.
+ *
+ * @param {f64} x A `f64` number in the domain `[-1, 1]`
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function atanh_1(x: f64): TwoF64 {
+  const xabs = Math.abs(x);
+  if (!(xabs <= 1)) {
+    return NaN2;
+  }
+
+  // atanh(x) = asinh(x / √(1 - x²))
+  const y = sqrt_2(sub12(1, square_1(x)));
+  return asinh_2(div12(x, y));
+}
+
+/**
+ * Computes the inverse hyperbolic tangent of `x` using extended precision
+ * arithmetic.
+ *
+ * @param {TwoF64} x A `TwoF64` number in the domain `[-1, 1]`
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function atanh_2(x: TwoF64): TwoF64 {
+  const xabs = abs2(x);
+  if (!le21(xabs, 1)) {
+    return NaN2;
+  }
+
+  // atanh(x) = asinh(x / √(1 - x²))
+  const y = sqrt_2(sub12(1, square_2(x)));
+  return asinh_2(div22(x, y));
 }
