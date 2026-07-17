@@ -2,14 +2,15 @@
  * @file Inverse Hyperbolic functions
  */
 
-import { NaN2, type f64, type TwoF64 } from "../base/common.js";
-import { add21, add22, div12, div22, mul21, mul22, sub12, sub21 } from "../arithmetic/index.js";
+import { NaN2, ZERO, type f64, type TwoF64 } from "../base/common.js";
+import { add21, add22, div12, div22, inv1, inv2, mul21, mul22, sub12, sub21 } from "../arithmetic/index.js";
 import { square_1, square_2 } from "./exp.js";
 import { sqrt_2 } from "./roots.js";
 import { ln_2 } from "./log.js";
 import { abs2, neg2 } from "./sign.js";
 import { asinh_pade } from "../pre/hyp-inv.js";
-import { isFinite2, le21, lt21 } from "../base/compare.js";
+import { eq21, ge21, isFinite2, le21, lt21 } from "../base/compare.js";
+import { INF, NINF } from "./constants.js";
 
 /**
  * Computes the inverse hyperbolic sine of `x` using extended precision
@@ -205,4 +206,52 @@ export function atanh_2(x: TwoF64): TwoF64 {
   // atanh(x) = asinh(x / √(1 - x²))
   const y = sqrt_2(sub12(1, square_2(x)));
   return asinh_2(div22(x, y));
+}
+
+/**
+ * Computes the inverse hyperbolic cotangent of `x` using extended precision
+ * arithmetic.
+ *
+ * @param {f64} x A `f64` number in the domain `ℝ ∖ (-1, 1)`
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function acoth_1(x: f64): TwoF64 {
+  const xabs = Math.abs(x);
+  if (!(xabs >= 1)) {
+    return NaN2;
+  }
+
+  if (xabs === 1) {
+    return x > 0 ? INF : NINF;
+  }
+
+  if (xabs === Infinity) {
+    return x < 0 ? neg2(ZERO) : ZERO;
+  }
+
+  return atanh_2(inv1(x));
+}
+
+/**
+ * Computes the inverse hyperbolic cotangent of `x` using extended precision
+ * arithmetic.
+ *
+ * @param {TwoF64} x A `TwoF64` number in the domain `ℝ ∖ (-1, 1)`
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function acoth_2(x: TwoF64): TwoF64 {
+  const xabs = abs2(x);
+  if (!(ge21(xabs, 1))) {
+    return NaN2;
+  }
+
+  if (eq21(xabs, 1)) {
+    return x[0] > 0 ? INF : NINF;
+  }
+
+  if (!isFinite2(x)) {
+    return x[0] < 0 ? neg2(ZERO) : ZERO;
+  }
+
+  return atanh_2(inv2(x));
 }

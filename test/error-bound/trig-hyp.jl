@@ -457,6 +457,33 @@ println()
             "compute" => ((xhi, xlo),) -> atanh(big(xhi) + big(xlo))
         ))
     end
+
+    @testset "acoth_1" begin
+        _test(Dict(
+            "fn" => "acoth_1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-95,
+            "process_args" => function(x)
+                abs(x) ≥ 1 && return (x,)
+                return (ldexp(x, -exponent(x)),)
+            end,
+            "compute" => x -> acoth(big(x))
+        ))
+    end
+
+    @testset "acoth_2" begin
+        _test(Dict(
+            "fn" => "acoth_2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-90,
+            "process_args" => function((xhi, xlo),)
+                abs(big(xhi) + big(xlo)) ≥ 1 && return ((xhi, xlo),)
+                p = -exponent(xhi)
+                return ((ldexp(xhi, p), ldexp(xlo, p)),)
+            end,
+            "compute" => ((xhi, xlo),) -> acoth(big(xhi) + big(xlo))
+        ))
+    end
 end
 
 ##
