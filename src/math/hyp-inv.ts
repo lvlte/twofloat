@@ -9,7 +9,7 @@ import { sqrt_2 } from "./roots.js";
 import { ln_2 } from "./log.js";
 import { abs2, neg2 } from "./sign.js";
 import { asinh_pade } from "../pre/hyp-inv.js";
-import { eq21, ge21, isFinite2, le21, lt21 } from "../base/compare.js";
+import { eq21, ge21, isFinite2, isOne, isZero, le21, lt21 } from "../base/compare.js";
 import { INF, NINF } from "./constants.js";
 
 /**
@@ -254,4 +254,50 @@ export function acoth_2(x: TwoF64): TwoF64 {
   }
 
   return atanh_2(inv2(x));
+}
+
+/**
+ * Computes the inverse hyperbolic secant of `x` using extended precision
+ * arithmetic.
+ *
+ * @param {f64} x A `f64` number in the domain `[0, 1]`
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
+ */
+export function asech_1(x: f64): TwoF64 {
+  if (!(x >= 0 && x <= 1)) {
+    return NaN2;
+  }
+
+  if (x === 0) {
+    return 1/x < 0 ? NaN2 : INF;
+  }
+
+  if (x === 1) {
+    return ZERO;
+  }
+
+  return acosh_2(inv1(x));
+}
+
+/**
+ * Computes the inverse hyperbolic secant of `x` using extended precision
+ * arithmetic.
+ *
+ * @param {TwoF64} x A `TwoF64` number in the domain `[0, 1]`
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
+ */
+export function asech_2(x: TwoF64): TwoF64 {
+  if (!(ge21(x, 0) && le21(x, 1))) {
+    return NaN2;
+  }
+
+  if (isZero(x)) {
+    return 1/x[0] < 0 ? NaN2 : INF;
+  }
+
+  if (isOne(x)) {
+    return ZERO;
+  }
+
+  return acosh_2(inv2(x));
 }

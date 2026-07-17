@@ -10,7 +10,7 @@ import {
   cosh_1, cosh_2, coth_1, coth_2, csch_1, csch_2,
   asin_1, asin_2, atan_1, atan_2, asec_1, asec_2,
   acos_1, acos_2, acot_1, acot_2, acsc_1, acsc_2,
-  asinh_1, asinh_2, atanh_1, atanh_2,
+  asinh_1, asinh_2, atanh_1, atanh_2, asech_1, asech_2,
   acosh_1, acosh_2, acoth_1, acoth_2,
   lt21,
 } from '../../src/index';
@@ -29,10 +29,10 @@ import fs from 'node:fs';
 const fnBySig = {
   'op1': {sin_1, cos_1, tan_1, cot_1, sec_1, csc_1,
           asin_1, acos_1, atan_1, acot_1, asec_1, acsc_1,
-          asinh_1, acosh_1, atanh_1, acoth_1},
+          asinh_1, acosh_1, atanh_1, acoth_1, asech_1},
   'op2': {sin_2, cos_2, tan_2, cot_2, sec_2, csc_2,
           asin_2, acos_2, atan_2, acot_2, asec_2, acsc_2,
-          asinh_2, acosh_2, atanh_2, acoth_2},
+          asinh_2, acosh_2, atanh_2, acoth_2, asech_2},
   // functions defined in terms of e^x are tested apart from op1/op2 group
   'exp1': {sinh_1, cosh_1, tanh_1, coth_1, sech_1, csch_1},
   'exp2': {sinh_2, cosh_2, tanh_2, coth_2, sech_2, csch_2},
@@ -51,6 +51,7 @@ type FnArgs = { [K in FnName]: Parameters<TestedFunctions[K]> };
  */
 function processArgsFn(fnName: FnName): Function {
   switch (fnName) {
+    // domain [-1, 1]
     case 'asin_1':
     case 'acos_1':
     case 'atanh_1':
@@ -61,7 +62,6 @@ function processArgsFn(fnName: FnName): Function {
         }
         return args;
       }
-
     case 'asin_2':
     case 'acos_2':
     case 'atanh_2':
@@ -74,9 +74,9 @@ function processArgsFn(fnName: FnName): Function {
         return args;
       }
 
+    // f(x) = 1 + ε with |ε| < u² for |x| > 37.09
     case 'tanh_1':
     case 'coth_1':
-      // f(x) = 1 + ε with |ε| < u² for |x| > 37.09
       return (...args: FnArgs[typeof fnName]) => (args[0] = args[0] % 37, args);
 
     case 'tanh_2':
@@ -87,6 +87,7 @@ function processArgsFn(fnName: FnName): Function {
         return args;
       }
 
+    // |x| ≥ 1
     case 'asec_1':
     case 'acsc_1':
     case 'acoth_1':
@@ -96,7 +97,6 @@ function processArgsFn(fnName: FnName): Function {
         }
         return args;
       }
-
     case 'asec_2':
     case 'acsc_2':
     case 'acoth_2':
@@ -108,6 +108,7 @@ function processArgsFn(fnName: FnName): Function {
         return args;
       }
 
+    // x ≥ 1
     case 'acosh_1':
       return (...args: FnArgs[typeof fnName]) => {
         let x = Math.abs(args[0]);
@@ -117,12 +118,33 @@ function processArgsFn(fnName: FnName): Function {
         args[0] = x;
         return args;
       }
-
     case 'acosh_2':
       return (...args: FnArgs[typeof fnName]) => {
         let x = abs2(args[0]);
         if (lt21(x, 1)) {
           x = ldexp2(x, -exponent(x[0]));
+        }
+        args[0] = x;
+        return args;
+      }
+
+    // domain [0, 1]
+    case 'asech_1':
+      return (...args: FnArgs[typeof fnName]) => {
+        let x = Math.abs(args[0]);
+        if (x > 1) {
+          const e = exponent(x);
+          x = ldexp(x, -(1 + e + (e % 2)));
+        }
+        args[0] = x;
+        return args;
+      }
+    case 'asech_2':
+      return (...args: FnArgs[typeof fnName]) => {
+        let x = abs2(args[0]);
+        if (gt21(x, 1)) {
+          const e = exponent(x[0]);
+          x = ldexp2(x, -(1 + e + (e % 2)));
         }
         args[0] = x;
         return args;

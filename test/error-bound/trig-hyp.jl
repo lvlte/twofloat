@@ -484,6 +484,37 @@ println()
             "compute" => ((xhi, xlo),) -> acoth(big(xhi) + big(xlo))
         ))
     end
+
+    @testset "asech_1" begin
+        _test(Dict(
+            "fn" => "asech_1",
+            "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-85,
+            "process_args" => function(x)
+                x = abs(x)
+                x ≤ 1 && return (x,)
+                e = exponent(x)
+                return (ldexp(x, -(1 + e + (e % 2))),)
+            end,
+            "compute" => x -> asech(big(x))
+        ))
+    end
+
+    @testset "asech_2" begin
+        _test(Dict(
+            "fn" => "asech_2",
+            "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-80,
+            "process_args" => function((xhi, xlo),)
+                xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
+                big(xhi) + big(xlo) ≤ 1 && return ((xhi, xlo),)
+                e = exponent(xhi)
+                p = -(1 + e + (e % 2))
+                return ((ldexp(xhi, p), ldexp(xlo, p)),)
+            end,
+            "compute" => ((xhi, xlo),) -> asech(big(xhi) + big(xlo))
+        ))
+    end
 end
 
 ##
