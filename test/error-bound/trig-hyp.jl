@@ -515,6 +515,22 @@ println()
             "compute" => ((xhi, xlo),) -> asech(big(xhi) + big(xlo))
         ))
     end
+
+    @testset "acsch_1" begin
+        _test(Dict(
+            "fn" => "acsch_1",
+            "args" => args_list.op1,
+            "compute" => x -> acsch(big(x)),
+        ))
+    end
+
+    @testset "acsch_2" begin
+        _test(Dict(
+            "fn" => "acsch_2",
+            "args" => args_list.op2,
+            "compute" => ((xhi, xlo),) -> acsch(big(xhi) + big(xlo))
+        ))
+    end
 end
 
 ##

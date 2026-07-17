@@ -9,7 +9,7 @@ import { sqrt_2 } from "./roots.js";
 import { ln_2 } from "./log.js";
 import { abs2, neg2 } from "./sign.js";
 import { asinh_pade } from "../pre/hyp-inv.js";
-import { eq21, ge21, isFinite2, isOne, isZero, le21, lt21 } from "../base/compare.js";
+import { eq21, ge21, isFinite2, isNaN2, isOne, isZero, le21, lt21 } from "../base/compare.js";
 import { INF, NINF } from "./constants.js";
 
 /**
@@ -300,4 +300,45 @@ export function asech_2(x: TwoF64): TwoF64 {
   }
 
   return acosh_2(inv2(x));
+}
+
+/**
+ * Computes the inverse hyperbolic cosecant of `x` using extended precision
+ * arithmetic.
+ *
+ * @param {f64} x A `f64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function acsch_1(x: f64): TwoF64 {
+  if (!Number.isFinite(x)) {
+    return x > 0 ? ZERO : x < 0 ? neg2(ZERO) : NaN2;
+  }
+
+  if (x === 0) {
+    return 1/x < 0 ? NINF : INF;
+  }
+
+  return asinh_2(inv1(x));
+}
+
+/**
+ * Computes the inverse hyperbolic cosecant of `x` using extended precision
+ * arithmetic.
+ *
+ * @param {TwoF64} x A `TwoF64` number
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ */
+export function acsch_2(x: TwoF64): TwoF64 {
+  if (!isFinite2(x)) {
+    if (isNaN2(x)) {
+      return NaN2;
+    }
+    return x[0] > 0 ? ZERO : neg2(ZERO);
+  }
+
+  if (isZero(x)) {
+    return 1/x[0] < 0 ? NINF : INF;
+  }
+
+  return asinh_2(inv2(x));
 }
