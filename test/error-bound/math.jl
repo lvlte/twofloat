@@ -236,7 +236,7 @@ println()
             "fn" => "log2_1",
             "args" => args_list.op1,
             "rel_err_bound" => big(2.0)^-90,
-            "process_args" => x -> abs(x),
+            "process_args" => x -> (abs(x),),
             "compute" => x -> log2(big(x))
         ))
     end
@@ -256,7 +256,7 @@ println()
             "fn" => "log10_1",
             "args" => args_list.op1,
             "rel_err_bound" => big(2.0)^-90,
-            "process_args" => x -> abs(x),
+            "process_args" => x -> (abs(x),),
             "compute" => x -> log10(big(x))
         ))
     end
@@ -280,7 +280,7 @@ println()
             "fn" => "sqrt_1",
             "args" => args_list.op1,
             "rel_err_bound" => 25u^2/8,
-            "process_args" => x -> abs(x),
+            "process_args" => x -> (abs(x),),
             "compute" => x -> sqrt(big(x))
         ))
     end

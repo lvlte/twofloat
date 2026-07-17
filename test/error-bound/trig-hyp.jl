@@ -311,8 +311,7 @@ println()
         _test(Dict(
             "fn" => "tanh_1",
             "args" => args_list.exp1,
-            # "rel_err_bound" => big(2.0)^-95,
-            "process_args" => x -> x % 37,
+            "process_args" => x -> (x % 37,),
             "compute" => x -> tanh(big(x))
         ))
     end
@@ -330,7 +329,7 @@ println()
         _test(Dict(
             "fn" => "coth_1",
             "args" => args_list.exp1,
-            "process_args" => x -> x % 37,
+            "process_args" => x -> (x % 37,),
             "compute" => x -> coth(big(x)),
             "underflow" => (r, (x,)) -> abs(u^2 * exp(big(x))) < ε₀
         ))
