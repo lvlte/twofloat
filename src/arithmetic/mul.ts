@@ -87,3 +87,27 @@ export function prod2(terms: ArrayLike<TwoF64>): TwoF64 {
 
   return p;
 }
+
+/**
+ * Extended-precision multiplication `x * y`.
+ *
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x * y`
+ */
+export function mul(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number'
+    ? typeof y === 'number' ? mul11(x, y) : mul21(y, x)
+    : typeof y === 'number' ? mul21(x, y) : mul22(x, y);
+}
+
+/**
+ * Extended-precision product of a given sequence of numbers (that must all be
+ * of the same type, either `f64` or `TwoF64`, no mix allowed).
+ *
+ * @param factors Array-like object of factors
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function prod(factors: ArrayLike<f64> | ArrayLike<TwoF64>): TwoF64 {
+  return typeof factors[0] === 'number'
+    ? prod1(factors as ArrayLike<f64>)
+    : prod2(factors as ArrayLike<TwoF64>); // TwoF64 or undefined (empty)
+}

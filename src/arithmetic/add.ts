@@ -125,3 +125,27 @@ export function sum2_alt(terms: ArrayLike<TwoF64>): TwoF64 {
 
   return add22(hi, lo);
 }
+
+/**
+ * Extended-precision addition `x + y`.
+ *
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x + y`
+ */
+export function add(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number'
+    ? typeof y === 'number' ? add11(x, y) : add21(y, x)
+    : typeof y === 'number' ? add21(x, y) : add22(x, y);
+}
+
+/**
+ * Extended-precision addition of a given sequence of numbers (that must all be
+ * of the same type, either `f64` or `TwoF64`, no mix allowed).
+ *
+ * @param terms Array-like object of summands
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function sum(terms: ArrayLike<f64> | ArrayLike<TwoF64>): TwoF64 {
+  return typeof terms[0] === 'number'
+    ? sum1(terms as ArrayLike<f64>)
+    : sum2(terms as ArrayLike<TwoF64>);
+}
