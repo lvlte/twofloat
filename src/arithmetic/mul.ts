@@ -22,22 +22,22 @@ export const mul22 = DWTimesDW1;
  * The result `[hi, lo]` is such that `f64([hi, lo])` is faithfully rounded as
  * long as `n < 2^25`, `n` being the number of terms in the sequence.
  *
- * @param {ArrayLike<f64>} terms Array-like object of `f64` summands
+ * @param {ArrayLike<f64>} factors Array-like object of `f64` summands
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function prod1(terms: ArrayLike<f64>): TwoF64 {
-  switch (terms.length) {
+export function prod1(factors: ArrayLike<f64>): TwoF64 {
+  switch (factors.length) {
     case 0:
       return ONE;
 
     case 1:
-      return [terms[0], 0*terms[0]];
+      return [factors[0], 0*factors[0]];
 
     case 2:
-      return mul11(terms[0], terms[1]);
+      return mul11(factors[0], factors[1]);
 
     case 3:
-      return mul21(mul11(terms[0], terms[1]), terms[2]);
+      return mul21(mul11(factors[0], factors[1]), factors[2]);
 
     case undefined:
       return NaN2;
@@ -45,12 +45,12 @@ export function prod1(terms: ArrayLike<f64>): TwoF64 {
 
   // Compensated algorithm (Graillat; Ogita, Rump and Oishi)
 
-  let hi = terms[0];
+  let hi = factors[0];
   let lo = 0;
   let lo_i = 0;
 
-  for (let i = 1; i < terms.length; i++) {
-    const a = terms[i];
+  for (let i = 1; i < factors.length; i++) {
+    const a = factors[i];
     [hi, lo_i] = mul11(hi, a);
     lo = lo*a + lo_i;
   }
@@ -61,28 +61,28 @@ export function prod1(terms: ArrayLike<f64>): TwoF64 {
 /**
  * Extended-precision product of a given sequence of `TwoF64` numbers.
  *
- * @param {ArrayLike<TwoF64>} terms Array-like object of `TwoF64` summands
+ * @param {ArrayLike<TwoF64>} factors Array-like object of `TwoF64` summands
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
-export function prod2(terms: ArrayLike<TwoF64>): TwoF64 {
-  switch (terms.length) {
+export function prod2(factors: ArrayLike<TwoF64>): TwoF64 {
+  switch (factors.length) {
     case 0:
       return ONE;
 
     case 1:
-      return terms[0];
+      return factors[0];
 
     case 2:
-      return mul22(terms[0], terms[1]);
+      return mul22(factors[0], factors[1]);
 
     case undefined:
       return NaN2;
   }
 
-  let p = mul22(terms[0], terms[1]);
+  let p = mul22(factors[0], factors[1]);
 
-  for (let i = 2; i < terms.length; i++) {
-    p = mul22(p, terms[i]);
+  for (let i = 2; i < factors.length; i++) {
+    p = mul22(p, factors[i]);
   }
 
   return p;
