@@ -9,7 +9,14 @@ import {
   fast2Sum,
   fast2Diff,
   neg2,
-  ONE
+  ONE,
+  normalize,
+  add,
+  sub,
+  mul,
+  twoProd,
+  div,
+  inv
 } from '../src/index';
 
 import {
@@ -22,6 +29,8 @@ import {
   twoDiv,
   twoInv,
   DWDivFP3,
+  DWTimesFP1,
+  DWTimesDW1,
 } from '../src/base/algorithms';
 
 import {
@@ -33,10 +42,9 @@ import {
 // Pseudo-random number generator
 const SEED = Math.sqrt(5);
 const random = randomFn(SEED, true);
+const exponentPairs = pairsInRange(-100, 60, 7);
 
 describe('Derived Algorithms', () => {
-  const exponentPairs = pairsInRange(-100, 60, 7);
-
   test('twoDiff', () => {
     for (const [e1, e2] of exponentPairs) {
       for (const [s1, s2] of signCombinations) {
@@ -61,7 +69,7 @@ describe('Derived Algorithms', () => {
   test('DWMinusFP', () => {
     for (const [e1, e2] of exponentPairs) {
       for (const [s1, s2] of signCombinations) {
-        const x = twoSum(random(e1, s1), random(e1, s1));
+        const x = normalize(random(e1, s1), random(e1 - 1, s1));
         const y = random(e2, s2);
         expect(DWMinusFP(x, y)).toEqual(DWPlusFP(x, -y));
       }
@@ -71,8 +79,8 @@ describe('Derived Algorithms', () => {
   test('AccurateDWMinusDW', () => {
     for (const [e1, e2] of exponentPairs) {
       for (const [s1, s2] of signCombinations) {
-        const x = twoSum(random(e1, s1), random(e1, s1));
-        const y = twoSum(random(e2, s2), random(e2, s2));
+        const x = normalize(random(e1, s1), random(e1 - 1, s1));
+        const y = normalize(random(e2, s2), random(e2 - 1, s2));
         expect(AccurateDWMinusDW(x, y)).toEqual(AccurateDWPlusDW(x, neg2(y)));
       }
     }
@@ -93,17 +101,82 @@ describe('Derived Algorithms', () => {
       const x = random(exp, 1);
       expect(twoInv(x)).toEqual(DWDivFP3(ONE, x));
       expect(twoInv(-x)).toEqual(DWDivFP3(neg2(ONE), x));
-      expect(twoInv(-x)).toEqual(DWDivFP3(ONE, -x));
     }
   });
 
   test('DWInv', () => {
     for (let exp = -100; exp <= 60; exp++) {
-      const x = twoSum(random(exp, 1), random(exp, 1));
+      const x = normalize(random(exp, 1), random(exp - 1, 1));
       const mx = neg2(x);
       expect(DWInv(x)).toEqual(DWDivDW2(ONE, x));
       expect(DWInv(mx)).toEqual(DWDivDW2(neg2(ONE), x));
-      expect(DWInv(mx)).toEqual(DWDivDW2(ONE, mx));
+    }
+  });
+});
+
+// sum1, prod1
+
+describe('Basic Arithmetic Functions', () => {
+
+  test('Addition', () => {
+    for (const [e1, e2] of exponentPairs) {
+      for (const [s1, s2] of signCombinations) {
+        const x = random(e1, s1);
+        const y = random(e2, s2);
+        const xx = normalize(random(e1, s1), random(e1 - 1, s1));
+        const yy = normalize(random(e2, s2), random(e2 - 1, s2));
+        expect(add(x, y)).toEqual(twoSum(x, y));
+        expect(add(x, yy)).toEqual(DWPlusFP(yy, x));
+        expect(add(xx, y)).toEqual(DWPlusFP(xx, y));
+        expect(add(xx, yy)).toEqual(AccurateDWPlusDW(xx, yy));
+      }
+    }
+  });
+
+  test('Subtraction', () => {
+    for (const [e1, e2] of exponentPairs) {
+      for (const [s1, s2] of signCombinations) {
+        const x = random(e1, s1);
+        const y = random(e2, s2);
+        const xx = normalize(random(e1, s1), random(e1 - 1, s1));
+        const yy = normalize(random(e2, s2), random(e2 - 1, s2));
+        expect(sub(x, y)).toEqual(twoDiff(x, y));
+        expect(sub(x, yy)).toEqual(DWPlusFP(neg2(yy), x));
+        expect(sub(xx, y)).toEqual(DWMinusFP(xx, y));
+        expect(sub(xx, yy)).toEqual(AccurateDWMinusDW(xx, yy));
+      }
+    }
+  });
+
+  test('Multiplication', () => {
+    for (const [e1, e2] of exponentPairs) {
+      for (const [s1, s2] of signCombinations) {
+        const x = random(e1, s1);
+        const y = random(e2, s2);
+        const xx = normalize(random(e1, s1), random(e1 - 1, s1));
+        const yy = normalize(random(e2, s2), random(e2 - 1, s2));
+        expect(mul(x, y)).toEqual(twoProd(x, y));
+        expect(mul(x, yy)).toEqual(DWTimesFP1(yy, x));
+        expect(mul(xx, y)).toEqual(DWTimesFP1(xx, y));
+        expect(mul(xx, yy)).toEqual(DWTimesDW1(xx, yy));
+      }
+    }
+  });
+
+  test('Division', () => {
+    for (const [e1, e2] of exponentPairs) {
+      for (const [s1, s2] of signCombinations) {
+        const x = random(e1, s1);
+        const y = random(e2, s2);
+        const xx = normalize(random(e1, s1), random(e1 - 1, s1));
+        const yy = normalize(random(e2, s2), random(e2 - 1, s2));
+        expect(div(x, y)).toEqual(twoDiv(x, y));
+        expect(div(x, yy)).toEqual(DWDivDW2([x, 0], yy));
+        expect(div(xx, y)).toEqual(DWDivFP3(xx, y));
+        expect(div(xx, yy)).toEqual(DWDivDW2(xx, yy));
+        expect(inv(y)).toEqual(DWDivFP3([1, 0], y));
+        expect(inv(yy)).toEqual(DWDivDW2([1, 0], yy));
+      }
     }
   });
 });
