@@ -1,5 +1,5 @@
 /**
- * @file Precomputed values and Padé approximant coefficients for
+ * @file Precomputed values and Padé approximant coefficients for inverse
  * trigonometric functions.
  */
 

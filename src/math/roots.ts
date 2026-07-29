@@ -8,6 +8,9 @@ import { normalize } from '../base/eft.js';
 import { powint_1, square_1 } from '../math/exp.js';
 import { INF, NINF } from './constants.js';
 
+// Computing nth root (Newton's iteration)
+//  yₖ₊₁ = yₖ - (yₖⁿ − x) / n*yₖⁿ⁻¹
+//  yₖ₊₁ = 1/n * (yₖ*(n - 1) + x/yₖⁿ⁻¹)
 
 /**
  * Computes `√(x)`, the square root of `x`, using extended precision arithmetic.

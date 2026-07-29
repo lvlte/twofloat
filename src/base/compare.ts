@@ -122,8 +122,8 @@ export function isInteger2([xhi, xlo]: TwoF64): boolean {
 }
 
 /**
- * Return a boolean indicating whether `x` is a safe f64 integer (ie. can be
- * converted to a float64 number without loosing precision).
+ * Return a boolean indicating whether `x` represents a safe f64 integer (ie.
+ * can be converted to a float64 number without loosing precision).
  */
 export function isSafeInteger2(x: TwoF64): boolean;
 export function isSafeInteger2([xhi, xlo]: TwoF64): boolean {
