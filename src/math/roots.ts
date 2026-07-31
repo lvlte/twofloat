@@ -176,3 +176,38 @@ export function nthroot_2([xhi, xlo]: TwoF64, n: int): TwoF64 {
 
   return div21(num, n);
 }
+
+/**
+ * Compute `√(x)`, the square root of `x`, using extended precision arithmetic.
+ *
+ * @param x The input number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `√(x)`
+ */
+export function sqrt(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? sqrt_1(x) : sqrt_2(x);
+}
+
+/**
+ * Compute `∛(x)`, the cube root of `x`, using extended precision arithmetic.
+ *
+ * @param x The input number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `∛(x)`
+ */
+export function cbrt(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? cbrt_1(x) : cbrt_2(x);
+}
+
+/**
+ * Compute `ⁿ√(x)`, the nth root of `x`, using extended precision arithmetic.
+ *
+ * @param x The input number
+ * @param n A positive integer
+ * @returns The {@link TwoF64|`TwoF64`} representation of `ⁿ√(x)`
+ */
+export function nthRoot(x: f64 | TwoF64, n: int): TwoF64 {
+  return typeof x === 'number' ? nthroot_1(x, n) : nthroot_2(x, n);
+}
+
+// √(1 + x)
+// √(1 - x)
+// √(1 + x²)

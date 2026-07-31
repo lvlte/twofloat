@@ -528,3 +528,71 @@ function _expm1_2f(x: TwoF64): TwoF64 {
 
   return div22(mul22(p, x), q);
 }
+
+/**
+ * Compute `x²`, the square of `x`, using extended precision arithmetic.
+ *
+ * @param x The input number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x²`
+ */
+export function square(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? square_1(x) : square_2(x);
+}
+
+/**
+ * Compute `x³`, the cube of `x`, using extended precision arithmetic.
+ *
+ * @param x The input number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x²`
+ */
+export function cube(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? cube_1(x) : cube_2(x);
+}
+
+/**
+ * Integer power of `x` - Compute `xⁿ` using extended precision arithmetic.
+ * `n` must be an integer.
+ *
+ * @param x The base number
+ * @param p The exponent number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `xⁿ`
+ */
+export function powint(x: f64 | TwoF64, n: int): TwoF64 {
+  return typeof x === 'number' ? powint_1(x, n) : powint_2(x, n);
+}
+
+/**
+ * Compute `xᵖ`, `x` raised to the power of `p`, using extended precision
+ * arithmetic.
+ *
+ * @param x The base number
+ * @param p The exponent number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
+ */
+export function pow(x: f64 | TwoF64, p: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number'
+    ? typeof p === 'number' ? pow_11(x, p) : pow_12(x, p)
+    : typeof p === 'number' ? pow_21(x, p) : pow_22(x, p);
+}
+
+/**
+ * Compute `eˣ`, the natural base exponential of `x`, using extended precision
+ * arithmetic.
+ *
+ * @param x The input number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `eˣ`
+ */
+export function exp(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? exp_1(x) : exp_2(x);
+}
+
+/**
+ * Compute `eˣ - 1`, the natural base exponential of `x` subtracted by `1`,
+ * using extended precision arithmetic.
+ *
+ * @param x The input number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `eˣ - 1`
+ */
+export function expm1(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? expm1_1(x) : expm1_2(x);
+}

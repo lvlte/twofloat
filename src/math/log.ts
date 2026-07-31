@@ -171,3 +171,36 @@ export function log10_2(x: TwoF64): TwoF64 {
 
   return div22(ln_2(x), LN10);
 }
+
+/**
+ * Compute `ln(x)`, the natural logarithm of `x`, using extended precision
+ * arithmetic.
+ *
+ * @param x The input number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `ln(x)`
+ */
+export function ln(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? ln_1(x) : ln_2(x);
+}
+
+/**
+ * Compute `log₂(x)`, the base-2 logarithm of `x`, using extended precision
+ * arithmetic.
+ *
+ * @param x The input number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `log₂(x)`
+ */
+export function log2(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? log2_1(x) : log2_2(x);
+}
+
+/**
+ * Compute `log₁₀(x)`, the base-10 logarithm of `x`, using extended precision
+ * arithmetic.
+ *
+ * @param x The input number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `log₁₀(x)`
+ */
+export function log10(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? log10_1(x) : log10_2(x);
+}
