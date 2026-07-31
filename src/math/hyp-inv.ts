@@ -342,3 +342,69 @@ export function acsch_2(x: TwoF64): TwoF64 {
 
   return asinh_2(inv2(x));
 }
+
+/**
+ * Compute the inverse hyperbolic sine of `x` using extended precision
+ * arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function asinh(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? asinh_1(x) : asinh_2(x);
+}
+
+/**
+ * Compute the inverse hyperbolic cosine of `x` using extended precision
+ * arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number in the domain `[1, ∞]`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
+ */
+export function acosh(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? acosh_1(x) : acosh_2(x);
+}
+
+/**
+ * Compute the inverse hyperbolic tangent of `x` using extended precision
+ * arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number in the domain `[-1, 1]`
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function atanh(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? atanh_1(x) : atanh_2(x);
+}
+
+/**
+ * Compute the inverse hyperbolic cotangent of `x` using extended precision
+ * arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number in the domain `ℝ ∖ (-1, 1)`
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function acoth(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? acoth_1(x) : acoth_2(x);
+}
+
+/**
+ * Compute the inverse hyperbolic secant of `x` using extended precision
+ * arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number in the domain `[0, 1]`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
+ */
+export function asech(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? asech_1(x) : asech_2(x);
+}
+
+/**
+ * Compute the inverse hyperbolic cosecant of `x` using extended precision
+ * arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function acsch(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? acsch_1(x) : acsch_2(x);
+}

@@ -203,3 +203,63 @@ export function csch_1(x: f64): TwoF64 {
 export function csch_2(x: TwoF64): TwoF64 {
   return inv2(sinh_2(x));
 }
+
+/**
+ * Compute the hyperbolic sine of `x` using extended precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function sinh(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? sinh_1(x) : sinh_2(x);
+}
+
+/**
+ * Compute the hyperbolic cosine of `x` using extended precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function cosh(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? cosh_1(x) : cosh_2(x);
+}
+
+/**
+ * Compute the hyperbolic tangent of `x` using extended precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function tanh(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? tanh_1(x) : tanh_2(x);
+}
+
+/**
+ * Compute the hyperbolic cotangent of `x` using extended precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function coth(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? coth_1(x) : coth_2(x);
+}
+
+/**
+ * Compute the hyperbolic secant of `x` using extended precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function sech(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? sech_1(x) : sech_2(x);
+}
+
+/**
+ * Compute the hyperbolic cosecant of `x` using extended precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function csch(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? csch_1(x) : csch_2(x);
+}
