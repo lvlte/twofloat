@@ -540,3 +540,69 @@ function _csc_2(x: TwoF64): TwoF64 {
   const [p, q] = _sin_padé_2(x);
   return div22(q, p);
 }
+
+/**
+ * Compute the sine of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[-1, 1]`
+ */
+export function sin(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? sin_1(x) : sin_2(x);
+}
+
+/**
+ * Compute the cosine of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[-1, 1]`
+ */
+export function cos(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? cos_1(x) : cos_2(x);
+}
+
+/**
+ * Compute the tangent of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function tan(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? tan_1(x) : tan_2(x);
+}
+
+/**
+ * Compute the cotangent of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
+ */
+export function cot(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? cot_1(x) : cot_2(x);
+}
+
+/**
+ * Compute the secant of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `(-∞, -1] ∪ [1, ∞)`
+ */
+export function sec(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? sec_1(x) : sec_2(x);
+}
+
+/**
+ * Compute the cosecant of `x`, where `x` is expressed in radians, using extended
+ * precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `(-∞, -1] ∪ [1, ∞)`
+ */
+export function csc(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? csc_1(x) : csc_2(x);
+}

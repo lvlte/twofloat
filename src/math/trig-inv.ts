@@ -477,3 +477,70 @@ export function acsc_2(x: TwoF64): TwoF64 {
 
   return asin_2(inv2(x));
 }
+
+/**
+ * Compute the inverse sine of `x` using extended precision arithmetic. The
+ * output is expressed in radians.
+ *
+ * @param x A `f64` or `TwoF64` number in the domain `[-1, 1]`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
+ */
+export function asin(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? asin_1(x) : asin_2(x);
+}
+
+/**
+ * Compute the inverse cosine of `x` using extended precision arithmetic. The
+ * output is expressed in radians.
+ *
+ * @param x A `f64` or `TwoF64` number in the domain `[-1, 1]`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[0, π]`
+ */
+export function acos(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? acos_1(x) : acos_2(x);
+}
+
+/**
+ * Compute the inverse tangent of `x` using extended precision arithmetic. The
+ * output is expressed in radians.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
+ */
+export function atan(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? atan_1(x) : atan_2(x);
+}
+
+/**
+ * Compute the inverse cotangent of `x` (as defined by the convention of Stegun
+ * and Abramowitz, and the Wolfram Language, ie. the principal value ranges from
+ * `-π/2`to `+π/2` radians) using extended precision arithmetic.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
+ */
+export function acot(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? acot_1(x) : acot_2(x);
+}
+
+/**
+ * Compute the inverse secant of `x` using extended precision arithmetic. The
+ * output is expressed in radians.
+ *
+ * @param x A `f64` or `TwoF64` number in the domain `[-∞, -1] ∪ [1, ∞]`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[0, π]`
+ */
+export function asec(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? asec_1(x) : asec_2(x);
+}
+
+/**
+ * Compute the inverse cosecant of `x` using extended precision arithmetic. The
+ * output is expressed in radians.
+ *
+ * @param x A `f64` or `TwoF64` number in the domain `[-∞, -1] ∪ [1, ∞]`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
+ */
+export function acsc(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? acsc_1(x) : acsc_2(x);
+}
