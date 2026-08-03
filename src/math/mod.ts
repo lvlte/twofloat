@@ -124,3 +124,27 @@ function _rem_npi_23(x: TwoF64, npi: ThreeF64): TwoF64 {
 
   return sub22(sub22(sub22(x, ayhi), aymd), aylo);
 }
+
+/**
+ * Return the remainder left over after integer division of `x` by `π`, with the
+ * quotient rounded towards zero (cf. `%` operator). Mathematically, the value
+ * `r` such that `r = x - a*π` where `a = trunc(x/π)`
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `r`
+ */
+export function rempi(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? _rem_npi_13(x, THREE.PI) : _rem_npi_23(x, THREE.PI);
+}
+
+/**
+ * Return the remainder left over after integer division of `x` by `2π`, with
+ * the quotient rounded towards zero (cf. `%` operator). Mathematically, the
+ * value `r` such that `r = x - a*2π` where `a = trunc(x/2π)`.
+ *
+ * @param x A `f64` or `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `r`
+ */
+export function rem2pi(x: f64 | TwoF64): TwoF64 {
+  return typeof x === 'number' ? _rem_npi_13(x, THREE.TAU) : _rem_npi_23(x, THREE.TAU);
+}
