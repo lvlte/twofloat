@@ -26,7 +26,8 @@ export type int = number;
  *
  * Here "canonical" means :
  * - `hi` contains the most significant bits and `lo` the least significant,
- * - the non-zero bits in `hi` and `lo` don't overlap.
+ * - the non-zero bits in `lo` don't overlap with the 53 bits of `hi` (the most
+ *   significant bit in `lo` is less than the ulp of `hi`).
  *
  * This non-overlapping representation is what guarantees the best accuracy
  * during calculations. Do not use arbitrary values like `[x, y] as TwoF64`
@@ -36,11 +37,12 @@ export type TwoF64 = readonly [hi: f64, lo: f64];
 
 /**
  * Canonical representation of a floating-point number expansion with three
- * components (similar to `TwoF64` but for triple precision) :
- * - `hi` contains the most significant bits and `lo` the least significant
- * - the non-zero bits in `hi`, `md` and `lo` don't overlap
+ * components (similar to `TwoF64` but for triple precision)/
  *
- * This implies `[hi, md]`, `[md, lo]` and `[hi, lo]` are valid `TwoF64`.
+ * Here "canonical" means :
+ * - `hi` contains the most significant bits and `lo` the least significant,
+ * - `[hi, md]` and `[md, lo]` are valid `TwoF64` (`hi`, `md` and `lo` don't
+ *    overlap).
  */
 export type ThreeF64 = readonly [hi: f64, md: f64, lo: f64];
 

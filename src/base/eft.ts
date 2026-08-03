@@ -15,13 +15,17 @@ import {
 } from './common.js';
 
 /**
- * Canonical representation of `x + y` (error-free transform).
+ * Return the canonical {@link TwoF64|`TwoF64`} representation of `x + y`
+ * (`fast2Sum` error-free transform).
  *
- * Return a tuple `[hi, lo]` where the non-zero bits in `hi` and `lo` don't
- * overlap and such that mathematically `hi + lo = x + y`.
- *
- * **NB. Assumes `|x| ≥ |y|`. Use `twoSum(x, y)` if this condition is not
+ * **NB. Assumes `|x| ≥ |y|`. Use `add(x, y)` if this condition is not
  * satisfied.**
+ *
+ * FP ops: 3
+ *
+ * @param x A `f64` number
+ * @param y A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x + y`
  */
 export function normalize(x: f64, y: f64): TwoF64 {
   const hi = x + y;
@@ -34,13 +38,16 @@ export function normalize(x: f64, y: f64): TwoF64 {
 export const fast2Sum = normalize;
 
 /**
- * Error-free transform of `x - y`.
+ * Fast extended-precision subtraction `x - y` (error-free transform).
  *
- * Return a tuple `[hi, lo]` where the non-zero bits in `hi` and `lo` don't
- * overlap and such that mathematically `hi + lo = x - y`.
+ * **NB. Assumes `|x| ≥ |y|`. Use `sub(x, y)` if this condition is not
+ * satisfied.**
  *
- * **NB. Assumes the absolute value of `x` is larger than that of `y`. Use
- * `twoDiff(x, y)` if this condition is not satisfied.**
+ * FP ops: 3
+ *
+ * @param x A `f64` number
+ * @param y A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x - y`
  */
 export function fast2Diff(x: f64, y: f64): TwoF64 {
   const hi = x - y;
@@ -52,21 +59,29 @@ export function fast2Diff(x: f64, y: f64): TwoF64 {
  *
  * Split the given number into two halves, `hi` and `lo`, using the splitting
  * constant `F64_SPLITTER`. Return a tuple `[hi, lo]` where the non-zero bits in
- * `hi` and `lo` don't overlap and such that mathematically `hi + lo = x` .
+ * `hi` and `lo` don't overlap and such that mathematically `hi + lo = x`.
+ *
+ * FP ops: 4
  *
  * @see {@link F64_SPLITTER}
+ * @param x A `f64` number
+ * @returns A tuple `[hi, lo]` such that `hi + lo = x`
  */
-export function split(x: f64): TwoF64 {
+export function split(x: f64): [f64, f64] {
   const c = F64_SPLITTER*x;
   const hi = c + (x - c);
   return [hi, x - hi];
 }
 
 /**
- * Error-free transform of `x + y` (Møller & Knuth algorithm).
+ * Extended-precision addition `x + y` (error-free transform - Møller & Knuth
+ * algorithm).
  *
- * Return a tuple `[hi, lo]` where the non-zero bits in `hi` and `lo` don't
- * overlap and such that mathematically `hi + lo = x + y`.
+ * FP ops: 6
+ *
+ * @param x A `f64` number
+ * @param y A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x + y`
  */
 export function twoSum(x: f64, y: f64): TwoF64 {
   const hi = x + y;
@@ -76,10 +91,14 @@ export function twoSum(x: f64, y: f64): TwoF64 {
 }
 
 /**
- * Error-free transform of `x - y` (Møller & Knuth algorithm).
+ * Extended-precision subtraction `x - y` (error-free transform - Møller & Knuth
+ * algorithm).
  *
- * Return a tuple `[hi, lo]` where the non-zero bits in `hi` and `lo` don't
- * overlap and such that mathematically `hi + lo = x - y`.
+ * FP ops: 6
+ *
+ * @param x A `f64` number
+ * @param y A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x - y`
  */
 export function twoDiff(x: f64, y: f64): TwoF64 {
   const hi = x - y;
@@ -89,11 +108,14 @@ export function twoDiff(x: f64, y: f64): TwoF64 {
 }
 
 /**
- * Error-free transform of `x * y` (Dekker/Veltkamp product).
+ * Extended-precision multiplication `x * y` (error-free transform - Dekker /
+ * Veltkamp product).
  *
- * Return a high precision representation of `x * y` as a tuple `[hi, lo]`
- * where the non-zero bits in `hi` and `lo` don't overlap and such that
- * mathematically `hi + lo = x * y`.
+ * FP ops: 17
+ *
+ * @param x A `f64` number
+ * @param y A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x * y`
  */
 export function twoProd(x: f64, y: f64): TwoF64 {
   const [xhi, xlo] = split(x);
@@ -107,11 +129,13 @@ export function twoProd(x: f64, y: f64): TwoF64 {
 }
 
 /**
- * Error-free transform of `x²` (Dekker/Veltkamp product).
+ * Extended-precision multiplication `x * x` (error-free transform - Dekker /
+ * Veltkamp product).
  *
- * Return a high precision representation of the square of `x` as a tuple
- * `[hi, lo]` where the non-zero bits in `hi` and `lo` don't overlap and such
- * that mathematically `hi + lo = x²`.
+ * FP ops: 12
+ *
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x²`
  */
 export function twoSquare(x: f64): TwoF64 {
   const [xhi, xlo] = split(x);

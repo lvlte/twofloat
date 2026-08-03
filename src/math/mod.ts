@@ -9,53 +9,48 @@ import { THREE } from "./constants.js";
 import { abs2 } from "./sign.js";
 
 /**
- * Return the remainder left over after integer division by `π`, in other words
- * the value `r` such that :
+ * Return the remainder left over after integer division of `x` by `π`, with the
+ * quotient rounded towards zero (cf. `%` operator). Mathematically, the value
+ * `r` such that `r = x - a*π` where `a = trunc(x/π)`
  *
- *  `r = x - a*π` where `a = trunc(x/π)` (round towards zero)
- *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `r`
  */
 export function rempi_1(x: f64): TwoF64 {
   return _rem_npi_13(x, THREE.PI);
 }
 
 /**
- * Return the remainder left over after integer division by `π`, in other words
- * the value `r` such that :
+ * Return the remainder left over after integer division of `x` by `π`, with the
+ * quotient rounded towards zero (cf. `%` operator). Mathematically, the value
+ * `r` such that `r = x - a*π` where `a = trunc(x/π)`
  *
- *  `r = x - a*π` where `a = trunc(x/π)` (round towards zero)
- *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `r`
  */
 export function rempi_2(x: TwoF64): TwoF64 {
   return _rem_npi_23(x, THREE.PI);
 }
 
-
 /**
- * Return the remainder left over after integer division by `2π`, in other words
- * the value `r` such that :
+ * Return the remainder left over after integer division of `x` by `2π`, with
+ * the quotient rounded towards zero (cf. `%` operator). Mathematically, the
+ * value `r` such that `r = x - a*2π` where `a = trunc(x/2π)`.
  *
- *  `r = x - a*2π` where `a = trunc(x/2π)` (round towards zero)
- *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `r`
  */
 export function rem2pi_1(x: f64): TwoF64 {
   return _rem_npi_13(x, THREE.TAU);
 }
 
 /**
- * Return the remainder left over after integer division by `2π`, in other words
- * the value `r` such that :
+ * Return the remainder left over after integer division of `x` by `2π`, with
+ * the quotient rounded towards zero (cf. `%` operator). Mathematically, the
+ * value `r` such that `r = x - a*2π` where `a = trunc(x/2π)`.
  *
- *  `r = x - a*2π` where `a = trunc(x/2π)` (round towards zero)
- *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `r`
  */
 export function rem2pi_2(x: TwoF64): TwoF64 {
   return _rem_npi_23(x, THREE.TAU);

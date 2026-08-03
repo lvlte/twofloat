@@ -8,11 +8,11 @@ import { INF, LN10, LN2, NINF } from "./constants.js";
 import { exp_1 } from "./exp.js";
 
 /**
- * Compute `ln(x)`, the natural logarithm of `x`, using extended precision
+ * Compute `ln(x)`, the natural logarithm of `x`, using extended-precision
  * arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `ln(x)`
  */
 export function ln_1(x: f64): TwoF64 {
   switch (x) {
@@ -69,11 +69,11 @@ export function ln_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Compute `log₂(x)`, the base-2 logarithm of `x`, using extended precision
+ * Compute `log₂(x)`, the base-2 logarithm of `x`, using extended-precision
  * arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `log₂(x)`
  */
 export function log2_1(x: f64): TwoF64 {
   switch (x) {
@@ -99,11 +99,11 @@ export function log2_1(x: f64): TwoF64 {
 }
 
 /**
- * Compute `log₂(xₕᵢ + xₗₒ)`, the base-2 logarithm of `x`, using extended
- * precision arithmetic.
+ * Compute `log₂(x)`, the base-2 logarithm of `x`, using extended-precision
+ * arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `log₂(x)`
  */
 export function log2_2(x: TwoF64): TwoF64 {
   const [xhi, xlo] = x;
@@ -120,11 +120,11 @@ export function log2_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Compute `log₁₀(x)`, the base-10 logarithm of `x`, using extended precision
+ * Compute `log₁₀(x)`, the base-10 logarithm of `x`, using extended-precision
  * arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `log₁₀(x)`
  */
 export function log10_1(x: f64): TwoF64 {
   switch (x) {
@@ -152,11 +152,11 @@ export function log10_1(x: f64): TwoF64 {
 }
 
 /**
- * Compute `log₁₀(xₕᵢ + xₗₒ)`, the base-10 logarithm of `x`, using extended
- * precision arithmetic.
+ * Compute `log₁₀(x)`, the base-10 logarithm of `x`, using extended-precision
+ * arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `log₁₀(x)`
  */
 export function log10_2(x: TwoF64): TwoF64 {
   const [xhi, xlo] = x;
@@ -173,10 +173,10 @@ export function log10_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Compute `ln(x)`, the natural logarithm of `x`, using extended precision
+ * Compute `ln(x)`, the natural logarithm of `x`, using extended-precision
  * arithmetic.
  *
- * @param x The input number
+ * @param x A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `ln(x)`
  */
 export function ln(x: f64 | TwoF64): TwoF64 {
@@ -184,10 +184,10 @@ export function ln(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute `log₂(x)`, the base-2 logarithm of `x`, using extended precision
+ * Compute `log₂(x)`, the base-2 logarithm of `x`, using extended-precision
  * arithmetic.
  *
- * @param x The input number
+ * @param x A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `log₂(x)`
  */
 export function log2(x: f64 | TwoF64): TwoF64 {
@@ -195,10 +195,10 @@ export function log2(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute `log₁₀(x)`, the base-10 logarithm of `x`, using extended precision
+ * Compute `log₁₀(x)`, the base-10 logarithm of `x`, using extended-precision
  * arithmetic.
  *
- * @param x The input number
+ * @param x A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `log₁₀(x)`
  */
 export function log10(x: f64 | TwoF64): TwoF64 {

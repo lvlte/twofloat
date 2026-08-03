@@ -19,10 +19,8 @@ export const add22 = AccurateDWPlusDW;
 /**
  * Extended-precision addition of a given sequence of floating-point numbers.
  *
- * The result `[hi, lo]` is such that `f64([hi, lo])` is faithfully rounded.
- *
- * @param {ArrayLike<f64>} terms Array-like object of `f64` summands
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param terms `ArrayLike` object of `f64` summands
+ * @returns The sum of the given `terms` as a {@link TwoF64|`TwoF64`} number
  */
 export function sum1(terms: ArrayLike<f64>): TwoF64 {
   switch (terms.length) {
@@ -60,8 +58,8 @@ export function sum1(terms: ArrayLike<f64>): TwoF64 {
 /**
  * Extended-precision addition of a given sequence of `TwoF64` numbers.
  *
- * @param {ArrayLike<TwoF64>} terms Array-like object of `TwoF64` summands
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param terms `ArrayLike` object of `TwoF64` summands
+ * @returns The sum of the given `terms` as a {@link TwoF64|`TwoF64`} number
  */
 export function sum2(terms: ArrayLike<TwoF64>): TwoF64 {
   switch (terms.length) {
@@ -86,11 +84,17 @@ export function sum2(terms: ArrayLike<TwoF64>): TwoF64 {
   return s;
 }
 
-// Alternative sum2: sum1(hi) ++ sum1(lo)
-// Appear to be more accurate (on average) when both :
-// - terms.length < 100
-// - eps(max_abs(terms) / min_abs(terms)) < 1
+/**
+ * Extended-precision addition of a given sequence of `TwoF64` numbers.
+ *
+ * @param terms `ArrayLike` object of `TwoF64` summands
+ * @returns The sum of the given `terms` as a {@link TwoF64|`TwoF64`} number
+ */
 export function sum2_alt(terms: ArrayLike<TwoF64>): TwoF64 {
+  // Alternative sum2: sum1(hi) ++ sum1(lo)
+  // Appear to be more accurate (on average) when both :
+  // - terms.length < 100
+  // - eps(max_abs(terms) / min_abs(terms)) < 1
   switch (terms.length) {
     case 0:
       return ZERO;
@@ -129,6 +133,8 @@ export function sum2_alt(terms: ArrayLike<TwoF64>): TwoF64 {
 /**
  * Extended-precision addition `x + y`.
  *
+ * @param x A `f64` or `TwoF64` number
+ * @param y A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `x + y`
  */
 export function add(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
@@ -142,7 +148,7 @@ export function add(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
  * of the same type, either `f64` or `TwoF64`, no mix allowed).
  *
  * @param terms Array-like object of summands
- * @returns A {@link TwoF64|`TwoF64`} number
+ * @returns The sum of the given `terms` as a {@link TwoF64|`TwoF64`} number
  */
 export function sum(terms: ArrayLike<f64> | ArrayLike<TwoF64>): TwoF64 {
   return typeof terms[0] === 'number'

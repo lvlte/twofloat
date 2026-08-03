@@ -13,14 +13,12 @@ import { INF, NINF } from './constants.js';
 //  yₖ₊₁ = 1/n * (yₖ*(n - 1) + x/yₖⁿ⁻¹)
 
 /**
- * Computes `√(x)`, the square root of `x`, using extended precision arithmetic.
+ * Compute `√(x)`, the square root of `x`, using extended-precision arithmetic.
  *
- * Relative error bound:
- *  as long as `x ≥ 2^-968` and no overflow/underflow occurs, the relative error
- *  is bounded by `25u²/8 = 3.125u²`, with `u = 2^-53`.
+ * Relative error bound (for `x ≥ 2^-968`): `3.125u²`, with `u = 2^-53`.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `√(x)`
  */
 export function sqrt_1(x: f64): TwoF64 {
   if (x <= 0) {
@@ -42,15 +40,12 @@ export function sqrt_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes `√(xₕᵢ + xₗₒ)`, the square root of `x`, using extended precision
- * arithmetic.
+ * Compute `√(x)`, the square root of `x`, using extended-precision arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * Relative error bound (for `x ≥ 2^-968`): `3.125u²`, with `u = 2^-53`.
  *
- * Relative error bound:
- *  as long as `x ≥ 2^-968` and no overflow/underflow occurs, the relative error
- *  is bounded by `25u²/8 = 3.125u²`, with `u = 2^-53`.
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `√(x)`
  */
 export function sqrt_2(x: TwoF64): TwoF64;
 export function sqrt_2([xhi, xlo]: TwoF64): TwoF64 {
@@ -71,10 +66,10 @@ export function sqrt_2([xhi, xlo]: TwoF64): TwoF64 {
 }
 
 /**
- * Computes `∛(x)`, the cube root of `x`, using extended precision arithmetic.
+ * Compute `∛(x)`, the cube root of `x`, using extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `∛(x)`
  */
 export function cbrt_1(x: f64): TwoF64 {
   if (x === 0) {
@@ -95,11 +90,10 @@ export function cbrt_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes `∛(xₕᵢ + xₗₒ)`, the cube root of `x`, using extended precision
- * arithmetic.
+ * Compute `∛(x)`, the cube root of `x`, using extended-precision arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `∛(x)`
  */
 export function cbrt_2(x: TwoF64): TwoF64;
 export function cbrt_2([xhi, xlo]: TwoF64): TwoF64 {
@@ -119,11 +113,11 @@ export function cbrt_2([xhi, xlo]: TwoF64): TwoF64 {
 }
 
 /**
- * Computes `ⁿ√(x)`, the nth root of `x`, using extended precision arithmetic.
+ * Compute `ⁿ√(x)`, the nth root of `x`, using extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @param {int} x A `int` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number representing the radicand
+ * @param n A `f64` integer representing the root degree
+ * @returns The {@link TwoF64|`TwoF64`} representation of `ⁿ√(x)`
  */
 export function nthroot_1(x: f64, n: int): TwoF64 {
   if (x === 0) {
@@ -149,11 +143,11 @@ export function nthroot_1(x: f64, n: int): TwoF64 {
 }
 
 /**
- * Computes `ⁿ√(x)`, the nth root of `x`, using extended precision arithmetic.
+ * Compute `ⁿ√(x)`, the nth root of `x`, using extended-precision arithmetic.
  *
- * @param {TwoF64} x A `TwoF64` number
- * @param {int} n A positive integer
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `TwoF64` number representing the radicand
+ * @param n A `f64` integer representing the root degree
+ * @returns The {@link TwoF64|`TwoF64`} representation of `ⁿ√(x)`
  */
 export function nthroot_2(x: TwoF64, n: int): TwoF64;
 export function nthroot_2([xhi, xlo]: TwoF64, n: int): TwoF64 {
@@ -178,9 +172,11 @@ export function nthroot_2([xhi, xlo]: TwoF64, n: int): TwoF64 {
 }
 
 /**
- * Compute `√(x)`, the square root of `x`, using extended precision arithmetic.
+ * Compute `√(x)`, the square root of `x`, using extended-precision arithmetic.
  *
- * @param x The input number
+ * Relative error bound (for `x ≥ 2^-968`): `3.125u²`, with `u = 2^-53`.
+ *
+ * @param x A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `√(x)`
  */
 export function sqrt(x: f64 | TwoF64): TwoF64 {
@@ -188,9 +184,9 @@ export function sqrt(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute `∛(x)`, the cube root of `x`, using extended precision arithmetic.
+ * Compute `∛(x)`, the cube root of `x`, using extended-precision arithmetic.
  *
- * @param x The input number
+ * @param x A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `∛(x)`
  */
 export function cbrt(x: f64 | TwoF64): TwoF64 {
@@ -198,16 +194,12 @@ export function cbrt(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute `ⁿ√(x)`, the nth root of `x`, using extended precision arithmetic.
+ * Compute `ⁿ√(x)`, the nth root of `x`, using extended-precision arithmetic.
  *
- * @param x The input number
- * @param n A positive integer
+ * @param x A `f64` or `TwoF64` number representing the radicand
+ * @param n A `f64` integer representing the root degree
  * @returns The {@link TwoF64|`TwoF64`} representation of `ⁿ√(x)`
  */
 export function nthRoot(x: f64 | TwoF64, n: int): TwoF64 {
   return typeof x === 'number' ? nthroot_1(x, n) : nthroot_2(x, n);
 }
-
-// √(1 + x)
-// √(1 - x)
-// √(1 + x²)

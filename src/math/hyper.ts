@@ -8,11 +8,10 @@ import { exp_1, exp_2, expm1_1, expm1_2} from "./exp.js";
 import { sqrt_2 } from "./roots.js";
 
 /**
- * Computes the hyperbolic sine of `x`, where `x` is expressed in radians, using
- * extended precision arithmetic.
+ * Compute the hyperbolic sine of `x` using extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function sinh_1(x: f64): TwoF64 {
   if (Math.abs(x) < Math.LN2) {
@@ -29,11 +28,10 @@ export function sinh_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the hyperbolic sine of `x`, where `x` is expressed in radians, using
- * extended precision arithmetic.
+ * Compute the hyperbolic sine of `x` using extended-precision arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function sinh_2(x: TwoF64): TwoF64;
 export function sinh_2([xhi, xlo]: TwoF64): TwoF64 {
@@ -49,11 +47,10 @@ export function sinh_2([xhi, xlo]: TwoF64): TwoF64 {
 }
 
 /**
- * Computes the hyperbolic cosine of `x`, where `x` is expressed in radians,
- * using extended precision arithmetic.
+ * Compute the hyperbolic cosine of `x` using extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function cosh_1(x: f64): TwoF64 {
   const ex = exp_1(x);
@@ -62,11 +59,10 @@ export function cosh_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the hyperbolic cosine of `x`, where `x` is expressed in radians,
- * using extended precision arithmetic.
+ * Compute the hyperbolic cosine of `x` using extended-precision arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function cosh_2(x: TwoF64): TwoF64 {
   const ex = exp_2(x);
@@ -111,11 +107,10 @@ function _exp_pm1_2(x: TwoF64): [TwoF64, TwoF64]{
 }
 
 /**
- * Computes the hyperbolic tangent of `x`, where `x` is expressed in radians,
- * using extended precision arithmetic.
+ * Compute the hyperbolic tangent of `x` using extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function tanh_1(x: f64): TwoF64 {
   const [ex_m1, ex_p1] = _exp_pm1_1(2*x);
@@ -123,11 +118,10 @@ export function tanh_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the hyperbolic tangent of `x`, where `x` is expressed in radians,
- * using extended precision arithmetic.
+ * Compute the hyperbolic tangent of `x` using extended-precision arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function tanh_2(x: TwoF64): TwoF64;
 export function tanh_2([xhi, xlo]: TwoF64): TwoF64 {
@@ -136,11 +130,10 @@ export function tanh_2([xhi, xlo]: TwoF64): TwoF64 {
 }
 
 /**
- * Computes the hyperbolic cotangent of `x`, where `x` is expressed in radians,
- * using extended precision arithmetic.
+ * Compute the hyperbolic cotangent of `x` using extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function coth_1(x: f64): TwoF64 {
   const [ex_m1, ex_p1] = _exp_pm1_1(2*x);
@@ -148,11 +141,10 @@ export function coth_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the hyperbolic cotangent of `x`, where `x` is expressed in radians,
- * using extended precision arithmetic.
+ * Compute the hyperbolic cotangent of `x` using extended-precision arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function coth_2(x: TwoF64): TwoF64;
 export function coth_2([xhi, xlo]: TwoF64): TwoF64 {
@@ -161,53 +153,49 @@ export function coth_2([xhi, xlo]: TwoF64): TwoF64 {
 }
 
 /**
- * Computes the hyperbolic secant of `x`, where `x` is expressed in radians,
- * using extended precision arithmetic.
+ * Compute the hyperbolic secant of `x` using extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function sech_1(x: f64): TwoF64 {
   return inv2(cosh_1(x));
 }
 
 /**
- * Computes the hyperbolic secant of `x`, where `x` is expressed in radians,
- * using extended precision arithmetic.
+ * Compute the hyperbolic secant of `x` using extended-precision arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function sech_2(x: TwoF64): TwoF64 {
   return inv2(cosh_2(x));
 }
 
 /**
- * Computes the hyperbolic cosecant of `x`, where `x` is expressed in radians,
- * using extended precision arithmetic.
+ * Compute the hyperbolic cosecant of `x` using extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function csch_1(x: f64): TwoF64 {
   return inv2(sinh_1(x));
 }
 
 /**
- * Computes the hyperbolic cosecant of `x`, where `x` is expressed in radians,
- * using extended precision arithmetic.
+ * Compute the hyperbolic cosecant of `x` using extended-precision arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number representing an hyperbolic angle
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function csch_2(x: TwoF64): TwoF64 {
   return inv2(sinh_2(x));
 }
 
 /**
- * Compute the hyperbolic sine of `x` using extended precision arithmetic.
+ * Compute the hyperbolic sine of `x` using extended-precision arithmetic.
  *
- * @param x A `f64` or `TwoF64` number
+ * @param x A `f64` or `TwoF64` number representing an hyperbolic angle
  * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function sinh(x: f64 | TwoF64): TwoF64 {
@@ -215,9 +203,9 @@ export function sinh(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the hyperbolic cosine of `x` using extended precision arithmetic.
+ * Compute the hyperbolic cosine of `x` using extended-precision arithmetic.
  *
- * @param x A `f64` or `TwoF64` number
+ * @param x A `f64` or `TwoF64` number representing an hyperbolic angle
  * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function cosh(x: f64 | TwoF64): TwoF64 {
@@ -225,9 +213,9 @@ export function cosh(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the hyperbolic tangent of `x` using extended precision arithmetic.
+ * Compute the hyperbolic tangent of `x` using extended-precision arithmetic.
  *
- * @param x A `f64` or `TwoF64` number
+ * @param x A `f64` or `TwoF64` number representing an hyperbolic angle
  * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function tanh(x: f64 | TwoF64): TwoF64 {
@@ -235,9 +223,9 @@ export function tanh(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the hyperbolic cotangent of `x` using extended precision arithmetic.
+ * Compute the hyperbolic cotangent of `x` using extended-precision arithmetic.
  *
- * @param x A `f64` or `TwoF64` number
+ * @param x A `f64` or `TwoF64` number representing an hyperbolic angle
  * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function coth(x: f64 | TwoF64): TwoF64 {
@@ -245,9 +233,9 @@ export function coth(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the hyperbolic secant of `x` using extended precision arithmetic.
+ * Compute the hyperbolic secant of `x` using extended-precision arithmetic.
  *
- * @param x A `f64` or `TwoF64` number
+ * @param x A `f64` or `TwoF64` number representing an hyperbolic angle
  * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function sech(x: f64 | TwoF64): TwoF64 {
@@ -255,9 +243,9 @@ export function sech(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the hyperbolic cosecant of `x` using extended precision arithmetic.
+ * Compute the hyperbolic cosecant of `x` using extended-precision arithmetic.
  *
- * @param x A `f64` or `TwoF64` number
+ * @param x A `f64` or `TwoF64` number representing an hyperbolic angle
  * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function csch(x: f64 | TwoF64): TwoF64 {

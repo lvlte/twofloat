@@ -13,11 +13,11 @@ import { eq21, ge21, isFinite2, isNaN2, isOne, isZero, le21, lt21 } from "../bas
 import { INF, NINF } from "./constants.js";
 
 /**
- * Computes the inverse hyperbolic sine of `x` using extended precision
+ * Compute the inverse hyperbolic sine of `x` using extended-precision
  * arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function asinh_1(x: f64): TwoF64 {
   if (!Number.isFinite(x)) {
@@ -39,11 +39,11 @@ export function asinh_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse hyperbolic sine of `x` using extended precision
+ * Compute the inverse hyperbolic sine of `x` using extended-precision
  * arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function asinh_2(x: TwoF64): TwoF64 {
   if (!isFinite2(x)) {
@@ -128,11 +128,11 @@ function _asinh_padé_2(x: TwoF64): [TwoF64, TwoF64] {
 }
 
 /**
- * Computes the inverse hyperbolic cosine of `x` using extended precision
+ * Compute the inverse hyperbolic cosine of `x` using extended-precision
  * arithmetic.
  *
- * @param {f64} x A `f64` number in the domain `[1, ∞]`
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
+ * @param x A `f64` number in the domain `[1, ∞]`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
  */
 export function acosh_1(x: f64): TwoF64 {
   if (!Number.isFinite(x)) {
@@ -151,11 +151,11 @@ export function acosh_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse hyperbolic cosine of `x` using extended precision
+ * Compute the inverse hyperbolic cosine of `x` using extended-precision
  * arithmetic.
  *
- * @param {TwoF64} x A `TwoF64` number in the domain `[1, ∞]`
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
+ * @param x A `TwoF64` number in the domain `[1, ∞]`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
  */
 export function acosh_2(x: TwoF64): TwoF64 {
   if (!isFinite2(x)) {
@@ -173,11 +173,11 @@ export function acosh_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Computes the inverse hyperbolic tangent of `x` using extended precision
+ * Compute the inverse hyperbolic tangent of `x` using extended-precision
  * arithmetic.
  *
- * @param {f64} x A `f64` number in the domain `[-1, 1]`
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number in the domain `[-1, 1]`
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function atanh_1(x: f64): TwoF64 {
   const xabs = Math.abs(x);
@@ -191,11 +191,11 @@ export function atanh_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse hyperbolic tangent of `x` using extended precision
+ * Compute the inverse hyperbolic tangent of `x` using extended-precision
  * arithmetic.
  *
- * @param {TwoF64} x A `TwoF64` number in the domain `[-1, 1]`
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `TwoF64` number in the domain `[-1, 1]`
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function atanh_2(x: TwoF64): TwoF64 {
   const xabs = abs2(x);
@@ -209,11 +209,11 @@ export function atanh_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Computes the inverse hyperbolic cotangent of `x` using extended precision
+ * Compute the inverse hyperbolic cotangent of `x` using extended-precision
  * arithmetic.
  *
- * @param {f64} x A `f64` number in the domain `ℝ ∖ (-1, 1)`
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number in the domain `[-∞, -1] ∪ [1, ∞]`
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function acoth_1(x: f64): TwoF64 {
   const xabs = Math.abs(x);
@@ -233,11 +233,11 @@ export function acoth_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse hyperbolic cotangent of `x` using extended precision
+ * Compute the inverse hyperbolic cotangent of `x` using extended-precision
  * arithmetic.
  *
- * @param {TwoF64} x A `TwoF64` number in the domain `ℝ ∖ (-1, 1)`
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `TwoF64` number in the domain `[-∞, -1] ∪ [1, ∞]`
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function acoth_2(x: TwoF64): TwoF64 {
   const xabs = abs2(x);
@@ -257,11 +257,11 @@ export function acoth_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Computes the inverse hyperbolic secant of `x` using extended precision
+ * Compute the inverse hyperbolic secant of `x` using extended-precision
  * arithmetic.
  *
- * @param {f64} x A `f64` number in the domain `[0, 1]`
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
+ * @param x A `f64` number in the domain `[0, 1]`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
  */
 export function asech_1(x: f64): TwoF64 {
   if (!(x >= 0 && x <= 1)) {
@@ -280,11 +280,11 @@ export function asech_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse hyperbolic secant of `x` using extended precision
+ * Compute the inverse hyperbolic secant of `x` using extended-precision
  * arithmetic.
  *
- * @param {TwoF64} x A `TwoF64` number in the domain `[0, 1]`
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
+ * @param x A `TwoF64` number in the domain `[0, 1]`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
  */
 export function asech_2(x: TwoF64): TwoF64 {
   if (!(ge21(x, 0) && le21(x, 1))) {
@@ -303,11 +303,11 @@ export function asech_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Computes the inverse hyperbolic cosecant of `x` using extended precision
+ * Compute the inverse hyperbolic cosecant of `x` using extended-precision
  * arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function acsch_1(x: f64): TwoF64 {
   if (!Number.isFinite(x)) {
@@ -322,11 +322,11 @@ export function acsch_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse hyperbolic cosecant of `x` using extended precision
+ * Compute the inverse hyperbolic cosecant of `x` using extended-precision
  * arithmetic.
  *
- * @param {TwoF64} x A `TwoF64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function acsch_2(x: TwoF64): TwoF64 {
   if (!isFinite2(x)) {
@@ -344,7 +344,7 @@ export function acsch_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Compute the inverse hyperbolic sine of `x` using extended precision
+ * Compute the inverse hyperbolic sine of `x` using extended-precision
  * arithmetic.
  *
  * @param x A `f64` or `TwoF64` number
@@ -355,7 +355,7 @@ export function asinh(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the inverse hyperbolic cosine of `x` using extended precision
+ * Compute the inverse hyperbolic cosine of `x` using extended-precision
  * arithmetic.
  *
  * @param x A `f64` or `TwoF64` number in the domain `[1, ∞]`
@@ -366,7 +366,7 @@ export function acosh(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the inverse hyperbolic tangent of `x` using extended precision
+ * Compute the inverse hyperbolic tangent of `x` using extended-precision
  * arithmetic.
  *
  * @param x A `f64` or `TwoF64` number in the domain `[-1, 1]`
@@ -377,10 +377,10 @@ export function atanh(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the inverse hyperbolic cotangent of `x` using extended precision
+ * Compute the inverse hyperbolic cotangent of `x` using extended-precision
  * arithmetic.
  *
- * @param x A `f64` or `TwoF64` number in the domain `ℝ ∖ (-1, 1)`
+ * @param x A `f64` or `TwoF64` number in the domain `[-∞, -1] ∪ [1, ∞]`
  * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function acoth(x: f64 | TwoF64): TwoF64 {
@@ -388,7 +388,7 @@ export function acoth(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the inverse hyperbolic secant of `x` using extended precision
+ * Compute the inverse hyperbolic secant of `x` using extended-precision
  * arithmetic.
  *
  * @param x A `f64` or `TwoF64` number in the domain `[0, 1]`
@@ -399,7 +399,7 @@ export function asech(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the inverse hyperbolic cosecant of `x` using extended precision
+ * Compute the inverse hyperbolic cosecant of `x` using extended-precision
  * arithmetic.
  *
  * @param x A `f64` or `TwoF64` number

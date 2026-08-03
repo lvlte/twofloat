@@ -21,21 +21,34 @@ import {
 } from './eft.js';
 
 /**
- * Extended-precision computation of `(xhi, xlo) + y`.
+ * Extended-precision addition `x + y`.
  *
- * Relative error bound: `2u²` with `u = 2^-53` (*J.M. Muller et al.*).
- *                        `u²` for positive operands
+ * Relative error bound: `2u²` (`u²` for positive operands), with `u = 2^-53`
+ *
+ * FP ops: 10
+ *
+ * @param x A `TwoF64` number
+ * @param y A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x + y`
  */
+export function DWPlusFP(x: TwoF64, y: f64): TwoF64;
 export function DWPlusFP([xhi, xlo]: TwoF64, y: f64): TwoF64 {
   const [hi, lo] = twoSum(xhi, y);
   return normalize(hi, xlo + lo);
 }
 
 /**
- * Extended-precision computation of `(xhi, xlo) + (yhi, ylo)`.
+ * Extended-precision addition `x + y`.
  *
- * Relative error bound: `3u² + 13u³` with `u = 2^-53` (*J.M. Muller et al.*).
+ * Relative error bound: `3u² + 13u³` with `u = 2^-53`
+ *
+ * FP ops: 20
+ *
+ * @param x A `TwoF64` number
+ * @param y A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x + y`
  */
+export function AccurateDWPlusDW(x: TwoF64, y: TwoF64): TwoF64;
 export function AccurateDWPlusDW([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF64 {
   const [shi, slo] = twoSum(xhi, yhi);
   const [thi, tlo] = twoSum(xlo, ylo);
@@ -44,10 +57,17 @@ export function AccurateDWPlusDW([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF64
 }
 
 /**
- * Extended-precision computation of `(xhi, xlo) * y`.
+ * Extended-precision multiplication `x * y`.
  *
- * Relative error bound: `3u²/2 + 4u³` with `u = 2^-53` (*J.M. Muller et al.*).
+ * Relative error bound: `1.5u² + 4u³` with `u = 2^-53`
+ *
+ * FP ops: 25
+ *
+ * @param x A `TwoF64` number
+ * @param y A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x * y`
  */
+export function DWTimesFP1(x: TwoF64, y: f64): TwoF64;
 export function DWTimesFP1([xhi, xlo]: TwoF64, y: f64): TwoF64 {
   const [shi, slo] = twoProd(xhi, y);
   const [hi, lo] = normalize(shi, xlo*y);
@@ -55,20 +75,34 @@ export function DWTimesFP1([xhi, xlo]: TwoF64, y: f64): TwoF64 {
 }
 
 /**
- * Extended-precision computation of `(xhi, xlo) * (yhi, ylo)`.
+ * Extended-precision multiplication `x * y`.
  *
- * Relative error bound: `5u²` with `u = 2^-53` (*J.M. Muller et al.*).
+ * Relative error bound: `5u²` with `u = 2^-53`
+ *
+ * FP ops: 24
+ *
+ * @param x A `TwoF64` number
+ * @param y A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x * y`
  */
+export function DWTimesDW1(x: TwoF64, y: TwoF64): TwoF64;
 export function DWTimesDW1([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF64 {
   const [hi, lo] = twoProd(xhi, yhi);
   return normalize(hi, lo + (xhi*ylo + xlo*yhi));
 }
 
 /**
- * Extended-precision computation of `(xhi, xlo) / y`.
+ * Extended-precision division `x/y`.
  *
- * Relative error bound: `3u²` with `u = 2^-53` (*J.M. Muller et al.*).
+ * Relative error bound: `3u²` with `u = 2^-53`
+ *
+ * FP ops: 25
+ *
+ * @param x A `TwoF64` number
+ * @param y A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x/y`
  */
+export function DWDivFP3(x: TwoF64, y: f64): TwoF64;
 export function DWDivFP3([xhi, xlo]: TwoF64, y: f64): TwoF64 {
   const hi = xhi/y;
   const [shi, slo] = twoProd(hi, y);
@@ -76,10 +110,17 @@ export function DWDivFP3([xhi, xlo]: TwoF64, y: f64): TwoF64 {
 }
 
 /**
- * Extended-precision computation of `(xhi, xlo) / (yhi, ylo)`.
+ * Extended-precision division `x/y`.
  *
- * Relative error bound: `15u² + 56u³` with `u = 2^-53` (*J.M. Muller et al.*).
+ * Relative error bound: `15u² + 56u³` with `u = 2^-53`
+ *
+ * FP ops: 33
+ *
+ * @param x A `TwoF64` number
+ * @param y A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x/y`
  */
+export function DWDivDW2(x: TwoF64, y: TwoF64): TwoF64;
 export function DWDivDW2([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF64 {
   const hi = xhi/yhi;
   const [rhi, rlo] = DWTimesFP1([yhi, ylo], hi);
@@ -87,10 +128,17 @@ export function DWDivDW2([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF64 {
 }
 
 /**
- * Extended-precision computation of `(xhi, xlo) - y`.
+ * Extended-precision subtraction `x - y`.
  *
- * Relative error bound: `2u²` with `u = 2^-53` (*J.M. Muller et al.*).
+ * Relative error bound: `2u²` with `u = 2^-53`
+ *
+ * FP ops: 10
+ *
+ * @param x A `TwoF64` number
+ * @param y A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x - y`
  */
+export function DWMinusFP(x: TwoF64, y: f64): TwoF64;
 export function DWMinusFP([xhi, xlo]: TwoF64, y: f64): TwoF64 {
   // based on DWPlusFP
   const [hi, lo] = twoDiff(xhi, y);
@@ -98,10 +146,17 @@ export function DWMinusFP([xhi, xlo]: TwoF64, y: f64): TwoF64 {
 }
 
 /**
- * Extended-precision computation of `(xhi, xlo) - (yhi, ylo)`.
+ * Extended-precision subtraction `x - y`.
  *
- * Relative error bound: `3u² + 13u³` with `u = 2^-53` (*J.M. Muller et al.*).
+ * Relative error bound: `3u² + 13u³` with `u = 2^-53`
+ *
+ * FP ops: 17
+ *
+ * @param x A `TwoF64` number
+ * @param y A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x - y`
  */
+export function AccurateDWMinusDW(x: TwoF64, y: TwoF64): TwoF64;
 export function AccurateDWMinusDW([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF64 {
   // based on AccurateDWPlusDW
   const [shi, slo] = twoDiff(xhi, yhi);
@@ -111,9 +166,15 @@ export function AccurateDWMinusDW([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): TwoF6
 }
 
 /**
- * Extended-precision computation of `x/y`.
+ * Extended-precision division `x/y`.
  *
- * Relative error bound: `3u²` with `u = 2^-53` (*J.M. Muller et al.*).
+ * Relative error bound: `3u²` with `u = 2^-53`
+ *
+ * FP ops: 24
+ *
+ * @param x A `f64` number
+ * @param y A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x/y`
  */
 export function twoDiv(x: f64, y: f64): TwoF64 {
   // based on DWDivFP3
@@ -123,9 +184,14 @@ export function twoDiv(x: f64, y: f64): TwoF64 {
 }
 
 /**
- * Extended-precision computation of `1/x`.
+ * Extended-precision multiplicative inverse of `x`, `1/x`.
  *
- * Relative error bound: `3u²` with `u = 2^-53` (*J.M. Muller et al.*).
+ * Relative error bound: `3u²` with `u = 2^-53`
+ *
+ * FP ops: 24
+ *
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `1/x`
  */
 export function twoInv(x: f64): TwoF64 {
   // based on DWDivFP3
@@ -135,10 +201,16 @@ export function twoInv(x: f64): TwoF64 {
 }
 
 /**
- * Extended-precision computation of `1 / (xhi, xlo)`.
+ * Extended-precision multiplicative inverse of `x`, `1/x`.
  *
- * Relative error bound: `15u² + 56u³` with `u = 2^-53` (*J.M. Muller et al.*).
+ * Relative error bound: `15u² + 56u³` with `u = 2^-53`
+ *
+ * FP ops: 32
+ *
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `1/x`
  */
+export function DWInv(x: TwoF64): TwoF64;
 export function DWInv([xhi, xlo]: TwoF64): TwoF64 {
   // based on DWDivDW2
   const hi = 1/xhi;

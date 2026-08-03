@@ -21,6 +21,10 @@ export const inv2 = DWInv;
  *
  * Relative error bound: `15u² + 56u³` with `u = 2^-53`
  *
+ * FP ops: 32
+ *
+ * @param x A `f64` number
+ * @param y A `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `x/y`
  */
 export function div12(x: f64, y: TwoF64): TwoF64;
@@ -33,6 +37,8 @@ export function div12(x: f64, [yhi, ylo]: TwoF64): TwoF64 {
 /**
  * Extended-precision division `x/y`.
  *
+ * @param x A `f64` or `TwoF64` number
+ * @param y A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `x/y`
  */
 export function div(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
@@ -42,8 +48,10 @@ export function div(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the multiplicative inverse of `x`, `1/x`, using extended precision.
+ * Compute the multiplicative inverse of `x`, `1/x`, using extended-precision
+ * arithmetic.
  *
+ * @param x A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `1/x`
  */
 export function inv(x: f64 | TwoF64): TwoF64 {

@@ -19,11 +19,8 @@ export const mul22 = DWTimesDW1;
 /**
  * Extended-precision product of a given sequence of floating-point numbers.
  *
- * The result `[hi, lo]` is such that `f64([hi, lo])` is faithfully rounded as
- * long as `n < 2^25`, `n` being the number of terms in the sequence.
- *
- * @param {ArrayLike<f64>} factors Array-like object of `f64` summands
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param factors `ArrayLike` object of `f64` factors
+ * @returns The product of the `factors` as a {@link TwoF64|`TwoF64`} number
  */
 export function prod1(factors: ArrayLike<f64>): TwoF64 {
   switch (factors.length) {
@@ -61,8 +58,8 @@ export function prod1(factors: ArrayLike<f64>): TwoF64 {
 /**
  * Extended-precision product of a given sequence of `TwoF64` numbers.
  *
- * @param {ArrayLike<TwoF64>} factors Array-like object of `TwoF64` summands
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param factors `ArrayLike` object of `TwoF64` factors
+ * @returns The product of the `factors` as a {@link TwoF64|`TwoF64`} number
  */
 export function prod2(factors: ArrayLike<TwoF64>): TwoF64 {
   switch (factors.length) {
@@ -91,6 +88,8 @@ export function prod2(factors: ArrayLike<TwoF64>): TwoF64 {
 /**
  * Extended-precision multiplication `x * y`.
  *
+ * @param x A `f64` or `TwoF64` number
+ * @param y A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `x * y`
  */
 export function mul(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
@@ -103,8 +102,8 @@ export function mul(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
  * Extended-precision product of a given sequence of numbers (that must all be
  * of the same type, either `f64` or `TwoF64`, no mix allowed).
  *
- * @param factors Array-like object of factors
- * @returns A {@link TwoF64|`TwoF64`} number
+ * @param factors `ArrayLike` object of factors
+ * @returns The product of the `factors` as a {@link TwoF64|`TwoF64`} number
  */
 export function prod(factors: ArrayLike<f64> | ArrayLike<TwoF64>): TwoF64 {
   return typeof factors[0] === 'number'

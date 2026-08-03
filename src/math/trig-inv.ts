@@ -38,7 +38,7 @@ const PI$6: TwoF64 = [0.5235987755982989, -5.360408832255455e-17];
 const SQRT3_$2: TwoF64 = [0.8660254037844386, 5.0175421109034514e-17];
 
 /**
- * Computes the inverse sine of `x` using extended precision arithmetic. The
+ * Compute the inverse sine of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
  * @param {f64} x A `f64` number in the domain `[-1, 1]`
@@ -98,7 +98,7 @@ export function asin_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse sine of `x` using extended precision arithmetic. The
+ * Compute the inverse sine of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
  * @param {TwoF64} x A `TwoF64` number in the domain `[-1, 1]`
@@ -221,7 +221,7 @@ function _asin_padé_2(x: TwoF64): [TwoF64, TwoF64] {
 }
 
 /**
- * Computes the inverse cosine of `x` using extended precision arithmetic. The
+ * Compute the inverse cosine of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
  * @param {f64} x A `f64` number in the domain `[-1, 1]`
@@ -233,7 +233,7 @@ export function acos_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse cosine of `x` using extended precision arithmetic. The
+ * Compute the inverse cosine of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
  * @param {TwoF64} x A `TwoF64` number in the domain `[-1, 1]`
@@ -245,7 +245,7 @@ export function acos_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Computes the inverse tangent of `x` using extended precision arithmetic. The
+ * Compute the inverse tangent of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
  * @param {f64} x A `f64` number
@@ -274,7 +274,7 @@ export function atan_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse tangent of `x` using extended precision arithmetic. The
+ * Compute the inverse tangent of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
  * @param {TwoF64} x A `TwoF64` number
@@ -365,11 +365,12 @@ function _atan_padé_2(x: TwoF64): [TwoF64, TwoF64] {
 }
 
 /**
- * Computes the inverse cotangent of `x` using extended precision arithmetic.
- * The output is expressed in radians.
+ * Compute the inverse cotangent of `x` (as defined by the convention of Stegun
+ * and Abramowitz, and the Wolfram Language, ie. the principal value ranges from
+ * `-π/2`to `+π/2` radians) using extended-precision arithmetic.
  *
  * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `(0, π)`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
  */
 export function acot_1(x: f64): TwoF64 {
   if (x === 0) {
@@ -384,11 +385,12 @@ export function acot_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse cotangent of `x` using extended precision arithmetic.
- * The output is expressed in radians.
+ * Compute the inverse cotangent of `x` (as defined by the convention of Stegun
+ * and Abramowitz, and the Wolfram Language, ie. the principal value ranges from
+ * `-π/2`to `+π/2` radians) using extended-precision arithmetic.
  *
  * @param {TwoF64} x A `TwoF64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `(0, π)`
+ * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
  */
 export function acot_2(x: TwoF64): TwoF64 {
   if (isZero(x)) {
@@ -403,14 +405,14 @@ export function acot_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Computes the inverse secant of `x` using extended precision arithmetic. The
+ * Compute the inverse secant of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
- * @param {f64} x A `f64` number in the domain `ℝ ∖ (-1, 1)`
+ * @param {f64} x A `f64` number in the domain `[-∞, -1] ∪ [1, ∞]`
  * @returns {TwoF64} A `TwoF64` number in the range `[0, π]`
  */
 export function asec_1(x: f64): TwoF64 {
-  if (Math.abs(x) < 1 || Number.isNaN(x)) {
+  if (!(Math.abs(x) >= 1)) {
     return NaN2;
   }
 
@@ -422,10 +424,10 @@ export function asec_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse secant of `x` using extended precision arithmetic. The
+ * Compute the inverse secant of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
- * @param {TwoF64} x A `TwoF64` number in the domain `ℝ ∖ (-1, 1)`
+ * @param {TwoF64} x A `TwoF64` number in the domain `[-∞, -1] ∪ [1, ∞]`
  * @returns {TwoF64} A `TwoF64` number in the range `[0, π]`
  */
 export function asec_2(x: TwoF64): TwoF64 {
@@ -441,10 +443,10 @@ export function asec_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Computes the inverse cosecant of `x` using extended precision arithmetic.
+ * Compute the inverse cosecant of `x` using extended-precision arithmetic.
  * The output is expressed in radians.
  *
- * @param {f64} x A `f64` number in the domain `ℝ ∖ (-1, 1)`
+ * @param {f64} x A `f64` number in the domain `(-∞, -1] ∪ [1, ∞)`
  * @returns {TwoF64} A `TwoF64` number in the range `[-π/2, +π/2]`
  */
 export function acsc_1(x: f64): TwoF64 {
@@ -460,10 +462,10 @@ export function acsc_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the inverse cosecant of `x` using extended precision arithmetic.
+ * Compute the inverse cosecant of `x` using extended-precision arithmetic.
  * The output is expressed in radians.
  *
- * @param {TwoF64} x A `TwoF64` number in the domain `ℝ ∖ (-1, 1)`
+ * @param {TwoF64} x A `TwoF64` number in the domain `(-∞, -1] ∪ [1, ∞)`
  * @returns {TwoF64} A `TwoF64` number in the range `[-π/2, +π/2]`
  */
 export function acsc_2(x: TwoF64): TwoF64 {
@@ -479,7 +481,7 @@ export function acsc_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * Compute the inverse sine of `x` using extended precision arithmetic. The
+ * Compute the inverse sine of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
  * @param x A `f64` or `TwoF64` number in the domain `[-1, 1]`
@@ -490,7 +492,7 @@ export function asin(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the inverse cosine of `x` using extended precision arithmetic. The
+ * Compute the inverse cosine of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
  * @param x A `f64` or `TwoF64` number in the domain `[-1, 1]`
@@ -501,7 +503,7 @@ export function acos(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the inverse tangent of `x` using extended precision arithmetic. The
+ * Compute the inverse tangent of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
  * @param x A `f64` or `TwoF64` number
@@ -514,7 +516,7 @@ export function atan(x: f64 | TwoF64): TwoF64 {
 /**
  * Compute the inverse cotangent of `x` (as defined by the convention of Stegun
  * and Abramowitz, and the Wolfram Language, ie. the principal value ranges from
- * `-π/2`to `+π/2` radians) using extended precision arithmetic.
+ * `-π/2`to `+π/2` radians) using extended-precision arithmetic.
  *
  * @param x A `f64` or `TwoF64` number
  * @returns A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
@@ -524,7 +526,7 @@ export function acot(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the inverse secant of `x` using extended precision arithmetic. The
+ * Compute the inverse secant of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
  * @param x A `f64` or `TwoF64` number in the domain `[-∞, -1] ∪ [1, ∞]`
@@ -535,7 +537,7 @@ export function asec(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute the inverse cosecant of `x` using extended precision arithmetic. The
+ * Compute the inverse cosecant of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
  * @param x A `f64` or `TwoF64` number in the domain `[-∞, -1] ∪ [1, ∞]`

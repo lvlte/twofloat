@@ -19,22 +19,22 @@ import { isFinite2, isSafeInteger2, isZero } from '../base/compare.js';
 import { ln_1, ln_2 } from './log.js';
 
 /**
- * Computes `x²` using extended precision arithmetic.
+ * Compute `x²`, the square of `x`, using extended-precision arithmetic.
  *
  * Error-free transform.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x²`
  */
 export const square_1 = twoSquare;
 
 /**
- * Computes `(xₕᵢ + xₗₒ)²` using extended precision arithmetic.
- *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * Compute `x²`, the square of `x`, using extended-precision arithmetic.
  *
  * Relative error bound: `5u²`.
+ *
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x²`
  */
 export function square_2(x: TwoF64): TwoF64;
 export function square_2([xhi, xlo]: TwoF64): TwoF64 {
@@ -43,41 +43,36 @@ export function square_2([xhi, xlo]: TwoF64): TwoF64 {
 }
 
 /**
- * Computes `x³` using extended precision arithmetic.
+ * Compute `x³`, the cube of `x`, using extended-precision arithmetic.
  *
- * Relative error bound: `3u²/2 + 4u³`.
+ * Relative error bound: `1.5u² + 4u³`.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x³`
  */
 export function cube_1(x: f64): TwoF64 {
   return mul21(square_1(x), x);
 }
 
 /**
- * Computes `(xₕᵢ + xₗₒ)³` using extended precision arithmetic.
- *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * Compute `x³`, the cube of `x`, using extended-precision arithmetic.
  *
  * Relative error bound: `10u² + 25u⁴`.
+ *
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x³`
  */
 export function cube_2(x: TwoF64): TwoF64 {
   return mul22(square_2(x), x);
 }
 
 /**
- * Integer power of `x` - Computes `xⁿ` using extended precision arithmetic.
+ * Integer power of `x` - Compute `xⁿ` using extended-precision arithmetic.
  * `n` must be an integer.
  *
- * Error bound:
- *  - for `|n| ≤ 3`, see {@link square_1 | `square_1`}, {@link cube_1 | `cube_1`}.
- *  - for positive `n`, the result `[hi, lo]` is such that `f64([hi, lo])` is a
- * faithful rounding of `xⁿ` as long as `n ≤ 2⁴⁹`.
- *
- * @param {f64} x `f64` number (base)
- * @param {int} n `int` number (integer exponent)
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number representing the base
+ * @param n A `f64` integer representing the exponent
+ * @returns The {@link TwoF64|`TwoF64`} representation of `xⁿ`
  */
 export function powint_1(x: f64, n: int): TwoF64 {
   switch (n) {
@@ -192,12 +187,12 @@ export function _logpowltr(x: f64, n: int): TwoF64 {
 }
 
 /**
- * Integer power of `x` - Computes `(xₕᵢ + xₗₒ)ⁿ` using extended precision
- * arithmetic. `n` must be an integer.
+ * Integer power of `x` - Compute `xⁿ` using extended-precision arithmetic.
+ * `n` must be an integer.
  *
- * @param {TwoF64} x `TwoF64` number (base)
- * @param {int} n `int` number (integer exponent)
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `TwoF64` number representing the base
+ * @param n A `f64` integer representing the exponent
+ * @returns The {@link TwoF64|`TwoF64`} representation of `xⁿ`
  */
 export function powint_2(x: TwoF64, n: int): TwoF64 {
   switch (n) {
@@ -274,11 +269,12 @@ export function _logpow_2(x: TwoF64, n: int): TwoF64 {
 }
 
 /**
- * Computes `xᵖ` using extended precision arithmetic.
+ * Compute `xᵖ`, `x` raised to the power of `p`, using extended-precision
+ * arithmetic.
  *
- * @param {f64} x `f64` number (base)
- * @param {f64} p `f64` number (exponent)
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number representing the base
+ * @param p A `f64` number representing the exponent
+ * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
  */
 export function pow_11(x: f64, p: f64): TwoF64 {
   if (Number.isSafeInteger(p)) {
@@ -288,11 +284,12 @@ export function pow_11(x: f64, p: f64): TwoF64 {
 }
 
 /**
- * Computes `xᵖ` using extended precision arithmetic.
+ * Compute `xᵖ`, `x` raised to the power of `p`, using extended-precision
+ * arithmetic.
  *
- * @param {f64} x `f64` number (base)
- * @param {TwoF64} p `TwoF64` number (exponent)
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number representing the base
+ * @param p A `TwoF64` number representing the exponent
+ * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
  */
 export function pow_12(x: f64, p: TwoF64): TwoF64 {
   if (isSafeInteger2(p)) {
@@ -302,11 +299,12 @@ export function pow_12(x: f64, p: TwoF64): TwoF64 {
 }
 
 /**
- * Computes `xᵖ` using extended precision arithmetic.
+ * Compute `xᵖ`, `x` raised to the power of `p`, using extended-precision
+ * arithmetic.
  *
- * @param {TwoF64} x `TwoF64` number (base)
- * @param {f64} p `f64` number (exponent)
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `TwoF64` number representing the base
+ * @param p A `f64` number representing the exponent
+ * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
  */
 export function pow_21(x: TwoF64, p: f64): TwoF64 {
   if (Number.isSafeInteger(p)) {
@@ -316,11 +314,12 @@ export function pow_21(x: TwoF64, p: f64): TwoF64 {
 }
 
 /**
- * Computes `xᵖ` using extended precision arithmetic.
+ * Compute `xᵖ`, `x` raised to the power of `p`, using extended-precision
+ * arithmetic.
  *
- * @param {TwoF64} x `TwoF64` number (base)
- * @param {TwoF64} p `TwoF64` number (exponent)
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `TwoF64` number representing the base
+ * @param p A `TwoF64` number representing the exponent
+ * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
  */
 export function pow_22(x: TwoF64, p: TwoF64): TwoF64 {
   if (isSafeInteger2(p)) {
@@ -330,11 +329,11 @@ export function pow_22(x: TwoF64, p: TwoF64): TwoF64 {
 }
 
 /**
- * Compute `e^x`, the natural base exponential of `x`, using extended precision
+ * Compute `eˣ`, the natural base exponential of `x`, using extended-precision
  * arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `eˣ`
  */
 export function exp_1(x: f64): TwoF64 {
   if (Number.isInteger(x)) {
@@ -402,10 +401,11 @@ function divrem(x: f64, y: f64): [int, f64] {
 }
 
 /**
- * Computes `e^(xₕᵢ + xₗₒ)` using extended precision arithmetic.
+ * Compute `eˣ`, the natural base exponential of `x`, using extended-precision
+ * arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `eˣ`
  */
 export function exp_2([xhi, xlo]: TwoF64): TwoF64 {
   if (Number.isInteger(xhi)) {
@@ -459,10 +459,10 @@ function _exp_2f(x: TwoF64): TwoF64 {
 
 /**
  * Compute `eˣ - 1`, the natural base exponential of `x` subtracted by `1`,
- * using extended precision arithmetic.
+ * using extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `eˣ - 1`
  */
 export function expm1_1(x: f64): TwoF64 {
   if (Math.abs(x) < Math.LN2) {
@@ -495,10 +495,10 @@ function _expm1_1f(x: f64): TwoF64 {
 
 /**
  * Compute `eˣ - 1`, the natural base exponential of `x` subtracted by `1`,
- * using extended precision arithmetic.
+ * using extended-precision arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `eˣ - 1`
  */
 export function expm1_2(x: TwoF64): TwoF64{
   if (Math.abs(x[0]) < Math.LN2) {
@@ -530,9 +530,9 @@ function _expm1_2f(x: TwoF64): TwoF64 {
 }
 
 /**
- * Compute `x²`, the square of `x`, using extended precision arithmetic.
+ * Compute `x²`, the square of `x`, using extended-precision arithmetic.
  *
- * @param x The input number
+ * @param x A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `x²`
  */
 export function square(x: f64 | TwoF64): TwoF64 {
@@ -540,21 +540,21 @@ export function square(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute `x³`, the cube of `x`, using extended precision arithmetic.
+ * Compute `x³`, the cube of `x`, using extended-precision arithmetic.
  *
- * @param x The input number
- * @returns The {@link TwoF64|`TwoF64`} representation of `x²`
+ * @param x A `f64` or `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `x³`
  */
 export function cube(x: f64 | TwoF64): TwoF64 {
   return typeof x === 'number' ? cube_1(x) : cube_2(x);
 }
 
 /**
- * Integer power of `x` - Compute `xⁿ` using extended precision arithmetic.
+ * Integer power of `x` - Compute `xⁿ` using extended-precision arithmetic.
  * `n` must be an integer.
  *
- * @param x The base number
- * @param p The exponent number
+ * @param x A `f64` or `TwoF64` number representing the base
+ * @param n A `f64` integer representing the exponent
  * @returns The {@link TwoF64|`TwoF64`} representation of `xⁿ`
  */
 export function powint(x: f64 | TwoF64, n: int): TwoF64 {
@@ -562,11 +562,11 @@ export function powint(x: f64 | TwoF64, n: int): TwoF64 {
 }
 
 /**
- * Compute `xᵖ`, `x` raised to the power of `p`, using extended precision
+ * Compute `xᵖ`, `x` raised to the power of `p`, using extended-precision
  * arithmetic.
  *
- * @param x The base number
- * @param p The exponent number
+ * @param x A `f64` or `TwoF64` number representing the base
+ * @param p A `f64` or `TwoF64` number representing the exponent
  * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
  */
 export function pow(x: f64 | TwoF64, p: f64 | TwoF64): TwoF64 {
@@ -576,10 +576,10 @@ export function pow(x: f64 | TwoF64, p: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Compute `eˣ`, the natural base exponential of `x`, using extended precision
+ * Compute `eˣ`, the natural base exponential of `x`, using extended-precision
  * arithmetic.
  *
- * @param x The input number
+ * @param x A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `eˣ`
  */
 export function exp(x: f64 | TwoF64): TwoF64 {
@@ -588,9 +588,9 @@ export function exp(x: f64 | TwoF64): TwoF64 {
 
 /**
  * Compute `eˣ - 1`, the natural base exponential of `x` subtracted by `1`,
- * using extended precision arithmetic.
+ * using extended-precision arithmetic.
  *
- * @param x The input number
+ * @param x A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `eˣ - 1`
  */
 export function expm1(x: f64 | TwoF64): TwoF64 {

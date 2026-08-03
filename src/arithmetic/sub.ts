@@ -15,6 +15,10 @@ export const sub22 = AccurateDWMinusDW;
  *
  * Relative error bound: `2u²` with `u = 2^-53`
  *
+ * FP ops: 10
+ *
+ * @param x A `f64` number
+ * @param y A `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `x - y`
  */
 export function sub12(x: f64, y: TwoF64): TwoF64;
@@ -26,6 +30,8 @@ export function sub12(x: f64, [yhi, ylo]: TwoF64): TwoF64 {
 /**
  * Extended-precision subtraction `x - y`.
  *
+ * @param x A `f64` or `TwoF64` number
+ * @param y A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `x - y`
  */
 export function sub(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {

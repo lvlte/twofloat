@@ -173,8 +173,8 @@ export function isSafeTwoInteger([xhi, xlo]: TwoF64): boolean {
 }
 
 /**
- * Return a boolean indicating whether `x` is the reserved value `NaN2` (not a
- * number).
+ * Return a boolean indicating whether `x` should be considered as `NaN2` (not a
+ * number), that is, `true` if `xₕᵢ + xₗₒ` evaluates to `NaN`, `false` otherwise.
  */
 export function isNaN2(x: TwoF64): boolean;
 export function isNaN2([xhi, xlo]: TwoF64): boolean {

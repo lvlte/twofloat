@@ -17,7 +17,7 @@ import { abs2, neg2 } from "./sign.js";
 const PI_HALF: TwoF64 = [1.5707963267948966, 6.123233995736766e-17];
 
 /**
- * Computes the sine of `x`, where `x` is expressed in radians, using extended
+ * Compute the sine of `x`, where `x` is expressed in radians, using extended
  * precision arithmetic.
  *
  * @param {f64} x A `f64` number
@@ -47,7 +47,7 @@ export function sin_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the sine of `x`, where `x` is expressed in radians, using extended
+ * Compute the sine of `x`, where `x` is expressed in radians, using extended
  * precision arithmetic.
  *
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
@@ -161,7 +161,7 @@ function _sin_padé_2(x: TwoF64): [TwoF64, TwoF64] {
 }
 
 /**
- * Computes the cosine of `x`, where `x` is expressed in radians, using extended
+ * Compute the cosine of `x`, where `x` is expressed in radians, using extended
  * precision arithmetic.
  *
  * @param {f64} x A `f64` number
@@ -191,7 +191,7 @@ export function cos_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the cosine of `x`, where `x` is expressed in radians, using extended
+ * Compute the cosine of `x`, where `x` is expressed in radians, using extended
  * precision arithmetic.
  *
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
@@ -250,8 +250,8 @@ function _cos_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
 }
 
 /**
- * Computes the tangent of `x`, where `x` is expressed in radians, using
- * extended precision arithmetic.
+ * Compute the tangent of `x`, where `x` is expressed in radians, using
+ * extended-precision arithmetic.
  *
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
@@ -276,8 +276,8 @@ export function tan_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the tangent of `x`, where `x` is expressed in radians, using
- * extended precision arithmetic.
+ * Compute the tangent of `x`, where `x` is expressed in radians, using
+ * extended-precision arithmetic.
  *
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
@@ -338,8 +338,8 @@ function _tan(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Computes the cotangent of `x`, where `x` is expressed in radians, using
- * extended precision arithmetic.
+ * Compute the cotangent of `x`, where `x` is expressed in radians, using
+ * extended-precision arithmetic.
  *
  * @param {f64} x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
@@ -364,8 +364,8 @@ export function cot_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the cotangent of `x`, where `x` is expressed in radians, using
- * extended precision arithmetic.
+ * Compute the cotangent of `x`, where `x` is expressed in radians, using
+ * extended-precision arithmetic.
  *
  * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
  * its canonical form).
@@ -398,11 +398,11 @@ function _cot(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Computes the secant of `x`, where `x` is expressed in radians, using extended
+ * Compute the secant of `x`, where `x` is expressed in radians, using extended
  * precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `(-∞, -1] ∪ [1, ∞)`
  */
 export function sec_1(x: f64): TwoF64 {
   const xabs = Math.abs(x);
@@ -428,11 +428,11 @@ export function sec_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the secant of `x`, where `x` is expressed in radians, using extended
+ * Compute the secant of `x`, where `x` is expressed in radians, using extended
  * precision arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `(-∞, -1] ∪ [1, ∞)`
  */
 export function sec_2(x: TwoF64): TwoF64 {
   const xabs = abs2(x);
@@ -466,11 +466,11 @@ function _sec(x: f64 | TwoF64): TwoF64 {
 }
 
 /**
- * Computes the cosecant of `x`, where `x` is expressed in radians, using
- * extended precision arithmetic.
+ * Compute the cosecant of `x`, where `x` is expressed in radians, using
+ * extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `(-∞, -1] ∪ [1, ∞)`
  */
 export function csc_1(x: f64): TwoF64 {
   let sign = Math.sign(x);
@@ -496,11 +496,11 @@ export function csc_1(x: f64): TwoF64 {
 }
 
 /**
- * Computes the cosecant of `x`, where `x` is expressed in radians, using
- * extended precision arithmetic.
+ * Compute the cosecant of `x`, where `x` is expressed in radians, using
+ * extended-precision arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `(-∞, -1] ∪ [1, ∞)`
  */
 export function csc_2(x: TwoF64): TwoF64 {
   let sign = Math.sign(x[0]);
