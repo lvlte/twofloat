@@ -9,7 +9,7 @@ import { sin_pade, cos_pade, tan_pade_int } from "../pre/trig.js";
 import { PI } from "./constants.js";
 import { square_1, square_2 } from "./exp.js";
 import { rem2pi_1, rem2pi_2, rempi_1, rempi_2 } from "./mod.js";
-import { abs2, neg2 } from "./basic.js";
+import { abs, neg } from "./basic.js";
 
 /**
  * TwoF64 representation of `π/2` (`PI_HALF > π/2`).
@@ -40,10 +40,10 @@ export function sin_1(x: f64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? neg2(_cos(r)) : _cos(r);
+    return sign < 0 ? neg(_cos(r)) : _cos(r);
   }
 
-  return sign < 0 ? _sin_2(neg2(r)) : _sin_2(r);
+  return sign < 0 ? _sin_2(neg(r)) : _sin_2(r);
 }
 
 /**
@@ -55,7 +55,7 @@ export function sin_1(x: f64): TwoF64 {
  */
 export function sin_2(x: TwoF64): TwoF64 {
   let sign = Math.sign(x[0]);
-  const xabs = abs2(x);
+  const xabs = abs(x);
 
   if (lt22(xabs, PI_HALF)) {
     return _sin_2(x);
@@ -70,10 +70,10 @@ export function sin_2(x: TwoF64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? neg2(_cos(r)) : _cos(r);
+    return sign < 0 ? neg(_cos(r)) : _cos(r);
   }
 
-  return sign < 0 ? _sin_2(neg2(r)) : _sin_2(r);
+  return sign < 0 ? _sin_2(neg(r)) : _sin_2(r);
 }
 
 /**
@@ -184,10 +184,10 @@ export function cos_1(x: f64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? _sin_2(r) : _sin_2(neg2(r));
+    return sign < 0 ? _sin_2(r) : _sin_2(neg(r));
   }
 
-  return sign < 0 ? neg2(_cos(r)) : _cos(r);
+  return sign < 0 ? neg(_cos(r)) : _cos(r);
 }
 
 /**
@@ -198,7 +198,7 @@ export function cos_1(x: f64): TwoF64 {
  * its canonical form).
  */
 export function cos_2(x: TwoF64): TwoF64 {
-  const xabs = abs2(x);
+  const xabs = abs(x);
   let sign = 1;
 
   if (lt22(xabs, PI_HALF)) {
@@ -214,10 +214,10 @@ export function cos_2(x: TwoF64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? _sin_2(r) : _sin_2(neg2(r));
+    return sign < 0 ? _sin_2(r) : _sin_2(neg(r));
   }
 
-  return sign < 0 ? neg2(_cos(r)) : _cos(r);
+  return sign < 0 ? neg(_cos(r)) : _cos(r);
 }
 
 /**
@@ -269,10 +269,10 @@ export function tan_1(x: f64): TwoF64 {
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
     sign *= -1;
-    return sign < 0 ? neg2(_cot(r)) : _cot(r);
+    return sign < 0 ? neg(_cot(r)) : _cot(r);
   }
 
-  return sign < 0 ? neg2(_tan(r)) : _tan(r);
+  return sign < 0 ? neg(_tan(r)) : _tan(r);
 }
 
 /**
@@ -284,7 +284,7 @@ export function tan_1(x: f64): TwoF64 {
  */
 export function tan_2(x: TwoF64): TwoF64 {
   let sign = Math.sign(x[0]);
-  const xabs = abs2(x);
+  const xabs = abs(x);
 
   if (lt22(xabs, PI_HALF)) {
     return _tan(x);
@@ -295,10 +295,10 @@ export function tan_2(x: TwoF64): TwoF64 {
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
     sign *= -1;
-    return sign < 0 ? neg2(_cot(r)) : _cot(r);
+    return sign < 0 ? neg(_cot(r)) : _cot(r);
   }
 
-  return sign < 0 ? neg2(_tan(r)) : _tan(r);
+  return sign < 0 ? neg(_tan(r)) : _tan(r);
 }
 
 /**
@@ -357,10 +357,10 @@ export function cot_1(x: f64): TwoF64 {
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
     sign *= -1;
-    return sign < 0 ? neg2(_tan(r)) : _tan(r);
+    return sign < 0 ? neg(_tan(r)) : _tan(r);
   }
 
-  return sign < 0 ? neg2(_cot(r)) : _cot(r);
+  return sign < 0 ? neg(_cot(r)) : _cot(r);
 }
 
 /**
@@ -372,7 +372,7 @@ export function cot_1(x: f64): TwoF64 {
  */
 export function cot_2(x: TwoF64): TwoF64 {
   let sign = Math.sign(x[0]);
-  const xabs = abs2(x);
+  const xabs = abs(x);
 
   if (lt22(xabs, PI_HALF)) {
     return _cot(x);
@@ -383,10 +383,10 @@ export function cot_2(x: TwoF64): TwoF64 {
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
     sign *= -1;
-    return sign < 0 ? neg2(_tan(r)) : _tan(r);
+    return sign < 0 ? neg(_tan(r)) : _tan(r);
   }
 
-  return sign < 0 ? neg2(_cot(r)) : _cot(r);
+  return sign < 0 ? neg(_cot(r)) : _cot(r);
 }
 
 /**
@@ -421,10 +421,10 @@ export function sec_1(x: f64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? _csc_2(r) : neg2(_csc_2(r));
+    return sign < 0 ? _csc_2(r) : neg(_csc_2(r));
   }
 
-  return sign < 0 ? neg2(_sec(r)) : _sec(r);
+  return sign < 0 ? neg(_sec(r)) : _sec(r);
 }
 
 /**
@@ -435,7 +435,7 @@ export function sec_1(x: f64): TwoF64 {
  * @returns A {@link TwoF64|`TwoF64`} number in the range `(-∞, -1] ∪ [1, ∞)`
  */
 export function sec_2(x: TwoF64): TwoF64 {
-  const xabs = abs2(x);
+  const xabs = abs(x);
   let sign = 1;
 
   if (lt22(xabs, PI_HALF)) {
@@ -451,10 +451,10 @@ export function sec_2(x: TwoF64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? _csc_2(r) : neg2(_csc_2(r));
+    return sign < 0 ? _csc_2(r) : neg(_csc_2(r));
   }
 
-  return sign < 0 ? neg2(_sec(r)) : _sec(r);
+  return sign < 0 ? neg(_sec(r)) : _sec(r);
 }
 
 /**
@@ -489,10 +489,10 @@ export function csc_1(x: f64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? neg2(_sec(r)) : _sec(r);
+    return sign < 0 ? neg(_sec(r)) : _sec(r);
   }
 
-  return sign < 0 ? neg2(_csc_2(r)) : _csc_2(r);
+  return sign < 0 ? neg(_csc_2(r)) : _csc_2(r);
 }
 
 /**
@@ -504,7 +504,7 @@ export function csc_1(x: f64): TwoF64 {
  */
 export function csc_2(x: TwoF64): TwoF64 {
   let sign = Math.sign(x[0]);
-  const xabs = abs2(x);
+  const xabs = abs(x);
 
   if (lt22(xabs, PI_HALF)) {
     return _csc_2(x);
@@ -519,10 +519,10 @@ export function csc_2(x: TwoF64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? neg2(_sec(r)) : _sec(r);
+    return sign < 0 ? neg(_sec(r)) : _sec(r);
   }
 
-  return sign < 0 ? neg2(_csc_2(r)) : _csc_2(r);
+  return sign < 0 ? neg(_csc_2(r)) : _csc_2(r);
 }
 
 /**

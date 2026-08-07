@@ -3,7 +3,7 @@
  */
 
 import {
-  abs2, add11, gt21,
+  abs, add11, gt21,
   sin_1, sin_2, tan_1, tan_2, sec_1, sec_2,
   cos_1, cos_2, cot_1, cot_2, csc_1, csc_2,
   sinh_1, sinh_2, tanh_1, tanh_2, sech_1, sech_2,
@@ -67,7 +67,7 @@ function processArgsFn(fnName: FnName): Function {
     case 'atanh_2':
       return (...args: FnArgs[typeof fnName]) => {
         const x = args[0];
-        if (gt21(abs2(x), 1)) {
+        if (gt21(abs(x), 1)) {
           const e = exponent(x[0]);
           args[0] = ldexp2(x, -(1 + e + (e % 2)));
         }
@@ -102,7 +102,7 @@ function processArgsFn(fnName: FnName): Function {
     case 'acoth_2':
       return (...args: FnArgs[typeof fnName]) => {
         const x = args[0];
-        if (lt21(abs2(x), 1)) {
+        if (lt21(abs(x), 1)) {
           args[0] = ldexp2(x, -exponent(x[0]));
         }
         return args;
@@ -120,7 +120,7 @@ function processArgsFn(fnName: FnName): Function {
       }
     case 'acosh_2':
       return (...args: FnArgs[typeof fnName]) => {
-        let x = abs2(args[0]);
+        let x = abs(args[0]);
         if (lt21(x, 1)) {
           x = ldexp2(x, -exponent(x[0]));
         }
@@ -141,7 +141,7 @@ function processArgsFn(fnName: FnName): Function {
       }
     case 'asech_2':
       return (...args: FnArgs[typeof fnName]) => {
-        let x = abs2(args[0]);
+        let x = abs(args[0]);
         if (gt21(x, 1)) {
           const e = exponent(x[0]);
           x = ldexp2(x, -(1 + e + (e % 2)));

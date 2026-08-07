@@ -8,7 +8,7 @@ import {
   twoDiff,
   fast2Sum,
   fast2Diff,
-  neg2,
+  neg,
   ONE,
   normalize,
   add,
@@ -81,7 +81,7 @@ describe('Derived Algorithms', () => {
       for (const [s1, s2] of signCombinations) {
         const x = normalize(random(e1, s1), random(e1 - 1, s1));
         const y = normalize(random(e2, s2), random(e2 - 1, s2));
-        expect(AccurateDWMinusDW(x, y)).toEqual(AccurateDWPlusDW(x, neg2(y)));
+        expect(AccurateDWMinusDW(x, y)).toEqual(AccurateDWPlusDW(x, neg(y)));
       }
     }
   });
@@ -100,16 +100,16 @@ describe('Derived Algorithms', () => {
     for (let exp = -100; exp <= 60; exp++) {
       const x = random(exp, 1);
       expect(twoInv(x)).toEqual(DWDivFP3(ONE, x));
-      expect(twoInv(-x)).toEqual(DWDivFP3(neg2(ONE), x));
+      expect(twoInv(-x)).toEqual(DWDivFP3(neg(ONE), x));
     }
   });
 
   test('DWInv', () => {
     for (let exp = -100; exp <= 60; exp++) {
       const x = normalize(random(exp, 1), random(exp - 1, 1));
-      const mx = neg2(x);
+      const mx = neg(x);
       expect(DWInv(x)).toEqual(DWDivDW2(ONE, x));
-      expect(DWInv(mx)).toEqual(DWDivDW2(neg2(ONE), x));
+      expect(DWInv(mx)).toEqual(DWDivDW2(neg(ONE), x));
     }
   });
 });
@@ -141,7 +141,7 @@ describe('Basic Arithmetic Functions', () => {
         const xx = normalize(random(e1, s1), random(e1 - 1, s1));
         const yy = normalize(random(e2, s2), random(e2 - 1, s2));
         expect(sub(x, y)).toEqual(twoDiff(x, y));
-        expect(sub(x, yy)).toEqual(DWPlusFP(neg2(yy), x));
+        expect(sub(x, yy)).toEqual(DWPlusFP(neg(yy), x));
         expect(sub(xx, y)).toEqual(DWMinusFP(xx, y));
         expect(sub(xx, yy)).toEqual(AccurateDWMinusDW(xx, yy));
       }

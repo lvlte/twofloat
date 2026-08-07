@@ -8,7 +8,7 @@
  */
 
 import {
-  normalize, abs2, add11,
+  normalize, abs, add11,
   square_1, square_2, cube_1, cube_2,
   exp_1, exp_2, expm1_1, expm1_2, powint_1, powint_2, pow_11, pow_12, pow_21, pow_22,
   _linpow_1, _logpow_1, _logpowltr, _linpow_2, _logpow_2,
@@ -64,7 +64,7 @@ function processArgsFn(fnName: FnName): Function {
     case 'log10_2':
     case 'pow_21':
     case 'pow_22':
-      return (...args: FnArgs[typeof fnName]) => (args[0] = abs2(args[0]), args);
+      return (...args: FnArgs[typeof fnName]) => (args[0] = abs(args[0]), args);
 
     case '_linpow_1':
     case '_logpow_1':

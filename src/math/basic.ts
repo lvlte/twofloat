@@ -12,8 +12,8 @@ import { NaN2, type TwoF64 } from '../base/common.js';
  * @param x A `f64` or `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `|x|`
  */
-export function abs2(x: TwoF64): TwoF64;
-export function abs2([xhi, xlo]: TwoF64): TwoF64 {
+export function abs(x: TwoF64): TwoF64;
+export function abs([xhi, xlo]: TwoF64): TwoF64 {
   return xhi < 0 ? [-xhi, -xlo] : [xhi, xlo];
 }
 
@@ -23,8 +23,8 @@ export function abs2([xhi, xlo]: TwoF64): TwoF64 {
  * @param x A `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `-x`
  */
-export function neg2(x: TwoF64): TwoF64
-export function neg2([xhi, xlo]: TwoF64): TwoF64 {
+export function neg(x: TwoF64): TwoF64
+export function neg([xhi, xlo]: TwoF64): TwoF64 {
   return [-xhi, -xlo];
 }
 
@@ -35,8 +35,8 @@ export function neg2([xhi, xlo]: TwoF64): TwoF64 {
  * @param x A `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of the sign of `x`
  */
-export function sign2(x: TwoF64): TwoF64;
-export function sign2([xhi, xlo]: TwoF64): TwoF64 {
+export function sign(x: TwoF64): TwoF64;
+export function sign([xhi, xlo]: TwoF64): TwoF64 {
   const sign = Math.sign(xhi + xlo);
   return Number.isFinite(sign) ? [sign, 0] : NaN2;
 }

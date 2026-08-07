@@ -4,7 +4,7 @@
 
 import { NaN2, ZERO, type f64, type TwoF64 } from "../base/common.js";
 import { add21, add22, div12, div22, inv1, inv2, mul11, mul21, mul22, sub12, sub22 } from "../arithmetic/index.js";
-import { abs2, neg2 } from "./basic.js";
+import { abs, neg } from "./basic.js";
 import { asin_pade, atan_pade } from "../pre/trig-inv.js";
 import { square_1, square_2 } from "./exp.js";
 import { sqrt_1, sqrt_2 } from "./roots.js";
@@ -54,13 +54,13 @@ export function asin_1(x: f64): TwoF64 {
       return PI$6;
 
     case -0.5:
-      return neg2(PI$6);
+      return neg(PI$6);
 
     case 1:
       return PI$2;
 
     case -1:
-      return neg2(PI$2);
+      return neg(PI$2);
   }
 
   const xabs = Math.abs(x);
@@ -90,7 +90,7 @@ export function asin_1(x: f64): TwoF64 {
     const y = normalize(x2h - 1, x2l);
     const [hi, lo] = div22(..._asin_padé_2(y));
     const r = add22(PI$4, [0.5*hi, 0.5*lo]);
-    return x > 0 ? r : neg2(r);
+    return x > 0 ? r : neg(r);
   }
 
   const [p, q] = _asin_padé_1(x);
@@ -110,25 +110,25 @@ export function asin_2(x: TwoF64): TwoF64 {
     return [xhi, xlo];
   }
 
-  const xabs = abs2(x);
+  const xabs = abs(x);
   if (isNaN2(x) || gt21(xabs, 1)) {
     return NaN2;
   }
 
   if (eq21(xabs, 0.5)) {
-    return xhi > 0 ? PI$6 : neg2(PI$6);
+    return xhi > 0 ? PI$6 : neg(PI$6);
   }
 
   if (eq22(xabs, SQRT1_2)) {
-    return xhi > 0 ? PI$4 : neg2(PI$4);
+    return xhi > 0 ? PI$4 : neg(PI$4);
   }
 
   if (eq22(xabs, SQRT3_$2)) {
-    return xhi > 0 ? PI$3 : neg2(PI$3);
+    return xhi > 0 ? PI$3 : neg(PI$3);
   }
 
   if (eq21(xabs, 1)) {
-    return xhi > 0 ? PI$2 : neg2(PI$2);
+    return xhi > 0 ? PI$2 : neg(PI$2);
   }
 
   if (gt21(xabs, 0.5)) {
@@ -145,7 +145,7 @@ export function asin_2(x: TwoF64): TwoF64 {
     const y = normalize(2*shi - 1, 2*slo);
     const [hi, lo] = div22(..._asin_padé_2(y));
     const r = add22(PI$4, [0.5*hi, 0.5*lo]);
-    return xhi > 0 ? r : neg2(r);
+    return xhi > 0 ? r : neg(r);
   }
 
   const [p, q] = _asin_padé_2(x);
@@ -261,7 +261,7 @@ export function atan_1(x: f64): TwoF64 {
   }
 
   if (!Number.isFinite(x)) {
-    return Number.isNaN(x) ? NaN2 : x >= 0 ? PI$2 : neg2(PI$2);
+    return Number.isNaN(x) ? NaN2 : x >= 0 ? PI$2 : neg(PI$2);
   }
 
   // atan(x) = 2*atan( x / (1 + √(1 + x²)) )
@@ -281,7 +281,7 @@ export function atan_1(x: f64): TwoF64 {
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
  */
 export function atan_2(x: TwoF64): TwoF64 {
-  if (lt21(abs2(x), 0.6)) {
+  if (lt21(abs(x), 0.6)) {
     if (isZero(x)) {
       return ZERO;
     }
@@ -290,7 +290,7 @@ export function atan_2(x: TwoF64): TwoF64 {
   }
 
   if (!isFinite2(x)) {
-    return isNaN2(x) ? NaN2 : ge21(x, 0) ? PI$2 : neg2(PI$2);
+    return isNaN2(x) ? NaN2 : ge21(x, 0) ? PI$2 : neg(PI$2);
   }
 
   const x2p1 = add21(square_2(x), 1);
@@ -431,7 +431,7 @@ export function asec_1(x: f64): TwoF64 {
  * @returns {TwoF64} A `TwoF64` number in the range `[0, π]`
  */
 export function asec_2(x: TwoF64): TwoF64 {
-  if (lt21(abs2(x), 1) || isNaN2(x)) {
+  if (lt21(abs(x), 1) || isNaN2(x)) {
     return NaN2;
   }
 
@@ -469,7 +469,7 @@ export function acsc_1(x: f64): TwoF64 {
  * @returns {TwoF64} A `TwoF64` number in the range `[-π/2, +π/2]`
  */
 export function acsc_2(x: TwoF64): TwoF64 {
-  if (lt21(abs2(x), 1) || isNaN2(x)) {
+  if (lt21(abs(x), 1) || isNaN2(x)) {
     return NaN2;
   }
 

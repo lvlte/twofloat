@@ -7,7 +7,7 @@ import { add21, add22, div12, div22, inv1, inv2, mul21, mul22, sub12, sub21 } fr
 import { square_1, square_2 } from "./exp.js";
 import { sqrt_2 } from "./roots.js";
 import { ln_2 } from "./log.js";
-import { abs2, neg2 } from "./basic.js";
+import { abs, neg } from "./basic.js";
 import { asinh_pade } from "../pre/hyp-inv.js";
 import { eq21, ge21, isFinite2, isNaN2, isOne, isZero, le21, lt21 } from "../base/compare.js";
 import { INF, NINF } from "./constants.js";
@@ -35,7 +35,7 @@ export function asinh_1(x: f64): TwoF64 {
   const y = add21(sqrt_2(x2p1), xabs);
   const ln_y = ln_2(y);
 
-  return x > 0 ? ln_y : neg2(ln_y);
+  return x > 0 ? ln_y : neg(ln_y);
 }
 
 /**
@@ -50,7 +50,7 @@ export function asinh_2(x: TwoF64): TwoF64 {
     return [...x];
   }
 
-  const xabs = abs2(x);
+  const xabs = abs(x);
   if (lt21(xabs, 0.5)) {
     const [p, q] = _asinh_padé_2(x);
     return div22(p, q);
@@ -61,7 +61,7 @@ export function asinh_2(x: TwoF64): TwoF64 {
   const y = add22(sqrt_2(x2p1), xabs);
   const ln_y = ln_2(y);
 
-  return x[0] > 0 ? ln_y : neg2(ln_y);
+  return x[0] > 0 ? ln_y : neg(ln_y);
 }
 
 /**
@@ -198,7 +198,7 @@ export function atanh_1(x: f64): TwoF64 {
  * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function atanh_2(x: TwoF64): TwoF64 {
-  const xabs = abs2(x);
+  const xabs = abs(x);
   if (!le21(xabs, 1)) {
     return NaN2;
   }
@@ -226,7 +226,7 @@ export function acoth_1(x: f64): TwoF64 {
   }
 
   if (xabs === Infinity) {
-    return x < 0 ? neg2(ZERO) : ZERO;
+    return x < 0 ? neg(ZERO) : ZERO;
   }
 
   return atanh_2(inv1(x));
@@ -240,7 +240,7 @@ export function acoth_1(x: f64): TwoF64 {
  * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function acoth_2(x: TwoF64): TwoF64 {
-  const xabs = abs2(x);
+  const xabs = abs(x);
   if (!(ge21(xabs, 1))) {
     return NaN2;
   }
@@ -250,7 +250,7 @@ export function acoth_2(x: TwoF64): TwoF64 {
   }
 
   if (!isFinite2(x)) {
-    return x[0] < 0 ? neg2(ZERO) : ZERO;
+    return x[0] < 0 ? neg(ZERO) : ZERO;
   }
 
   return atanh_2(inv2(x));
@@ -311,7 +311,7 @@ export function asech_2(x: TwoF64): TwoF64 {
  */
 export function acsch_1(x: f64): TwoF64 {
   if (!Number.isFinite(x)) {
-    return x > 0 ? ZERO : x < 0 ? neg2(ZERO) : NaN2;
+    return x > 0 ? ZERO : x < 0 ? neg(ZERO) : NaN2;
   }
 
   if (x === 0) {
@@ -333,7 +333,7 @@ export function acsch_2(x: TwoF64): TwoF64 {
     if (isNaN2(x)) {
       return NaN2;
     }
-    return x[0] > 0 ? ZERO : neg2(ZERO);
+    return x[0] > 0 ? ZERO : neg(ZERO);
   }
 
   if (isZero(x)) {
