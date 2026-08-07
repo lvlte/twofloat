@@ -9,7 +9,7 @@ import { sin_pade, cos_pade, tan_pade_int } from "../pre/trig.js";
 import { PI } from "./constants.js";
 import { square_1, square_2 } from "./exp.js";
 import { rem2pi_1, rem2pi_2, rempi_1, rempi_2 } from "./mod.js";
-import { abs2, neg2 } from "./sign.js";
+import { abs2, neg2 } from "./basic.js";
 
 /**
  * TwoF64 representation of `π/2` (`PI_HALF > π/2`).

@@ -1,5 +1,7 @@
 /**
- * @file Sign-related functions
+ * Basic math functions
+ *
+ * @module
  */
 
 import { NaN2, type TwoF64 } from '../base/common.js';

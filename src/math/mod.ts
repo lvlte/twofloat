@@ -6,7 +6,7 @@ import { add11, add21, div12, div22, mul11, sub11, sub12, sub21, sub22 } from ".
 import type { f64, ThreeF64, TwoF64 } from "../base/common.js";
 import { le22, lt22 } from "../base/compare.js";
 import { THREE } from "./constants.js";
-import { abs2 } from "./sign.js";
+import { abs2 } from "./basic.js";
 
 /**
  * Return the remainder left over after integer division of `x` by `π`, with the

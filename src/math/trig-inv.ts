@@ -4,7 +4,7 @@
 
 import { NaN2, ZERO, type f64, type TwoF64 } from "../base/common.js";
 import { add21, add22, div12, div22, inv1, inv2, mul11, mul21, mul22, sub12, sub22 } from "../arithmetic/index.js";
-import { abs2, neg2 } from "./sign.js";
+import { abs2, neg2 } from "./basic.js";
 import { asin_pade, atan_pade } from "../pre/trig-inv.js";
 import { square_1, square_2 } from "./exp.js";
 import { sqrt_1, sqrt_2 } from "./roots.js";
