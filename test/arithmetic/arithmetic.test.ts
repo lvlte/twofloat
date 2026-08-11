@@ -3,7 +3,6 @@
  */
 
 import {
-  TwoF64,
   twoSum,
   twoDiff,
   fast2Sum,
@@ -17,7 +16,7 @@ import {
   twoProd,
   div,
   inv
-} from '../src/index';
+} from '../../src';
 
 import {
   DWPlusFP,
@@ -31,13 +30,13 @@ import {
   DWDivFP3,
   DWTimesFP1,
   DWTimesDW1,
-} from '../src/base/algorithms';
+} from '../../src/base/algorithms';
 
 import {
   randomFn,
   pairsInRange,
   signCombinations
-} from './utils';
+} from '../utils';
 
 // Pseudo-random number generator
 const SEED = Math.sqrt(5);
@@ -113,8 +112,6 @@ describe('Derived Algorithms', () => {
     }
   });
 });
-
-// sum1, prod1
 
 describe('Basic Arithmetic Functions', () => {
 
