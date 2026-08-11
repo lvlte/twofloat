@@ -230,7 +230,7 @@ export function le(x: f64 | TwoF64, y: f64 | TwoF64): boolean {
 export function gt(x: f64 | TwoF64, y: f64 | TwoF64): boolean {
   return typeof x === 'number'
     ? typeof y === 'number' ? x > y : gt12(x, y)
-    : typeof y === 'number' ? gt21(x, y) : lt22(x, y)
+    : typeof y === 'number' ? gt21(x, y) : gt22(x, y)
 }
 
 /**
