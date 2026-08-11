@@ -171,7 +171,7 @@ export function isSafeInteger2([xhi, xlo]: TwoF64): boolean {
  */
 export function isSafeTwoInteger(x: TwoF64): boolean;
 export function isSafeTwoInteger([xhi, xlo]: TwoF64): boolean {
-  return xlo === 0 ? Number.isSafeInteger(xhi) : Number.isSafeInteger(xlo);
+  return Number.isInteger(xhi) && Number.isSafeInteger(xlo);
 }
 
 /**
