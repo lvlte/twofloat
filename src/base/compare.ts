@@ -144,7 +144,7 @@ export function isOne([xhi, xlo]: TwoF64): boolean {
  */
 export function isFinite2(x: TwoF64): boolean;
 export function isFinite2([xhi, xlo]: TwoF64): boolean {
-  return Number.isFinite(xhi + xlo);
+  return Number.isFinite(xhi) && Number.isFinite(xlo);
 }
 
 /**
