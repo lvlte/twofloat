@@ -1,5 +1,7 @@
 /**
- * @file Comparison/min/max/is* functions
+ * Comparison functions (equality/ordering/is* predicates)
+ *
+ * @module
  */
 
 import {
@@ -175,10 +177,24 @@ export function isSafeTwoInteger([xhi, xlo]: TwoF64): boolean {
 /**
  * Return a boolean indicating whether `x` should be considered as `NaN2` (not a
  * number), that is, `true` if `xₕᵢ + xₗₒ` evaluates to `NaN`, `false` otherwise.
+ *
+ * The exception to this rule is with infinite `x`: because `normalize(INF)`
+ * returns `[Infinity, NaN]` we consider infinite any twofloat number having an
+ * infinite hi part, although `Infinity + NaN` evaluates to `NaN`.
  */
 export function isNaN2(x: TwoF64): boolean;
 export function isNaN2([xhi, xlo]: TwoF64): boolean {
-  return Number.isNaN(xhi + xlo);
+  return Number.isNaN(xhi + xlo) && Math.abs(xhi) !== Infinity;
+}
+
+/**
+ * Return a boolean indicating whether `x` represents ±Infinity, that is, any
+ * twofloat number having an infinite hi part, including `[Infinity, NaN]` (the
+ * reason for this is that `normalize(INF)` returns `[Infinity, NaN]`).
+ */
+export function isInfinite2(x: TwoF64): boolean;
+export function isInfinite2([xhi,]: TwoF64): boolean {
+  return Math.abs(xhi) === Infinity;
 }
 
 /**

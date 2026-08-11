@@ -60,12 +60,12 @@ export const SQRT3: TwoF64 = [1.7320508075688772, 1.0035084221806903e-16];
 /**
  * `TwoF64` representation of `∞` (positive infinity).
  */
-export const INF: TwoF64 = [Infinity, Infinity];
+export const INF: TwoF64 = [Infinity, 0];
 
 /**
  * `TwoF64` representation of `-∞` (negative infinity).
  */
-export const NINF: TwoF64 = [-Infinity, -Infinity];
+export const NINF: TwoF64 = [-Infinity, 0];
 
 
 /**
