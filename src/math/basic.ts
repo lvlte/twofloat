@@ -53,11 +53,16 @@ export function sign([xhi,]: TwoF64): TwoF64 {
 export function trunc(x: TwoF64): TwoF64;
 export function trunc([xhi, xlo]: TwoF64): TwoF64 {
   if (!Number.isFinite(xhi)) {
-    return Number.isNaN(xhi) || Math.abs(xhi) !== Infinity ? NaN2 : [xhi, 0];
+    return Math.abs(xhi) !== Infinity ? NaN2 : [xhi, 0];
   }
 
   if (Number.isInteger(xhi)) {
-    return Number.isInteger(xlo) ? [xhi, xlo] : normalize(xhi, Math.trunc(xlo));
+    if (Number.isInteger(xlo)) {
+      return [xhi, xlo];
+    }
+    const s = Math.sign(xhi);
+    const [hi, lo] = normalize(xhi, s > 0 ? Math.floor(xlo) : Math.ceil(xlo));
+    return hi === 0 ? [s*0, 0] : [hi, lo];
   }
 
   return [Math.trunc(xhi), 0];
@@ -72,7 +77,7 @@ export function trunc([xhi, xlo]: TwoF64): TwoF64 {
 export function floor(x: TwoF64): TwoF64;
 export function floor([xhi, xlo]: TwoF64): TwoF64 {
   if (!Number.isFinite(xhi)) {
-    return Number.isNaN(xhi) || Math.abs(xhi) !== Infinity ? NaN2 : [xhi, 0];
+    return Math.abs(xhi) !== Infinity ? NaN2 : [xhi, 0];
   }
 
   if (Number.isInteger(xhi)) {
@@ -91,11 +96,15 @@ export function floor([xhi, xlo]: TwoF64): TwoF64 {
 export function ceil(x: TwoF64): TwoF64;
 export function ceil([xhi, xlo]: TwoF64): TwoF64 {
   if (!Number.isFinite(xhi)) {
-    return Number.isNaN(xhi) || Math.abs(xhi) !== Infinity ? NaN2 : [xhi, 0];
+    return Math.abs(xhi) !== Infinity ? NaN2 : [xhi, 0];
   }
 
   if (Number.isInteger(xhi)) {
-    return Number.isInteger(xlo) ? [xhi, xlo] : normalize(xhi, Math.ceil(xlo));
+    if (Number.isInteger(xlo)) {
+      return [xhi, xlo];
+    }
+    const [hi, lo] = normalize(xhi, Math.ceil(xlo));
+    return hi === 0 ? [Math.sign(xhi)*0, 0] : [hi, lo];
   }
 
   return [Math.ceil(xhi), 0];
