@@ -39,9 +39,9 @@ export function neg([xhi, xlo]: TwoF64): TwoF64 {
  * @returns The {@link TwoF64|`TwoF64`} representation of the sign of `x`
  */
 export function sign(x: TwoF64): TwoF64;
-export function sign([xhi, xlo]: TwoF64): TwoF64 {
-  const sign = Math.sign(xhi + xlo);
-  return Number.isFinite(sign) ? [sign, 0] : NaN2;
+export function sign([xhi,]: TwoF64): TwoF64 {
+  const s = Math.sign(xhi);
+  return Number.isFinite(s) ? [s, 0] : NaN2;
 }
 
 /**
