@@ -15,7 +15,9 @@ import { normalize } from '../base/eft.js';
  */
 export function abs(x: TwoF64): TwoF64;
 export function abs([xhi, xlo]: TwoF64): TwoF64 {
-  return xhi < 0 ? [-xhi, -xlo] : [xhi, xlo];
+  const hi = Math.abs(xhi);
+  const lo = hi > xhi ? (xlo === 0 ? 0 : -xlo) : xlo;
+  return [hi, lo];
 }
 
 /**
@@ -26,7 +28,7 @@ export function abs([xhi, xlo]: TwoF64): TwoF64 {
  */
 export function neg(x: TwoF64): TwoF64
 export function neg([xhi, xlo]: TwoF64): TwoF64 {
-  return [-xhi, -xlo];
+  return [-xhi, xlo === 0 ? 0 : -xlo];
 }
 
 /**
