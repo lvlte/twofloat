@@ -5,6 +5,7 @@
  */
 
 import { NaN2, type TwoF64 } from '../base/common.js';
+import { isNaN2 } from '../base/compare.js';
 import { normalize } from '../base/eft.js';
 
 /**
@@ -128,4 +129,70 @@ export function round([xhi, xlo]: TwoF64): TwoF64 {
   }
 
   return [Math.round(xhi), 0];
+}
+
+/**
+ * Return the maximum of the given arguments (at least one must be provided).
+ *
+ * @param arg1 A `TwoF64` number
+ * @param args More `TwoF64` numbers
+ * @returns The maximum {@link TwoF64|`TwoF64`} number
+ */
+export function max(arg1: TwoF64, ...args: Array<TwoF64>): TwoF64;
+/**
+ * Return the maximum of the given arguments (at least one must be provided).
+ *
+ * @param args One or more `TwoF64` numbers
+ * @returns The maximum {@link TwoF64|`TwoF64`} number
+ */
+export function max(...args: Array<TwoF64>): TwoF64;
+export function max([hi, lo]: TwoF64, ...args: Array<TwoF64>): TwoF64 {
+  if (isNaN2([hi, lo])) {
+    return NaN2;
+  }
+
+  for (const [xhi, xlo] of args) {
+    if (hi < xhi || (hi === xhi && lo < xlo)) {
+      [hi, lo] = [xhi, xlo];
+    }
+    else if (isNaN2([xhi, xlo])) {
+      return NaN2;
+    }
+  }
+
+  if (Math.abs(hi) === Infinity) {
+    return [hi, 0];
+  }
+
+  return [hi, lo];
+}
+
+/**
+ * Return the minimum of the given arguments (at least one must be provided).
+ *
+ * @param arg1 A `TwoF64` number
+ * @param args More `TwoF64` numbers
+ * @returns The minimum {@link TwoF64|`TwoF64`} number
+ */
+export function min(arg1: TwoF64, ...args: Array<TwoF64>): TwoF64;
+export function min(...args: Array<TwoF64>): TwoF64;
+export function min([hi, lo]: TwoF64, ...args: Array<TwoF64>): TwoF64 {
+  if (isNaN2([hi, lo])) {
+    return NaN2;
+  }
+
+  for (const [xhi, xlo] of args) {
+    if (hi > xhi || (hi === xhi && lo > xlo)) {
+      [hi, lo] = [xhi, xlo];
+    }
+    else if (isNaN2([xhi, xlo])) {
+      return NaN2;
+    }
+  }
+
+  if (Math.abs(hi) === Infinity) {
+    return [hi, 0];
+  }
+
+  return [hi, lo];
 }
