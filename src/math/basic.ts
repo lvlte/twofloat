@@ -112,20 +112,25 @@ export function ceil([xhi, xlo]: TwoF64): TwoF64 {
 }
 
 /**
- * Return the nearest integer to `x`, with ties (fractional values of `0.5`)
- * being rounded to the nearest **even** integer.
+ * Return `⌊x⌉`, the nearest integer to `x`, with ties (fractional values of
+ * `0.5`) being rounded toward positive infinity.
  *
  * @param x A `TwoF64` number
- * @returns The {@link TwoF64|`TwoF64`} representation of `x`
+ * @returns The {@link TwoF64|`TwoF64`} representation of `⌊x⌉`
  */
 export function round(x: TwoF64): TwoF64;
 export function round([xhi, xlo]: TwoF64): TwoF64 {
   if (!Number.isFinite(xhi)) {
-    return Number.isNaN(xhi) || Math.abs(xhi) !== Infinity ? NaN2 : [xhi, 0];
+    return Math.abs(xhi) !== Infinity ? NaN2 : [xhi, 0];
   }
 
   if (Number.isInteger(xhi)) {
     return Number.isInteger(xlo) ? [xhi, xlo] : normalize(xhi, Math.round(xlo));
+  }
+
+  if (Math.abs(xhi) === 0.5 && xlo !== 0) {
+    const s = Math.sign(xhi);
+    return s === Math.sign(xlo) ? [s*1, 0] : [s*0, 0];
   }
 
   return [Math.round(xhi), 0];
