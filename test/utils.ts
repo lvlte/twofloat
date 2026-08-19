@@ -127,6 +127,17 @@ export function rand2Fn<T extends boolean>(rng: RandomGenerator, rangeOpt: T): R
 }
 
 /**
+ * In-place array shufling (Durstenfeld)
+ */
+export function shuffle<T>(rng: RandomGenerator, arr: Array<T>): Array<T> {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(uniformFloat64(rng) * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/**
  * Return pairs of numbers in the range [emin, emax] according to the given step.
  */
 export function pairsInRange(emin: f64, emax: f64, step: f64): Array<[f64, f64]> {

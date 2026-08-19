@@ -2,12 +2,12 @@
  * @file Tests basic math functions
  */
 
-import { type Sign, rand2Fn } from "../utils";
+import { type Sign, rand2Fn, shuffle } from "../utils";
 import { nextFloat, prevFloat } from "@lvlte/ulp";
 import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 import {
   type TwoF64, INF, NINF, NaN2, ONE, PI, ZERO,
-  abs, ceil, floor, neg, sign, trunc,
+  abs, ceil, floor, max, min, neg, normalize, round, sign, trunc,
 } from '../../src';
 
 const rng = xoroshiro128plus(1234);
@@ -177,6 +177,123 @@ describe('Basic math functions', () => {
     expect(ceil(INF)).toEqual(INF);
     expect(ceil(NINF)).toEqual(NINF);
     expect(ceil(NaN2)).toEqual(NaN2);
+  });
+
+  test('round', () => {
+    expect(round(ZERO)).toEqual(ZERO);
+    expect(round(neg(ZERO))).toEqual(neg(ZERO));
+    expect(round([nextFloat(0), 0])).toEqual(ZERO);
+    expect(round([prevFloat(0), 0])).toEqual(neg(ZERO));
+
+    expect(round(ONE)).toEqual(ONE);
+    expect(round(neg(ONE))).toEqual(neg(ONE));
+    expect(round([1, nextFloat(0)])).toEqual(ONE);
+    expect(round([1, prevFloat(0)])).toEqual(ONE);
+    expect(round([-1, nextFloat(0)])).toEqual(neg(ONE));
+    expect(round([-1, prevFloat(0)])).toEqual(neg(ONE));
+
+    expect(round(PI)).toEqual([3, 0]);
+    expect(round(neg(PI))).toEqual([-3, 0]);
+
+    // xhi safe int
+    const xhi = 2**53 - 1;
+    expect(round([xhi, 0.4])).toEqual([xhi, 0]);
+    expect(round([xhi, 0.6])).toEqual([xhi + 1, 0]);
+    expect(round([xhi, -0.4])).toEqual([xhi, 0]);
+    expect(round([xhi, -0.6])).toEqual([xhi - 1, 0]);
+    expect(round([-xhi, 0.4])).toEqual([-xhi, 0]);
+    expect(round([-xhi, 0.6])).toEqual([-xhi + 1, 0]);
+    expect(round([-xhi, -0.4])).toEqual([-xhi, 0]);
+    expect(round([-xhi, -0.6])).toEqual([-xhi - 1, 0]);
+    // tie
+    expect(round([xhi, 0.5])).toEqual([xhi + 1, 0]);
+    expect(round([xhi, -0.5])).toEqual([xhi, 0]);
+    expect(round([-xhi, 0.5])).toEqual([-xhi + 1, 0]);
+    expect(round([-xhi, -0.5])).toEqual([-xhi, 0]);
+
+    // yhi unsafe int
+    const yhi = 1e20;
+    expect(round([yhi, 3.4])).toEqual([yhi, 3]);
+    expect(round([yhi, 3.6])).toEqual([yhi, 4]);
+    expect(round([yhi, -3.4])).toEqual([yhi, -3]);
+    expect(round([yhi, -3.6])).toEqual([yhi, -4]);
+    expect(round([-yhi, 3.4])).toEqual([-yhi, 3]);
+    expect(round([-yhi, 3.6])).toEqual([-yhi, 4]);
+    expect(round([-yhi, -3.4])).toEqual([-yhi, -3]);
+    expect(round([-yhi, -3.6])).toEqual([-yhi, -4]);
+    // tie
+    expect(round([yhi, 3.5])).toEqual([yhi, 4]);
+    expect(round([yhi, -3.5])).toEqual([yhi, -3]);
+    expect(round([-yhi, 3.5])).toEqual([-yhi, 4]);
+    expect(round([-yhi, -3.5])).toEqual([-yhi, -3]);
+
+    expect(round(INF)).toEqual(INF);
+    expect(round(NINF)).toEqual(NINF);
+    expect(round(NaN2)).toEqual(NaN2);
+  });
+
+  test('min/max', () => {
+
+    // one arg
+    for (const x of [ZERO, ONE, neg(ONE), PI, neg(PI), INF, NINF, NaN2]) {
+      expect(max(x)).toEqual(x);
+      expect(min(x)).toEqual(x);
+    }
+
+    // two args
+    expect(max(ZERO, ONE)).toEqual(ONE);
+    expect(max(ZERO, neg(ONE))).toEqual(ZERO);
+    expect(max(ONE, NaN2)).toEqual(NaN2);
+    expect(max(NaN2, ONE)).toEqual(NaN2);
+    expect(min(ZERO, ONE)).toEqual(ZERO);
+    expect(min(ZERO, neg(ONE))).toEqual(neg(ONE));
+    expect(min(ONE, NaN2)).toEqual(NaN2);
+    expect(min(NaN2, ONE)).toEqual(NaN2);
+    // with same hi
+    const [phi, plo] = PI;
+    const pnext: TwoF64 = [phi, nextFloat(plo)];
+    const pprev: TwoF64 = [phi, prevFloat(plo)];
+    const Xs = [[PI, pnext], [pprev, PI], [neg(pnext), neg(PI)], [neg(PI), neg(pprev)]];
+    for (const [x1, x2] of Xs) { // x1 < x2
+      expect(max(x1, x2)).toEqual(x2);
+      expect(max(x2, x1)).toEqual(x2);
+      expect(min(x1, x2)).toEqual(x1);
+      expect(min(x2, x1)).toEqual(x1);
+    }
+
+    // more args
+    let repeat = 3;
+    do {
+      const posArgs = exponents.map(e => rand2(e, 1));
+      const negArgs = exponents.map(e => rand2(e, -1));
+      const maxPos = posArgs.at(-1) as TwoF64;
+      const minPos = posArgs[0];
+      const maxNeg = negArgs[0];
+      const minNeg = negArgs.at(-1) as TwoF64;
+
+      expect(max(...shuffle(rng, posArgs))).toEqual(maxPos);
+      expect(max(...shuffle(rng, negArgs))).toEqual(maxNeg);
+      expect(min(...posArgs)).toEqual(minPos);
+      expect(min(...negArgs)).toEqual(minNeg);
+
+      const args = shuffle(rng, [...posArgs, ...negArgs]);
+      expect(max(...args)).toEqual(maxPos);
+      expect(min(...args)).toEqual(minNeg);
+
+      const maxPos2 = normalize(maxPos[0], nextFloat(maxPos[1]));
+      const minNeg2 = normalize(minNeg[0], prevFloat(minNeg[1]));
+      const args2 = shuffle(rng, [...args, maxPos2, minNeg2]);
+      expect(max(...args2)).toEqual(maxPos2);
+      expect(min(...args2)).toEqual(minNeg2);
+
+      const argsInf = shuffle(rng, [...args2, INF, NINF]);
+      expect(max(...argsInf)).toEqual(INF);
+      expect(min(...argsInf)).toEqual(NINF);
+
+      const argsNaN = shuffle(rng, [...argsInf, NaN2]);
+      expect(max(...argsNaN)).toEqual(NaN2);
+      expect(min(...argsNaN)).toEqual(NaN2);
+    } while (repeat-- > 0);
   });
 
 });
