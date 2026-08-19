@@ -19,11 +19,12 @@ import {
 
 import {
   FnSig, UnionToIntersection, randomFn, E_SPLIT_MAX, collectOutputs, initArgsList,
-  FnBySigOpt
+  FnBySigOpt, Sign
 } from '../utils';
 
 import { exponent } from '@lvlte/ulp';
-import fs from 'node:fs';
+import { writeFileSync } from 'node:fs';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 // Functions to test grouped by signature
 const fnBySig = {
@@ -98,9 +99,9 @@ function processArgsFn(fnName: FnName): Function {
 }
 
 // Pseudo-random number generator
-const SEED = Math.sqrt(2);
-const random = randomFn(SEED, true);
-const rand = randomFn(SEED, false);
+const rng = xoroshiro128plus(2468);
+const random = randomFn(rng, true);
+const rand = randomFn(rng, false);
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
 const argsList = initArgsList<ArgsListBySig>(fnBySig);
@@ -109,7 +110,7 @@ const emin = -106;
 const emax = 53;
 
 for (let exp = emin; exp <= emax; exp++) {
-  for (const sign of [1, -1]) {
+  for (const sign of [1, -1] as const) {
     for (let r = 0; r < 100; r++) {
       const x = random(exp, sign);
       const y = random(exp - 52, sign);
@@ -129,7 +130,7 @@ for (let exp = emin; exp <= emax; exp++) {
       for (let r = 0; r < 10; r++) {
         const x = random(exp, sign);
         if (Number.isFinite(x**n) && Math.abs(exponent(x**n)) < E_SPLIT_MAX) {
-          const xx = normalize(x, random(exp - 52, -1*sign));
+          const xx = normalize(x, random(exp - 52, -1*sign as Sign));
           const exp_sign = r % 2 ? -1 : 1;
           const sn = exp_sign * n;
           const p = exp_sign * (n - rand());
@@ -152,7 +153,7 @@ for (let exp = emin; exp <= emax; exp++) {
 // - e^+709.783 > Number.MAX_VALUE
 const e_negx = Math.log2(-Math.log(Number.MIN_VALUE)) - 1;
 const e_posx = Math.log2(+Math.log(Number.MAX_VALUE)) - 1;
-for (const [sign, emax] of [[1, e_posx], [-1, e_negx]]) {
+for (const [sign, emax] of [[1, e_posx], [-1, e_negx]] as const) {
   const emaxint = Math.floor(emax);
   for (let exp = emin; exp <= emax; exp = exp == emaxint ? emax : exp+1) {
     for (let r = 0; r < 200; r++) {
@@ -170,6 +171,6 @@ const testset = { argsList, fnOutput };
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
-fs.writeFileSync('test/error-bound/testset/math.json', testsetJSON, 'utf8');
+writeFileSync('test/error-bound/testset/math.json', testsetJSON, 'utf8');
 
 console.log('prerun math.ts done');

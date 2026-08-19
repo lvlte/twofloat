@@ -3,7 +3,9 @@
  */
 
 import { exponent } from '@lvlte/ulp';
-import { f64, F64_SPLITTER, int, TwoF64 } from '../src';
+import { type TwoF64, type f64, type int, F64_SPLITTER, normalize } from '../src';
+import { type RandomGenerator } from 'pure-rand/types/RandomGenerator';
+import { uniformFloat64 } from 'pure-rand/distribution/uniformFloat64';
 
 type _UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   (k: infer I) => void
@@ -14,13 +16,22 @@ export type UnionToIntersection<U> = _UnionToIntersection<U> extends infer O
   : never;
 
 export type Expand<T> = {} & T extends TwoF64 ? T : { [P in keyof T]: Expand<T[P]> };
+export type Sign = -1 | 1;
 
 type RandomFnDefault = () => number;
-type RandomFnWithDomainOpt = (exp: number, sign: number) => number;
+type RandomFnWithRangeOpt = (exp: number, sign: Sign) => number;
 type RandomFn<T extends boolean> = T extends false
   ? RandomFnDefault
   : T extends true
-    ? RandomFnWithDomainOpt
+    ? RandomFnWithRangeOpt
+    : never;
+
+type Rand2FnDefault = () => TwoF64;
+type Rand2FnWithRangeOpt = (exp: number, sign: Sign, losign?: Sign) => TwoF64;
+type Rand2Fn<T extends boolean> = T extends false
+  ? Rand2FnDefault
+  : T extends true
+    ? Rand2FnWithRangeOpt
     : never;
 
 export interface FnSig {
@@ -50,37 +61,69 @@ type FnOutputList = Partial<{[key: string]: ReturnType<FnBySig[keyof FnBySig][st
 export const E_SPLIT_MAX = exponent(Number.MAX_VALUE/F64_SPLITTER);
 
 /**
- * Computes x * 2^n.
+ * Compute x * 2^n.
  */
 export function ldexp(x: number, n: number) {
   return x * 2**n;
 }
 
 /**
- * Computes x * 2^n.
+ * Compute x * 2^n.
  */
 export function ldexp2([xhi, xlo]: TwoF64, n: number): TwoF64 {
   return [xhi * 2**n, xlo * 2**n];
 }
 
 /**
- * Return a function that returns pseudo-random numbers using the given `seed`.
- * If `domainOpt` is `true`, the function expects two arguments `exp` and `sign`
- * that define its output range `[sign*2^exp, sign*2^(exp+1)]`, otherwise the
- * the generated numbers are in the range `[0, 1]`.
+ * Return a function that generates pseudo-random `f64` numbers using the given
+ * `rng`.
+ * - if `rangeOpt` is `true`, the generator expects two arguments `exp` and
+ *   `sign` that define its output range `[sign*2^exp, sign*2^(exp+1)]`
+ * - otherwise the generated numbers are in the range `[0, 1]`.
  */
-export function randomFn<T extends boolean>(seed: number, domainOpt: T): RandomFn<T> {
-  let n = seed;
-  if (domainOpt === true) {
-    return function (exp: number, sign: -1 | 1): number {
-      const x = Math.abs(Math.sin(n++));
+export function randomFn<T extends boolean>(rng: RandomGenerator, rangeOpt: T): RandomFn<T> {
+  if (rangeOpt === true) {
+    return function (exp: number, sign: Sign): number {
+      const x = uniformFloat64(rng);
       const p = exp - exponent(x);
       return sign * ldexp(x, p);
     } as RandomFn<T>;
   }
   return function (): number {
-    return Math.abs(Math.sin(n++));
+    return uniformFloat64(rng);
   } as RandomFn<T>;
+}
+
+/**
+ * Return a function that generates pseudo-random `TwoF64` numbers using the
+ * given `rng`.
+ * - if `rangeOpt` is `true`, the generator expects two arguments `exp` and
+ *   `sign` that define its output range `[sign*2^exp, sign*2^(exp+1)]`, a third
+ *   argument `losign` (optional, default is random) determines the sign of `lo`
+ *   in the output
+ * - otherwise the generated numbers are in the range `[0, 1]`.
+ */
+export function rand2Fn<T extends boolean>(rng: RandomGenerator, rangeOpt: T): Rand2Fn<T> {
+  if (rangeOpt === true) {
+    return function (exp: number, sign: Sign, losign?: Sign): TwoF64 {
+      losign ??= uniformFloat64(rng) >= 0.5 ? 1 : -1;
+      const x = uniformFloat64(rng);
+      const y = uniformFloat64(rng);
+      const px = exp - exponent(x);
+      const py = exp - 53 - exponent(y);
+      const hi = sign * ldexp(x, px);
+      const lo = losign * ldexp(y, py);
+      return normalize(hi, lo);
+    } as Rand2Fn<T>;
+  }
+  return function (): TwoF64 {
+    const losign = uniformFloat64(rng) >= 0.5 ? 1 : -1;
+    const hi = uniformFloat64(rng);
+    const x = uniformFloat64(rng);
+    const px = exponent(hi) - 53 - exponent(x);
+    const lo = losign * ldexp(x, px);
+    return normalize(hi, lo);
+  } as Rand2Fn<T>;
 }
 
 /**

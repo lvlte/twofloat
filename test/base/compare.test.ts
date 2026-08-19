@@ -2,7 +2,7 @@
  * @file Tests - Comparison functions (equality/ordering/is* predicates)
  */
 
-import { randomFn } from "../utils";
+import { randomFn, type Sign } from "../utils";
 import { nextFloat, prevFloat } from "@lvlte/ulp";
 import {
   type TwoF64,
@@ -13,22 +13,23 @@ import {
   normalize,
 } from '../../src';
 
-// Pseudo-random number generator
-const SEED = Math.sqrt(7);
-const random = randomFn(SEED, true);
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
+
+const rng = xoroshiro128plus(7654);
+const random = randomFn(rng, true);
 const exponents = [-80, -53, 0, 52, 76];
 
 describe('Comparison functions', () => {
 
   test('Equality', () => {
     for (const e of exponents) {
-      for (const s of [1, -1]) {
+      for (const s of [1, -1] as const) {
         const x = random(e, s);
         const w = prevFloat(x);
         const y = nextFloat(x);
         const x2: TwoF64 = [x, 0];
         const y2: TwoF64 = [y, random(e - 53, s)];
-        const w2: TwoF64 = [w, random(e - 53, -s)];
+        const w2: TwoF64 = [w, random(e - 53, -s as Sign)];
 
         for (const fn of [eq, le, ge]) {
           expect(fn(x, x2)).toBe(true);
@@ -60,16 +61,16 @@ describe('Comparison functions', () => {
 
   test('Ordering', () => {
     for (const e of exponents) {
-      for (const s of [1, -1]) {
+      for (const s of [1, -1] as const) {
         // w < x < y
         const x = random(e, s);
         const w = prevFloat(x);
         const y = nextFloat(x);
 
         // w2 < x2 < y2
-        const x2: TwoF64 = [x, 0];                  // x == x2
-        const y2: TwoF64 = [y, random(e - 53, s)];  // y < y2 if s > 0
-        const w2: TwoF64 = [w, random(e - 53, -s)]; // w < w2 if s < 0
+        const x2: TwoF64 = [x, 0];                          // x == x2
+        const y2: TwoF64 = [y, random(e - 53, s)];          // y < y2 if s > 0
+        const w2: TwoF64 = [w, random(e - 53, -s as Sign)]; // w < w2 if s < 0
 
         const w2p: TwoF64 = [w, nextFloat(w2[1])]; // w < w2p
         const x2p: TwoF64 = [x, nextFloat(x2[1])]; // x < x2p

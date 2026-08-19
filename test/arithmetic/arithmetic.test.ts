@@ -38,9 +38,10 @@ import {
   signCombinations
 } from '../utils';
 
-// Pseudo-random number generator
-const SEED = Math.sqrt(5);
-const random = randomFn(SEED, true);
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
+
+const rng = xoroshiro128plus(5678);
+const random = randomFn(rng, true);
 const exponentPairs = pairsInRange(-100, 60, 7);
 
 describe('Derived Algorithms', () => {

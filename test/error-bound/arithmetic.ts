@@ -14,9 +14,6 @@ import {
   div12,
 } from '../../src/index';
 
-import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
-import fs from 'node:fs';
-
 import {
   FnSig,
   UnionToIntersection,
@@ -28,6 +25,10 @@ import {
   collectOutputs,
   FnBySigOpt,
 } from '../utils';
+
+import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
+import { writeFileSync } from 'node:fs';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 // Functions to test grouped by signature
 const fnBySig = {
@@ -44,8 +45,8 @@ type ArgsListBySig = { [K in keyof FnBySig]: Parameters<FnSig[K]>[] };
 type FnOutputList = { [K in FnName]: ReturnType<TestedFunctions[K]>[] }
 
 // Pseudo-random number generator
-const SEED = Math.sqrt(2);
-const random = randomFn(SEED, true);
+const rng = xoroshiro128plus(2345);
+const random = randomFn(rng, true);
 function randWithin(min: number, max: number) {
   return (max - min) * (random(0, 1) - 1) + min;
 }
@@ -101,6 +102,6 @@ const testset = { argsList, fnOutput };
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
-fs.writeFileSync('test/error-bound/testset/arithmetic.json', testsetJSON, 'utf8');
+writeFileSync('test/error-bound/testset/arithmetic.json', testsetJSON, 'utf8');
 
 console.log('prerun arithmetic.ts done');

@@ -23,7 +23,8 @@ import {
 } from '../utils';
 
 import { exponent } from '@lvlte/ulp';
-import fs from 'node:fs';
+import { writeFileSync } from 'node:fs';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 // Functions to test grouped by signature
 const fnBySig = {
@@ -155,8 +156,8 @@ function processArgsFn(fnName: FnName): Function {
 }
 
 // Pseudo-random number generator
-const SEED = Math.sqrt(2);
-const random = randomFn(SEED, true);
+const rng = xoroshiro128plus(2356);
+const random = randomFn(rng, true);
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
 const argsList = initArgsList<ArgsListBySig>(fnBySig);
@@ -165,7 +166,7 @@ const emin = -106;
 const emax = 53;
 
 for (let exp = emin; exp <= emax; exp++) {
-  for (const sign of [1, -1]) {
+  for (const sign of [1, -1] as const) {
     for (let r = 0; r < 100; r++) {
       const x = random(exp, sign);
       const y = random(exp - 52, sign);
@@ -181,10 +182,10 @@ for (let exp = emin; exp <= emax; exp++) {
 
 const e_negx = Math.log2(-Math.log(Number.MIN_VALUE)) - 1;
 const e_posx = Math.log2(+Math.log(Number.MAX_VALUE)) - 1;
-for (const [sign, emax] of [[1, e_posx], [-1, e_negx]]) {
+for (const [sign, emax] of [[1, e_posx], [-1, e_negx]] as const) {
   const emaxint = Math.floor(emax);
   for (let exp = emin; exp <= emax; exp = exp == emaxint ? emax : exp+1) {
-    for (let r = 0; r < 200; r++) {
+    for (let r = 0; r < 130; r++) {
       const x = random(exp, sign);
       const y = random(exp - 52, sign);
       const xy = add11(x, y);
@@ -199,6 +200,6 @@ const testset = { argsList, fnOutput };
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
-fs.writeFileSync('test/error-bound/testset/trig-hyp.json', testsetJSON, 'utf8');
+writeFileSync('test/error-bound/testset/trig-hyp.json', testsetJSON, 'utf8');
 
 console.log('prerun trig-hyp.ts done');

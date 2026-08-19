@@ -2,26 +2,16 @@
  * @file Tests basic math functions
  */
 
-import { randomFn } from "../utils";
+import { type Sign, rand2Fn } from "../utils";
 import { nextFloat, prevFloat } from "@lvlte/ulp";
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 import {
-  type TwoF64,
-  INF,
-  NINF,
-  NaN2,
-  ONE,
-  PI,
-  ZERO,
-  abs,
-  ceil,
-  floor,
-  neg,
-  sign,
-  trunc,
+  type TwoF64, INF, NINF, NaN2, ONE, PI, ZERO,
+  abs, ceil, floor, neg, sign, trunc,
 } from '../../src';
 
-const SEED = Math.sqrt(7);
-const random = randomFn(SEED, true);
+const rng = xoroshiro128plus(1234);
+const rand2 = rand2Fn(rng, true);
 const exponents = [-80, -53, 0, 52, 76];
 
 describe('Basic math functions', () => {
@@ -46,9 +36,9 @@ describe('Basic math functions', () => {
     expect(neg(NaN2)).toEqual(NaN2);
 
     for (const e of exponents) {
-      for (const s of [1, -1]) {
-        const [xhi, xlo] = [random(e, s), random(e - 53, s)];
-        const [yhi, ylo] = [random(e, s), random(e - 53, -s)];
+      for (const s of [1, -1] as const) {
+        const [xhi, xlo] = rand2(e, s, s);
+        const [yhi, ylo] = rand2(e, s, -s as Sign);
         expect(abs([xhi, xlo])).toEqual([s*xhi, s*xlo]);
         expect(abs([yhi, ylo])).toEqual([s*yhi, s*ylo]);
         expect(neg([xhi, xlo])).toEqual([-xhi, -xlo]);
@@ -75,9 +65,9 @@ describe('Basic math functions', () => {
     expect(sign(NaN2)).toEqual(NaN2);
 
     for (const e of exponents) {
-      for (const s of [1, -1]) {
-        const x: TwoF64 = [random(e, s), random(e - 53, s)];
-        const y: TwoF64 = [random(e, s), random(e - 53, -s)];
+      for (const s of [1, -1] as const) {
+        const x: TwoF64 = rand2(e, s, s);
+        const y: TwoF64 = rand2(e, s, -s as Sign);
         expect(sign(x)).toEqual([s*1, 0]);
         expect(sign(y)).toEqual([s*1, 0]);
       }

@@ -15,9 +15,6 @@ import {
   twoProd,
 } from '../../src/index';
 
-import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
-import fs from 'node:fs';
-
 import {
   DWPlusFP,
   AccurateDWPlusDW,
@@ -39,6 +36,10 @@ import {
   FnBySigOpt
 } from '../utils';
 
+import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
+import { writeFileSync } from 'node:fs';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
+
 // Wrap normalize so it is tested with the |x| ≥ |y| condition satisfied
 const normalize: typeof _normalize = (x, y) => {
   return Math.abs(x) >= Math.abs(y) ? _normalize(x, y) : _normalize(y, x);
@@ -59,8 +60,8 @@ type ArgsListBySig = { [K in keyof FnBySig]: Parameters<FnSig[K]>[] };
 type FnOutputList = { [K in FnName]: ReturnType<TestedFunctions[K]>[] };
 
 // Pseudo-random number generator
-const SEED = Math.sqrt(2);
-const random = randomFn(SEED, true);
+const rng = xoroshiro128plus(5678);
+const random = randomFn(rng, true);
 
 // Lists of arguments (grouped by FnSig) to pass to the TestedFunctions
 const argsList = initArgsList<ArgsListBySig>(fnBySig);
@@ -73,7 +74,7 @@ const emin = Math.floor(exponent(FLOAT64_MIN)/2) + e_shift;
 const emax = Math.min(0, emin) + E_SPLIT_MAX;
 
 // Fill argsList with number combinations in the domain [±2^emin, ±2^emax]
-for (const [e1, e2] of pairsInRange(emin, emax, 5)) {
+for (const [e1, e2] of pairsInRange(emin, emax, 7)) {
   for (const [s1, s2] of signCombinations) {
     const w = random(e1, s1);
     const x = random(e1, s1);
@@ -100,6 +101,6 @@ const testset = { argsList, fnOutput };
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
-fs.writeFileSync('test/error-bound/testset/algorithms.json', testsetJSON, 'utf8');
+writeFileSync('test/error-bound/testset/algorithms.json', testsetJSON, 'utf8');
 
 console.log('prerun algorithms.ts done');
