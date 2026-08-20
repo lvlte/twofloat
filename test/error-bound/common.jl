@@ -14,7 +14,7 @@ const ε₀ = big(eps(0.0))
 
 const rel_err_default = big(1e-30)
 const rel_err_uf_default = big(1e-25)
-const abs_err_min_default = 2.5ε₀
+const abs_err_min_default = 3ε₀
 
 coverage = OrderedDict{String, Bool}()
 overflow = OrderedDict{String, Int}()

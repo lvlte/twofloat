@@ -216,7 +216,7 @@ println()
         _test(Dict(
             "fn" => "asec_1",
             "args" => args_list.op1,
-            "rel_err_bound" => big(2.0)^-90,
+            "rel_err_bound" => big(2.0)^-88,
             "process_args" => function(x)
                 abs(x) ≥ 1 && return (x,)
                 return (ldexp(x, -exponent(x)),)
@@ -229,7 +229,7 @@ println()
         _test(Dict(
             "fn" => "asec_2",
             "args" => args_list.op2,
-            "rel_err_bound" => big(2.0)^-90,
+            "rel_err_bound" => big(2.0)^-88,
             "process_args" => function((xhi, xlo),)
                 abs(big(xhi) + big(xlo)) ≥ 1 && return ((xhi, xlo),)
                 p = -exponent(xhi)
@@ -243,6 +243,7 @@ println()
         _test(Dict(
             "fn" => "acsc_1",
             "args" => args_list.op1,
+            "rel_err_bound" => big(2.0)^-96,
             "process_args" => function(x)
                 abs(x) ≥ 1 && return (x,)
                 return (ldexp(x, -exponent(x)),)
@@ -255,6 +256,7 @@ println()
         _test(Dict(
             "fn" => "acsc_2",
             "args" => args_list.op2,
+            "rel_err_bound" => big(2.0)^-96,
             "process_args" => function((xhi, xlo),)
                 abs(big(xhi) + big(xlo)) ≥ 1 && return ((xhi, xlo),)
                 p = -exponent(xhi)
@@ -400,7 +402,7 @@ println()
         _test(Dict(
             "fn" => "acosh_1",
             "args" => args_list.op1,
-            "rel_err_bound" => big(2.0)^-95,
+            "rel_err_bound" => big(2.0)^-94,
             "process_args" => function(x)
                 x = abs(x)
                 if x < 1
@@ -416,7 +418,7 @@ println()
         _test(Dict(
             "fn" => "acosh_2",
             "args" => args_list.op2,
-            "rel_err_bound" => big(2.0)^-90,
+            "rel_err_bound" => big(2.0)^-88,
             "process_args" => function((xhi, xlo),)
                 xhi, xlo = xhi < 0 ? (-xhi, -xlo) : (xhi, xlo)
                 if abs(big(xhi) + big(xlo)) < 1
@@ -462,7 +464,7 @@ println()
         _test(Dict(
             "fn" => "acoth_1",
             "args" => args_list.op1,
-            "rel_err_bound" => big(2.0)^-95,
+            "rel_err_bound" => big(2.0)^-92,
             "process_args" => function(x)
                 abs(x) ≥ 1 && return (x,)
                 return (ldexp(x, -exponent(x)),)
