@@ -1,10 +1,10 @@
-import {
-  DWDivFP3,
-  DWDivDW2,
-  twoDiv,
-  twoInv,
-  DWInv,
-} from '../base/algorithms.js';
+/**
+ * Arithmetic - Division
+ *
+ * @module twofloat/arithmetic/div
+ */
+
+import { DWDivFP3, DWDivDW2, twoDiv, twoInv, DWInv } from '../base/algorithms.js';
 import type { f64, TwoF64 } from '../base/common.js';
 import { normalize } from '../base/eft.js';
 import { mul21 } from './mul.js';

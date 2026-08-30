@@ -1,5 +1,7 @@
 /**
- * @file Trigonometric functions
+ * Trigonometric functions
+ *
+ * @module twofloat/math/trigonometry
  */
 
 import { type f64, type TwoF64 } from "../base/common.js";

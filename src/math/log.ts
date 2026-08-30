@@ -1,5 +1,7 @@
 /**
- * @file Logarithms
+ * Logarithms
+ *
+ * @module twofloat/math/logarithms
  */
 
 import { NaN2, ONE, ZERO, type f64, type TwoF64 } from "../base/common.js";
@@ -35,11 +37,11 @@ export function ln_1(x: f64): TwoF64 {
 }
 
 /**
- * Compute `ln(xₕᵢ + xₗₒ)`, the natural logarithm of `x`, using extended
- * precision arithmetic.
+ * Compute `ln(x)`, the natural logarithm of `x`, using extended-precision
+ * arithmetic.
  *
- * Expects and returns a {@link TwoF64|`TwoF64`} number (a tuple `[hi, lo]` in
- * its canonical form).
+ * @param x A `TwoF64` number
+ * @returns The {@link TwoF64|`TwoF64`} representation of `ln(x)`
  */
 export function ln_2(x: TwoF64): TwoF64 {
   const [xhi, xlo] = x;

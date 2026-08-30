@@ -1,7 +1,7 @@
 /**
  * Exponentiation functions
  *
- * @module
+ * @module twofloat/math/exponentiation
  */
 
 import {

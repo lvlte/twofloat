@@ -1,24 +1,12 @@
 /**
- * @file Main algorithms with formally proven error bounds (*J.M. Muller et al.*).
+ * Main algorithms with formally proven error bounds
  *
- * References:
- * - {@link https://csclub.uwaterloo.ca/~pbarfuss/dekker1971.pdf     | T.J. Dekker        }
- * - {@link https://people.eecs.berkeley.edu/~jrs/papers/robustr.pdf | J.R. Shewchuk      }
- * - {@link https://hal.science/hal-01351529v3/document              | J.M. Muller et al. }
+ * @module twofloat/base/algorithms
+ * @see {@link https://hal.science/hal-01351529v3/document | Joldes et al. }
  */
 
-import {
-  type f64,
-  type TwoF64,
-  ZERO
-} from './common.js';
-
-import {
-  normalize,
-  twoSum,
-  twoDiff,
-  twoProd,
-} from './eft.js';
+import { type f64, type TwoF64, ZERO } from './common.js';
+import { normalize, twoSum, twoDiff, twoProd } from './eft.js';
 
 /**
  * Extended-precision addition `x + y`.

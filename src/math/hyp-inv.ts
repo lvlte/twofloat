@@ -1,5 +1,7 @@
 /**
- * @file Inverse Hyperbolic functions
+ * Inverse Hyperbolic functions
+ *
+ * @module twofloat/math/hyperbolicTrigInverse
  */
 
 import { NaN2, ZERO, type f64, type TwoF64 } from "../base/common.js";

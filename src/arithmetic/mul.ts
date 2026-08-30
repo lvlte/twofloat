@@ -1,14 +1,10 @@
 /**
- * @file Arithmetic - Multiplication
+ * Arithmetic - Multiplication
+ *
+ * @module twofloat/arithmetic/mul
  */
 
-import {
-  type f64,
-  type TwoF64,
-  NaN2,
-  ONE,
-} from '../base/common.js';
-
+import { type f64, type TwoF64, NaN2, ONE } from '../base/common.js';
 import { normalize, twoProd } from '../base/eft.js';
 import { DWTimesFP1, DWTimesDW1 } from '../base/algorithms.js';
 

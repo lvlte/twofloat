@@ -1,25 +1,23 @@
 
 /**
- * @file Error-Free Transforms
+ * Error-Free Transforms
+ *
+ * @module twofloat/base/eft
  *
  * References:
- * - {@link https://csclub.uwaterloo.ca/~pbarfuss/dekker1971.pdf     | T.J. Dekker        }
- * - {@link https://people.eecs.berkeley.edu/~jrs/papers/robustr.pdf | J.R. Shewchuk      }
- * - {@link https://hal.science/hal-01351529v3/document              | J.M. Muller et al. }
+ * - {@link https://csclub.uwaterloo.ca/~pbarfuss/dekker1971.pdf     | T.J. Dekker   }
+ * - {@link https://people.eecs.berkeley.edu/~jrs/papers/robustr.pdf | J.R. Shewchuk }
+ * - {@link https://hal.science/hal-01351529v3/document              | Joldes et al. }
  */
 
-import {
-  type f64,
-  type TwoF64,
-  F64_SPLITTER
-} from './common.js';
+import { type f64, type TwoF64, F64_SPLITTER } from './common.js';
 
 /**
  * Return the canonical {@link TwoF64|`TwoF64`} representation of `x + y`
  * (`fast2Sum` error-free transform).
  *
- * **NB. Assumes `|x| ≥ |y|`. Use `add(x, y)` if this condition is not
- * satisfied.**
+ * **NB. Assumes `|x| ≥ |y|`. Use {@link twoSum|`twoSum`} if this condition is
+ * not satisfied.**
  *
  * FP ops: 3
  *
@@ -32,9 +30,6 @@ export function normalize(x: f64, y: f64): TwoF64 {
   return [hi, x - hi + y];
 }
 
-/**
- * @borrows normalize as fast2Sum
- */
 export const fast2Sum = normalize;
 
 /**

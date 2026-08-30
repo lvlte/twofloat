@@ -1,5 +1,7 @@
 /**
- * @file Roots
+ * Roots
+ *
+ * @module twofloat/math/roots
  */
 
 import { type TwoF64, type f64, type int, NaN2, ZERO } from '../base/common.js';

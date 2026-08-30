@@ -1,5 +1,7 @@
 /**
- * @file Inverse trigonometric functions
+ * Inverse trigonometric functions
+ *
+ * @module twofloat/math/trigonometryInverse
  */
 
 import { NaN2, ZERO, type f64, type TwoF64 } from "../base/common.js";

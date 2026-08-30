@@ -1,5 +1,7 @@
 /**
- * @file TwoF64 mathematical constants
+ * TwoF64 mathematical constants
+ *
+ * @module twofloat/math/constants
  */
 
 import type { ThreeF64, TwoF64 } from "../base/common.js";

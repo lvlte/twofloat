@@ -1,5 +1,7 @@
 /**
- * @file Arithmetic - Subtraction
+ * Arithmetic - Subtraction
+ *
+ * @module twofloat/arithmetic/sub
  */
 
 import { normalize, twoDiff } from '../base/eft.js';

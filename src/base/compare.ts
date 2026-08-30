@@ -1,7 +1,7 @@
 /**
  * Comparison functions (equality/ordering/is* predicates)
  *
- * @module
+ * @module twofloat/compare
  */
 
 import {

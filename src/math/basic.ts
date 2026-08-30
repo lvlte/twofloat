@@ -1,7 +1,7 @@
 /**
  * Basic math functions
  *
- * @module
+ * @module twofloat/math/basic
  */
 
 import { NaN2, type TwoF64 } from '../base/common.js';

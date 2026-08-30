@@ -1,5 +1,7 @@
 /**
- * @file Modular Arithmetic
+ * Modular Arithmetic
+ *
+ * @module twofloat/math/modularArithmetic
  */
 
 import { add11, add21, div12, div22, mul11, sub11, sub12, sub21, sub22 } from "../arithmetic/index.js";

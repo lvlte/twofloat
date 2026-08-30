@@ -1,5 +1,7 @@
 /**
- * @file Common types and constants
+ * Common types and constants
+ *
+ * @module twofloat/base
  */
 
 /**

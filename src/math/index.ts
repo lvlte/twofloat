@@ -1,3 +1,9 @@
+/**
+ * Mathematical constants and functions
+ *
+ * @module twofloat/math
+ */
+
 export * from './basic.js';
 export * from './constants.js';
 export * from './exp.js';

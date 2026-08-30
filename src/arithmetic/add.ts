@@ -1,5 +1,7 @@
 /**
- * @file Arithmetic - Addition
+ * Arithmetic - Addition
+ *
+ * @module twofloat/arithmetic/add
  */
 
 import {

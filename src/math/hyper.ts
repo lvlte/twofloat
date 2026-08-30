@@ -1,5 +1,7 @@
 /**
- * @file Hyperbolic functions
+ * Hyperbolic functions
+ *
+ * @module twofloat/math/hyperbolicTrig
  */
 
 import { type f64, type TwoF64 } from "../base/common.js";
