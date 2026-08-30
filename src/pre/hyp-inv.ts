@@ -1,6 +1,8 @@
 /**
  * @file Precomputed values and Padé approximant coefficients for inverse
  * hyperbolic functions.
+ *
+ * @internal
  */
 
 import type { TwoF64 } from "../base/common.js";
@@ -10,6 +12,8 @@ import type { TwoF64 } from "../base/common.js";
  * for asinh(x). Trivial zeros are skipped, which means :
  * - for the numerator:   index `k` maps to degree `2k + 1`
  * - for the denominator: index `k` maps to degree `2k`
+ *
+ * @internal
  */
 export const asinh_pade = {
   23: <[TwoF64[], TwoF64[]]>[

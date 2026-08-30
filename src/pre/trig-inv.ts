@@ -1,6 +1,8 @@
 /**
  * @file Precomputed values and Padé approximant coefficients for inverse
  * trigonometric functions.
+ *
+ * @internal
  */
 
 import type { TwoF64 } from "../base/common.js";
@@ -10,6 +12,8 @@ import type { TwoF64 } from "../base/common.js";
  * for asin(x). Trivial zeros are skipped, which means :
  * - for the numerator:   index `k` maps to degree `2k + 1`
  * - for the denominator: index `k` maps to degree `2k`
+ *
+ * @internal
  */
 export const asin_pade = {
   25: <[TwoF64[], TwoF64[]]>[
@@ -226,6 +230,8 @@ export const asin_pade = {
  * for atan(x). Trivial zeros are skipped, which means :
  * - for the numerator:   index `k` maps to degree `2k + 1`
  * - for the denominator: index `k` maps to degree `2k`
+ *
+ * @internal
  */
 export const atan_pade = {
   25: <[TwoF64[], TwoF64[]]>[
@@ -442,6 +448,8 @@ export const atan_pade = {
  * approximant for `atan(x)`. Trivial zeros are skipped, which means index `k`
  * starting from the last element maps to degree `2k + 1` for the numerator and
  * `2k` for the denominator.
+ *
+ * @internal
  */
 export const atan_pade_int = {
   25: <[TwoF64[], TwoF64[]]>[

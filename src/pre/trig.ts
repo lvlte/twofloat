@@ -1,6 +1,8 @@
 /**
  * @file Precomputed values and Padé approximant coefficients for
  * trigonometric functions.
+ *
+ * @internal
  */
 
 import type { TwoF64 } from "../base/common.js";
@@ -10,6 +12,8 @@ import type { TwoF64 } from "../base/common.js";
  * for `sin(x)`. Trivial zeros are skipped, which means :
  * - for the numerator:   index `k` maps to degree `2k + 1`
  * - for the denominator: index `k` maps to degree `2k`
+ *
+ * @internal
  */
 export const sin_pade = {
   15: <[TwoF64[], TwoF64[]]>[
@@ -166,6 +170,8 @@ export const sin_pade = {
  * for `cos(x)`. Trivial zeros are skipped, which means index `k` maps to degree
  * `2k` for both the numerator and denominator. For odd `n`, approximants are
  * the same as for `n - 1`.
+ *
+ * @internal
  */
 export const cos_pade = {
   14: <[TwoF64[], TwoF64[]]>[
@@ -275,6 +281,8 @@ export const cos_pade = {
  * approximant for `tan(x)`. Trivial zeros are skipped, which means index `k`
  * starting from the last element maps to degree `2k - 1` for the numerator and
  * `2k` for the denominator.
+ *
+ * @internal
  */
 export const tan_pade_int = {
   16: <[TwoF64[], TwoF64[]]>[

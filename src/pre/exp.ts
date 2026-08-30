@@ -1,5 +1,7 @@
 /**
  * @file Precomputed values and Padé approximant coefficients for e^x
+ *
+ * @internal
  */
 
 import type { int, TwoF64 } from "../base/common.js";
@@ -9,6 +11,8 @@ import type { int, TwoF64 } from "../base/common.js";
  * of `eˣ` (absolute values, ie. one vector represent both the numerator, where
  * all coefficients are positive, and denominator, where odd powers are negative
  * and even powers positive).
+ *
+ * @internal
  */
 export const exp_pade = {
   12: <TwoF64[]>[
@@ -93,6 +97,8 @@ export const exp_pade = {
  *    observed is less than 10u^2.
  *  - Lower orders (12,13,14) produce accurate results as well but only for
  *    smaller ranges (x closer to zero).
+ *
+ * @internal
  */
 export const exp_pade_int = {
   12: <int[]>[1, 156, 12012, 600600, 21621600, 588107520, 12350257920, 201132771840, 2514159648000, 23465490048000, 154872234316800, 647647525324800, 1295295050649600],
@@ -110,6 +116,8 @@ export const exp_pade_int = {
  * are the same as those for `eˣ` (we don't reuse `exp_pade_int` because we need
  * higher order coefficients to produce accurate results, which don't fit in a
  * single f64).
+ *
+ * @internal
  */
 export const expm1_pade_int = {
   15: <[TwoF64[], TwoF64[]]>[
@@ -374,11 +382,15 @@ export const expm1_pade_int = {
 
 /**
  * Maximum value for `n` in precomputed `exp_n`
+ *
+ * @internal
  */
 export const exp_nmax = 80;
 
 /**
  * Precomputed values of `e^n` for integer n in [-80..80]
+ *
+ * @internal
  */
 export const exp_n: Map<number, TwoF64> = new Map([
   [-80, [1.8048513878454153e-35, -1.2636603623764078e-51]],
