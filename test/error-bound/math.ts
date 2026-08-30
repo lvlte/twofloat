@@ -1,10 +1,7 @@
 /**
- * @file Pre-test for math functions
+ * @file Pre-test for math functions (exponentiation, logarithms, roots)
  *
- *  - exponentiation
- *  - logarithms
- *  - roots
- *  - hyperbolic fn
+ * NB. trigonometric/hyperbolic functions are tested separately
  */
 
 import {

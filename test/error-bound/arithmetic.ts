@@ -1,5 +1,5 @@
 /**
- * @file Pre-test for math functions
+ * @file Pre-test for arithmetic functions
  */
 
 import {
