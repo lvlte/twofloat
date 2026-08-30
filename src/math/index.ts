@@ -12,5 +12,5 @@ export * from './roots.js';
 export * from './mod.js';
 export * from './trig.js';
 export * from './trig-inv.js';
-export * from './hyper.js';
-export * from './hyp-inv.js';
+export * from './htrig.js';
+export * from './htrig-inv.js';
