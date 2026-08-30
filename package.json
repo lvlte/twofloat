@@ -13,8 +13,8 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
       },
       "require": {
         "types": "./dist/cjs/index.d.ts",
@@ -29,13 +29,17 @@
     "dist"
   ],
   "scripts": {
-    "pretest": "rm -Rf ./test/error-bound/testset && mkdir \"./test/error-bound/testset\"",
-    "posttest": "tsx ./test/error-bound/prerun.ts && julia ./test/error-bound/runtest.jl",
-    "test": "jest",
+    "test:clean": "rm -Rf ./test/error-bound/testset && mkdir \"./test/error-bound/testset\"",
+    "test:prejl": "tsx ./test/error-bound/prerun.ts",
+    "test:jl": "julia ./test/error-bound/runtest.jl",
+    "pretest": "npm run test:clean && npm run test:prejl",
+    "test": "jest --verbose && npm run test:jl",
     "prebuild": "rm -Rf dist && mkdir dist",
-    "build": "tsc && tsc -p tsconfig-cjs.json",
+    "build:esm": "tsc && tsc -d --emitDeclarationOnly true --removeComments false",
+    "build:cjs": "tsc -p tsconfig-cjs.json && tsc -p tsconfig-cjs.json -d --emitDeclarationOnly true --removeComments false",
+    "build": "npm run build:esm && npm run build:cjs",
     "postbuild": "(echo { && echo   \"type\": \"commonjs\" && echo }) > ./dist/cjs/package.json",
-    "prepublishOnly": "npm test && npm run build && tsc --emitDeclarationOnly true --removeComments false && tsc -p tsconfig-cjs.json --emitDeclarationOnly true --removeComments false"
+    "prepublishOnly": "npm test && npm run build"
   },
   "keywords": [
     "double",

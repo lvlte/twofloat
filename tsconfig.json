@@ -2,9 +2,8 @@
   "extends": "@lvlte/tsconfig",
   "compilerOptions": {
     "target": "es2015",
-    "lib": [
-      "es2018"
-    ],
+    "outDir": "./dist/esm",
+    "declaration": false,
     "removeComments": true
   }
 }
