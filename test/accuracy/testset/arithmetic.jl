@@ -1,5 +1,5 @@
 # Test the accuracy of twofloat's math functions
-# Function inputs/outputs dataset is created by /test/error-bound/math.ts
+# Function inputs/outputs dataset is created by /test/accuracy/pre/math.ts
 
 json = read("$(dirname(@__DIR__))/pre/output/arithmetic.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)
@@ -7,11 +7,10 @@ testset = JSON.parse(json, TestSet; null=NaN)
 args_list = testset.argsList
 fn_output = testset.fnOutput
 
-coverage = Dict(keys(fn_output) .=> false)
-overflow = Dict(keys(fn_output) .=> 0)
+merge!(coverage, OrderedDict(keys(fn_output) .=> false))
 
-println()
-@testset verbose = true "Arithmetic (opa1, opa2) ─" begin ######################
+@testset verbose=verbose "Arithmetic (opa1, opa2)" begin
+
     @testset "sum1" begin
         _test(Dict(
             "fn" => "sum1",
@@ -49,8 +48,7 @@ println()
     end
 end
 
-println()
-@testset verbose = true "Arithmetic (op12) ───────" begin ######################
+@testset verbose=verbose "Arithmetic (op12)" begin
 
     @testset "sub12" begin
         _test(Dict(
@@ -68,18 +66,4 @@ println()
             "compute" => (x, (yhi, ylo)) -> big(x) / (big(yhi) + big(ylo))
         ))
     end
-end
-###
-
-println()
-@testset "Arithmetic coverage ─────" begin
-    for (fn, covered) in coverage
-        @test (fn, covered) == (fn, true)
-    end
-end
-
-overflowed = filter(((fn , ov_count),) -> ov_count > 0, overflow)
-if !isempty(overflowed)
-    println()
-    @info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflowed)...] |> join
 end

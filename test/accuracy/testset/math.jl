@@ -1,5 +1,5 @@
 # Test the accuracy of twofloat's math functions
-# Function inputs/outputs dataset is created by /test/error-bound/math.ts
+# Function inputs/outputs dataset is created by /test/accuracy/pre/math.ts
 
 json = read("$(dirname(@__DIR__))/pre/output/math.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)
@@ -7,11 +7,9 @@ testset = JSON.parse(json, TestSet; null=NaN)
 args_list = testset.argsList
 fn_output = testset.fnOutput
 
-coverage = OrderedDict(keys(fn_output) .=> false)
-overflow = OrderedDict(keys(fn_output) .=> 0)
+merge!(coverage, OrderedDict(keys(fn_output) .=> false))
 
-println()
-@testset verbose = true "Exponentiation ──────────" begin ######################
+@testset verbose=verbose "Exponentiation" begin
 
     @testset "square_1 (EFT)" begin
         _test(Dict(
@@ -208,8 +206,7 @@ println()
     end
 end
 
-println()
-@testset verbose = true "Logarithms ──────────────" begin ######################
+@testset verbose=verbose "Logarithms" begin
 
     @testset "ln_1" begin
         _test(Dict(
@@ -272,8 +269,7 @@ println()
     end
 end
 
-println()
-@testset verbose = true "Roots ───────────────────" begin ######################
+@testset verbose=verbose "Roots" begin
 
     @testset "sqrt_1" begin
         _test(Dict(
@@ -337,8 +333,7 @@ println()
     end
 end
 
-println()
-@testset verbose = true "Modular Arithmetic ──────" begin ######################
+@testset verbose=verbose "Modular Arithmetic" begin
 
     @testset "rempi_1" begin
         _test(Dict(
@@ -374,19 +369,4 @@ println()
             "compute" => ((xhi, xlo),) -> rem2pi(big(xhi) + big(xlo), RoundToZero)
         ))
     end
-end
-
-##
-
-println()
-@testset "Math functions coverage ─" begin
-    for (fn, covered) in coverage
-        @test (fn, covered) == (fn, true)
-    end
-end
-
-overflowed = filter(((fn , ov_count),) -> ov_count > 0, overflow)
-if !isempty(overflowed)
-    println()
-    @info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflowed)...] |> join
 end

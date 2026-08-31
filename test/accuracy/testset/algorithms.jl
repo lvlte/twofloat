@@ -1,6 +1,6 @@
 # Test the accuracy of twofloat's main algorithms
-# Relative error bounds: cf. paper from J.M. Muller et al.
-# Function inputs/outputs dataset is created by /test/algorithms.ts
+# Relative error bounds: cf. paper from Joldes et al.
+# Function inputs/outputs dataset is created by /test/accuracy/pre/algorithms.ts
 
 json = read("$(dirname(@__DIR__))/pre/output/algorithms.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)
@@ -8,11 +8,9 @@ testset = JSON.parse(json, TestSet; null=NaN)
 args_list = testset.argsList
 fn_output = testset.fnOutput
 
-coverage = Dict(keys(fn_output) .=> false)
-overflow = Dict(keys(fn_output) .=> 0)
+merge!(coverage, OrderedDict(keys(fn_output) .=> false))
 
-println()
-@testset verbose = true "Error-Free Transforms ────────────────" begin #########
+@testset verbose=verbose "Error-Free Transforms" begin
 
     @testset "split" begin
         _test(Dict(
@@ -23,7 +21,7 @@ println()
         ))
     end
 
-    @testset "normalize (fast2Sum, fast2Diff)" begin
+    @testset "normalize" begin # (fast2Sum, fast2Diff)
         _test(Dict(
             "fn" => "normalize",
             "args" => args_list.op11,
@@ -32,7 +30,7 @@ println()
         ))
     end
 
-    @testset "twoSum (twoDiff, add11, sub11)" begin
+    @testset "twoSum" begin # (twoDiff, add11, sub11)
         _test(Dict(
             "fn" => "twoSum",
             "args" => args_list.op11,
@@ -41,7 +39,7 @@ println()
         ))
     end
 
-    @testset "twoProd (mul11, twoSquare, square_1)" begin
+    @testset "twoProd" begin # (mul11, twoSquare, square_1)
         _test(Dict(
             "fn" => "twoProd",
             "args" => args_list.op11,
@@ -51,10 +49,9 @@ println()
     end
 end
 
-println()
-@testset verbose = true "Error bounds op21 ────────────────────" begin #########
+@testset verbose=verbose "<op21>(TwoF64, f64)" begin
 
-    @testset "DWPlusFP (add21, sub21)" begin
+    @testset "DWPlusFP" begin # (add21, sub21)
         _test(Dict(
             "fn" => "DWPlusFP",
             "args" => args_list.op21,
@@ -63,7 +60,7 @@ println()
         ))
     end
 
-    @testset "DWTimesFP1 (mul21)" begin
+    @testset "DWTimesFP1" begin # (mul21)
         _test(Dict(
             "fn" => "DWTimesFP1",
             "args" => args_list.op21,
@@ -71,7 +68,7 @@ println()
             "compute" => ((xhi, xlo), y) -> big(xhi)*big(y) + big(xlo)*big(y)
         ))
     end
-    @testset "DWDivFP3 (div11, div21, inv1)" begin
+    @testset "DWDivFP3" begin # (div11, div21, inv1)
         _test(Dict(
             "fn" => "DWDivFP3",
             "args" => args_list.op21,
@@ -81,10 +78,9 @@ println()
     end
 end
 
-println()
-@testset verbose = true "Error bounds op22 ────────────────────" begin #########
+@testset verbose=verbose "<op22>(TwoF64, TwoF64)" begin #########
 
-    @testset "AccurateDWPlusDW (add22, sub22)" begin
+    @testset "AccurateDWPlusDW" begin # (add22, sub22)
         _test(Dict(
             "fn" => "AccurateDWPlusDW",
             "args" => args_list.op22,
@@ -93,7 +89,7 @@ println()
         ))
     end
 
-    @testset "DWTimesDW1 (mul22, square_2)" begin
+    @testset "DWTimesDW1" begin # (mul22, square_2)
         _test(Dict(
             "fn" => "DWTimesDW1",
             "args" => args_list.op22,
@@ -102,7 +98,7 @@ println()
         ))
     end
 
-    @testset " (div22, inv2)" begin
+    @testset "DWDivDW2" begin # (div22, inv2)
         _test(Dict(
             "fn" => "DWDivDW2",
             "args" => args_list.op22,
@@ -110,19 +106,4 @@ println()
             "compute" => ((xhi,xlo),(yhi,ylo)) -> (big(xhi) + big(xlo)) / (big(yhi) + big(ylo))
         ))
     end
-end
-
-###
-
-println()
-@testset "Algorithm coverage ───────────────────" begin ########################
-    for (fn, covered) in coverage
-        @test (fn, covered) == (fn, true)
-    end
-end
-
-overflowed = filter(((fn , ov_count),) -> ov_count > 0, overflow)
-if !isempty(overflowed)
-    println()
-    @info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflowed)...] |> join
 end

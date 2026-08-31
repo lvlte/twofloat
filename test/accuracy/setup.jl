@@ -17,7 +17,6 @@ const rel_err_uf_default = big(1e-25)
 const abs_err_min_default = 3ε₀
 
 coverage = OrderedDict{String, Bool}()
-overflow = OrderedDict{String, Int}()
 
 struct ArgsList
     op1::Union{Vector{Tuple{Float64}},Nothing}
@@ -65,6 +64,7 @@ function _test(fn_data::Dict{String, Any})
     max_rel_err = (0.0, ())
     avg_psum = big(0.0)
     avg_count = 0
+    ovf_count = 0
 
     @test length(args) == length(output)
 
@@ -78,22 +78,26 @@ function _test(fn_data::Dict{String, Any})
         if abs(r) > floatmax(Float64) || !isfinite(r)
             @test !isfinite(zhi + zlo)
         elseif isnan(z)
-            overflow[fn] += 1 # spurious overflow
+            ovf_count += 1 # spurious overflow
         elseif underflow(r, fnargs)
             @test abs(z - r) ≤ abs_err_bound_uf(r, fnargs)
         else
-            @test abs(z - r) ≤ abs_err_bound(r, fnargs)
             rel_err = abs((z - r) / r)
             avg_psum, avg_count = avg_psum + rel_err, avg_count + 1
             if rel_err > max_rel_err[1]
                 max_rel_err = (Float64(rel_err), fnargs)
             end
+            @test abs(z - r) ≤ abs_err_bound(r, fnargs)
         end
     end
 
     coverage[fn] = true
     max_err, max_args = max_rel_err
     avg = Float64(avg_psum / avg_count)
-    @info "$fn relative error" max=max_err avg
+    if verbose
+        @info "$fn relative error" avg max=max_err max_args overflow=ovf_count
+    else
+        @info "$fn relative error" avg max=max_err
+    end
     println()
 end

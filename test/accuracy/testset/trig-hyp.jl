@@ -1,5 +1,5 @@
 # Test the accuracy of twofloat's trigonometric/hyperbolic functions
-# Function inputs/outputs dataset is created by /test/error-bound/trig-hyp.ts
+# Function inputs/outputs dataset is created by /test/accuracy/pre/trig-hyp.ts
 
 json = read("$(dirname(@__DIR__))/pre/output/trig-hyp.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)
@@ -7,11 +7,9 @@ testset = JSON.parse(json, TestSet; null=NaN)
 args_list = testset.argsList
 fn_output = testset.fnOutput
 
-coverage = OrderedDict(keys(fn_output) .=> false)
-overflow = OrderedDict(keys(fn_output) .=> 0)
+merge!(coverage, OrderedDict(keys(fn_output) .=> false))
 
-println()
-@testset verbose = true "Trigonometric functions ─────────" begin ##############
+@testset verbose=verbose "Trigonometric functions" begin
     @testset "sin_1" begin
         _test(Dict(
             "fn" => "sin_1",
@@ -121,8 +119,7 @@ println()
     end
 end
 
-println()
-@testset verbose = true "Inverse Trigonometric functions ─" begin ##############
+@testset verbose=verbose "Inverse Trigonometric functions" begin
 
     @testset "asin_1" begin
         _test(Dict(
@@ -267,8 +264,7 @@ println()
     end
 end
 
-println()
-@testset verbose = true "Hyperbolic functions ────────────" begin ##############
+@testset verbose=verbose "Hyperbolic functions" begin
     @testset "sinh_1" begin
         _test(Dict(
             "fn" => "sinh_1",
@@ -380,8 +376,7 @@ println()
     end
 end
 
-println()
-@testset verbose = true "Inverse Hyperbolic functions ────" begin ##############
+@testset verbose=verbose "Inverse Hyperbolic functions" begin
     @testset "asinh_1" begin
         _test(Dict(
             "fn" => "asinh_1",
@@ -533,19 +528,4 @@ println()
             "compute" => ((xhi, xlo),) -> acsch(big(xhi) + big(xlo))
         ))
     end
-end
-
-##
-
-println()
-@testset "Trig functions coverage ─" begin
-    for (fn, covered) in coverage
-        @test (fn, covered) == (fn, true)
-    end
-end
-
-overflowed = filter(((fn , ov_count),) -> ov_count > 0, overflow)
-if !isempty(overflowed)
-    println()
-    @info ["overflow\n ", (rpad(k, 20, ' ') * "$v\n " for (k, v) in overflowed)...] |> join
 end
