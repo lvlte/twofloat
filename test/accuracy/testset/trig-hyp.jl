@@ -1,7 +1,7 @@
 # Test the accuracy of twofloat's trigonometric/hyperbolic functions
 # Function inputs/outputs dataset is created by /test/error-bound/trig-hyp.ts
 
-json = read("$(@__DIR__)/testset/trig-hyp.json", String)
+json = read("$(dirname(@__DIR__))/pre/output/trig-hyp.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)
 
 args_list = testset.argsList

@@ -13,14 +13,14 @@ import {
   asinh_1, asinh_2, atanh_1, atanh_2, asech_1, asech_2,
   acosh_1, acosh_2, acoth_1, acoth_2, acsch_1, acsch_2,
   lt21,
-} from '../../src/index';
+} from '../../../src/index';
 
 import {
   FnSig, UnionToIntersection, randomFn, collectOutputs, initArgsList, FnBySigOpt,
   ldexp,
   ldexp2,
   // ldexp,
-} from '../utils';
+} from '../../utils';
 
 import { exponent } from '@lvlte/ulp';
 import { writeFileSync } from 'node:fs';
@@ -200,6 +200,6 @@ const testset = { argsList, fnOutput };
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
-writeFileSync('test/error-bound/testset/trig-hyp.json', testsetJSON, 'utf8');
+writeFileSync('test/accuracy/pre/output/trig-hyp.json', testsetJSON, 'utf8');
 
 console.log('prerun trig-hyp.ts done');

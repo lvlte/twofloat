@@ -12,12 +12,12 @@ import {
   sqrt_1, sqrt_2, cbrt_1, cbrt_2, nthroot_1, nthroot_2,
   ln_1, ln_2, log2_1, log2_2, log10_1, log10_2,
   rem2pi_1, rem2pi_2, rempi_1, rempi_2,
-} from '../../src/index';
+} from '../../../src/index';
 
 import {
   FnSig, UnionToIntersection, randomFn, E_SPLIT_MAX, collectOutputs, initArgsList,
   FnBySigOpt, Sign
-} from '../utils';
+} from '../../utils';
 
 import { exponent } from '@lvlte/ulp';
 import { writeFileSync } from 'node:fs';
@@ -168,6 +168,6 @@ const testset = { argsList, fnOutput };
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
-writeFileSync('test/error-bound/testset/math.json', testsetJSON, 'utf8');
+writeFileSync('test/accuracy/pre/output/math.json', testsetJSON, 'utf8');
 
 console.log('prerun math.ts done');

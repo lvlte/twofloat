@@ -13,7 +13,7 @@ import {
   split,
   twoSum,
   twoProd,
-} from '../../src/index';
+} from '../../../src/index';
 
 import {
   DWPlusFP,
@@ -22,7 +22,7 @@ import {
   DWTimesDW1,
   DWDivFP3,
   DWDivDW2,
-} from '../../src/base/algorithms';
+} from '../../../src/base/algorithms';
 
 import {
   FnSig,
@@ -34,7 +34,7 @@ import {
   collectOutputs,
   initArgsList,
   FnBySigOpt
-} from '../utils';
+} from '../../utils';
 
 import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
 import { writeFileSync } from 'node:fs';
@@ -101,6 +101,6 @@ const testset = { argsList, fnOutput };
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
-writeFileSync('test/error-bound/testset/algorithms.json', testsetJSON, 'utf8');
+writeFileSync('test/accuracy/pre/output/algorithms.json', testsetJSON, 'utf8');
 
 console.log('prerun algorithms.ts done');

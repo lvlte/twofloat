@@ -29,9 +29,9 @@
     "dist"
   ],
   "scripts": {
-    "test:clean": "rm -Rf ./test/error-bound/testset && mkdir \"./test/error-bound/testset\"",
-    "test:prejl": "tsx ./test/error-bound/prerun.ts",
-    "test:jl": "julia ./test/error-bound/runtest.jl",
+    "test:clean": "rm -Rf ./test/accuracy/pre/output && mkdir \"./test/accuracy/pre/output\"",
+    "test:prejl": "tsx ./test/accuracy/prerun.ts",
+    "test:jl": "julia ./test/accuracy/runtests.jl",
     "pretest": "npm run test:clean && npm run test:prejl",
     "test": "jest --verbose && npm run test:jl",
     "prebuild": "rm -Rf dist && mkdir dist",

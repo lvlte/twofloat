@@ -2,7 +2,7 @@
 # Relative error bounds: cf. paper from J.M. Muller et al.
 # Function inputs/outputs dataset is created by /test/algorithms.ts
 
-json = read("$(@__DIR__)/testset/algorithms.json", String)
+json = read("$(dirname(@__DIR__))/pre/output/algorithms.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)
 
 args_list = testset.argsList

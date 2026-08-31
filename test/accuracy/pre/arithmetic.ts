@@ -12,7 +12,7 @@ import {
   prod2,
   sub12,
   div12,
-} from '../../src/index';
+} from '../../../src/index';
 
 import {
   FnSig,
@@ -24,7 +24,7 @@ import {
   initArgsList,
   collectOutputs,
   FnBySigOpt,
-} from '../utils';
+} from '../../utils';
 
 import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
 import { writeFileSync } from 'node:fs';
@@ -102,6 +102,6 @@ const testset = { argsList, fnOutput };
 
 // Export as JSON
 const testsetJSON = JSON.stringify(testset);
-writeFileSync('test/error-bound/testset/arithmetic.json', testsetJSON, 'utf8');
+writeFileSync('test/accuracy/pre/output/arithmetic.json', testsetJSON, 'utf8');
 
 console.log('prerun arithmetic.ts done');
