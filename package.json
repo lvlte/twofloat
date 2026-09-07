@@ -1,6 +1,6 @@
 {
   "name": "twofloat",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Double-double (106-bit) floating-point arithmetic for TypeScript and JavaScript",
   "license": "MIT",
   "author": "Eric Lavault <lvlte.code@gmail.com>",
