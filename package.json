@@ -1,7 +1,7 @@
 {
   "name": "twofloat",
   "version": "0.0.0",
-  "description": "",
+  "description": "Double-double (106-bit) floating-point arithmetic for TypeScript and JavaScript",
   "license": "MIT",
   "author": "Eric Lavault <lvlte.code@gmail.com>",
   "repository": {
@@ -50,7 +50,8 @@
     "float128",
     "twice",
     "quad",
-    "IEEE754"
+    "IEEE754",
+    "math"
   ],
   "devDependencies": {
     "@lvlte/tsconfig": "^1.2.1",
