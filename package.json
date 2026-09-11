@@ -8,8 +8,12 @@
     "type": "git",
     "url": "git+https://github.com/lvlte/twofloat.git"
   },
+  "bugs": {
+    "url": "https://github.com/lvlte/twofloat/issues"
+  },
   "type": "module",
   "main": "./dist/cjs/index.js",
+  "sideEffects": false,
   "exports": {
     ".": {
       "import": {
