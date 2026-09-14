@@ -46,15 +46,14 @@
     "prepublishOnly": "npm test && npm run build"
   },
   "keywords": [
-    "double",
-    "precision",
+    "double-double",
+    "extended-precision",
+    "arithmetic",
     "number",
     "float64",
-    "f64",
     "float128",
-    "twice",
     "quad",
-    "IEEE754",
+    "IEEE 754",
     "math"
   ],
   "devDependencies": {
