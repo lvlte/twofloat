@@ -2,7 +2,8 @@
  * @file Tests - Comparison functions (equality/ordering/is* predicates)
  */
 
-import { randomFn, type Sign } from "../utils";
+import {describe, expect, test} from '@jest/globals';
+import { randomFn, type Sign } from "../utils.js";
 import { nextFloat, prevFloat } from "@lvlte/ulp";
 import {
   type TwoF64,
@@ -11,7 +12,7 @@ import {
   ZERO, ONE, INF, NINF, NaN2, PI,
   isInfinite2,
   normalize,
-} from '../../src';
+} from '../../src/index.js';
 
 import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 

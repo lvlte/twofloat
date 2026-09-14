@@ -2,13 +2,14 @@
  * @file Tests basic math functions
  */
 
-import { type Sign, rand2Fn, shuffle } from "../utils";
+import {describe, expect, test} from '@jest/globals';
+import { type Sign, rand2Fn, shuffle } from "../utils.js";
 import { nextFloat, prevFloat } from "@lvlte/ulp";
 import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 import {
   type TwoF64, INF, NINF, NaN2, ONE, PI, ZERO,
   abs, ceil, floor, max, min, neg, normalize, round, sign, trunc,
-} from '../../src';
+} from '../../src/index.js';
 
 const rng = xoroshiro128plus(1234);
 const rand2 = rand2Fn(rng, true);

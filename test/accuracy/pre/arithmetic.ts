@@ -3,8 +3,8 @@
  */
 
 import {
-  f64,
-  TwoF64,
+  type f64,
+  type TwoF64,
   normalize,
   sum1,
   prod1,
@@ -12,19 +12,19 @@ import {
   prod2,
   sub12,
   div12,
-} from '../../../src/index';
+} from '../../../src/index.js';
 
 import {
-  FnSig,
-  UnionToIntersection,
+  type FnSig,
+  type FnBySigOpt,
+  type UnionToIntersection,
   randomFn,
   pairsInRange,
   signCombinations,
   E_SPLIT_MAX,
   initArgsList,
   collectOutputs,
-  FnBySigOpt,
-} from '../../utils';
+} from '../../utils.js';
 
 import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
 import { writeFileSync } from 'node:fs';

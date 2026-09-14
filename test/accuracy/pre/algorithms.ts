@@ -13,7 +13,7 @@ import {
   split,
   twoSum,
   twoProd,
-} from '../../../src/index';
+} from '../../../src/index.js';
 
 import {
   DWPlusFP,
@@ -22,19 +22,19 @@ import {
   DWTimesDW1,
   DWDivFP3,
   DWDivDW2,
-} from '../../../src/base/algorithms';
+} from '../../../src/base/algorithms.js';
 
 import {
-  FnSig,
-  UnionToIntersection,
+  type FnSig,
+  type FnBySigOpt,
+  type UnionToIntersection,
   randomFn,
   pairsInRange,
   signCombinations,
   E_SPLIT_MAX,
   collectOutputs,
   initArgsList,
-  FnBySigOpt
-} from '../../utils';
+} from '../../utils.js';
 
 import { exponent, FLOAT64_MIN } from '@lvlte/ulp';
 import { writeFileSync } from 'node:fs';

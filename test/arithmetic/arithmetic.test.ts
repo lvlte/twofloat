@@ -16,7 +16,7 @@ import {
   twoProd,
   div,
   inv
-} from '../../src';
+} from '../../src/index.js';
 
 import {
   DWPlusFP,
@@ -30,15 +30,16 @@ import {
   DWDivFP3,
   DWTimesFP1,
   DWTimesDW1,
-} from '../../src/base/algorithms';
+} from '../../src/base/algorithms.js';
 
 import {
   randomFn,
   pairsInRange,
   signCombinations
-} from '../utils';
+} from '../utils.js';
 
 import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
+import {describe, expect, test} from '@jest/globals';
 
 const rng = xoroshiro128plus(5678);
 const random = randomFn(rng, true);

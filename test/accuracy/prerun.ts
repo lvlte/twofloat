@@ -5,7 +5,7 @@
  * as JSON so we can import it and do proper tests in Julia using BigFloat.
  */
 
-import './pre/algorithms';
-import './pre/arithmetic';
-import './pre/math';
-import './pre/trig-hyp';
+import './pre/algorithms.js';
+import './pre/arithmetic.js';
+import './pre/math.js';
+import './pre/trig-hyp.js';

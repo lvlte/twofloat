@@ -13,14 +13,13 @@ import {
   asinh_1, asinh_2, atanh_1, atanh_2, asech_1, asech_2,
   acosh_1, acosh_2, acoth_1, acoth_2, acsch_1, acsch_2,
   lt21,
-} from '../../../src/index';
+} from '../../../src/index.js';
 
 import {
-  FnSig, UnionToIntersection, randomFn, collectOutputs, initArgsList, FnBySigOpt,
-  ldexp,
-  ldexp2,
-  // ldexp,
-} from '../../utils';
+  type FnSig, type FnBySigOpt, type UnionToIntersection,
+  randomFn, collectOutputs, initArgsList,
+  ldexp, ldexp2,
+} from '../../utils.js';
 
 import { exponent } from '@lvlte/ulp';
 import { writeFileSync } from 'node:fs';

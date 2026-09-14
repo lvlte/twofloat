@@ -3,7 +3,7 @@
  */
 
 import { exponent } from '@lvlte/ulp';
-import { type TwoF64, type f64, type int, F64_SPLITTER, normalize } from '../src';
+import { type TwoF64, type f64, type int, F64_SPLITTER, normalize } from '../src/index.js';
 import { type RandomGenerator } from 'pure-rand/types/RandomGenerator';
 import { uniformFloat64 } from 'pure-rand/distribution/uniformFloat64';
 
