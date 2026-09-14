@@ -142,16 +142,16 @@ export function isOne([xhi, xlo]: TwoF64): boolean {
 /**
  * Return a boolean indicating whether `x` represents a finite number.
  */
-export function isFinite2(x: TwoF64): boolean;
-export function isFinite2([xhi, xlo]: TwoF64): boolean {
+export function isFinite(x: TwoF64): boolean;
+export function isFinite([xhi, xlo]: TwoF64): boolean {
   return Number.isFinite(xhi) && Number.isFinite(xlo);
 }
 
 /**
  * Return a boolean indicating whether `x` represents an integer.
  */
-export function isInteger2(x: TwoF64): boolean;
-export function isInteger2([xhi, xlo]: TwoF64): boolean {
+export function isInteger(x: TwoF64): boolean;
+export function isInteger([xhi, xlo]: TwoF64): boolean {
   return Number.isInteger(xlo) && Number.isInteger(xhi);
 }
 
@@ -159,8 +159,8 @@ export function isInteger2([xhi, xlo]: TwoF64): boolean {
  * Return a boolean indicating whether `x` represents a safe f64 integer (ie.
  * can be converted to a float64 number without loosing precision).
  */
-export function isSafeInteger2(x: TwoF64): boolean;
-export function isSafeInteger2([xhi, xlo]: TwoF64): boolean {
+export function isSafeInteger(x: TwoF64): boolean;
+export function isSafeInteger([xhi, xlo]: TwoF64): boolean {
   return Number.isSafeInteger(xhi) && xlo === 0;
 }
 
@@ -190,10 +190,10 @@ export function isNaN2([xhi, xlo]: TwoF64): boolean {
 /**
  * Return a boolean indicating whether `x` represents ±Infinity, that is, any
  * twofloat number having an infinite hi part, including `[Infinity, NaN]` (the
- * reason for this is that `normalize(INF)` returns `[Infinity, NaN]`).
+ * reason for this is that `normalize(...INF)` returns `[Infinity, NaN]`).
  */
-export function isInfinite2(x: TwoF64): boolean;
-export function isInfinite2([xhi,]: TwoF64): boolean {
+export function isInfinite(x: TwoF64): boolean;
+export function isInfinite([xhi,]: TwoF64): boolean {
   return Math.abs(xhi) === Infinity;
 }
 

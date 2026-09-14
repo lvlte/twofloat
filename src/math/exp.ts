@@ -11,7 +11,7 @@ import {
 } from '../base/common.js';
 
 import { mul21, mul22 } from '../arithmetic/index.js';
-import { isSafeInteger2 } from '../base/compare.js';
+import { isSafeInteger } from '../base/compare.js';
 import { ln_1, ln_2 } from './log.js';
 
 // NB. This file contains only wrapper functions that dispacth to more specific
@@ -49,7 +49,7 @@ export function pow_11(x: f64, p: f64): TwoF64 {
  * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
  */
 export function pow_12(x: f64, p: TwoF64): TwoF64 {
-  if (isSafeInteger2(p)) {
+  if (isSafeInteger(p)) {
     return powint_1(x, p[0]);
   }
   return exp_2(mul22(ln_1(x), p));
@@ -79,7 +79,7 @@ export function pow_21(x: TwoF64, p: f64): TwoF64 {
  * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
  */
 export function pow_22(x: TwoF64, p: TwoF64): TwoF64 {
-  if (isSafeInteger2(p)) {
+  if (isSafeInteger(p)) {
     return powint_2(x, p[0]);
   }
   return exp_2(mul22(ln_2(x), p));

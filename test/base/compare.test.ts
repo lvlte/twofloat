@@ -8,9 +8,9 @@ import { nextFloat, prevFloat } from "@lvlte/ulp";
 import {
   type TwoF64,
   eq, lt, le, gt, ge, neg,
-  isZero, isOne, isFinite2, isInteger2, isSafeInteger2, isSafeTwoInteger, isNaN2,
+  isZero, isOne, isFinite, isInteger, isSafeInteger, isSafeTwoInteger, isNaN2,
   ZERO, ONE, INF, NINF, NaN2, PI,
-  isInfinite2,
+  isInfinite,
   normalize,
 } from '../../src/index.js';
 
@@ -117,22 +117,22 @@ describe('Comparison functions', () => {
     expect(isOne(ONE)).toBe(true);
     expect(isOne([1, nextFloat(0)])).toBe(false);
 
-    expect(isFinite2(ONE)).toBe(true);
-    expect(isFinite2([prevFloat(Infinity), 2**969])).toBe(true);
-    expect(isFinite2(INF)).toBe(false);
-    expect(isFinite2(NINF)).toBe(false);
-    expect(isFinite2(NaN2)).toBe(false);
+    expect(isFinite(ONE)).toBe(true);
+    expect(isFinite([prevFloat(Infinity), 2**969])).toBe(true);
+    expect(isFinite(INF)).toBe(false);
+    expect(isFinite(NINF)).toBe(false);
+    expect(isFinite(NaN2)).toBe(false);
 
-    expect(isInteger2(ONE)).toBe(true);
-    expect(isInteger2([2**53, 1])).toBe(true);
-    expect(isInteger2([prevFloat(Infinity), 123456])).toBe(true);
-    expect(isInteger2(PI)).toBe(false);
-    expect(isInteger2([2**53, 0.5])).toBe(false);
+    expect(isInteger(ONE)).toBe(true);
+    expect(isInteger([2**53, 1])).toBe(true);
+    expect(isInteger([prevFloat(Infinity), 123456])).toBe(true);
+    expect(isInteger(PI)).toBe(false);
+    expect(isInteger([2**53, 0.5])).toBe(false);
 
-    expect(isSafeInteger2(ONE)).toBe(true);
-    expect(isSafeInteger2(PI)).toBe(false);
-    expect(isSafeInteger2([2**53 - 1, 0])).toBe(true);
-    expect(isSafeInteger2([2**53, 0])).toBe(false);
+    expect(isSafeInteger(ONE)).toBe(true);
+    expect(isSafeInteger(PI)).toBe(false);
+    expect(isSafeInteger([2**53 - 1, 0])).toBe(true);
+    expect(isSafeInteger([2**53, 0])).toBe(false);
 
     expect(isSafeTwoInteger(ONE)).toBe(true);
     expect(isSafeTwoInteger([1e23, 1])).toBe(true);
@@ -146,22 +146,22 @@ describe('Comparison functions', () => {
     expect(isNaN2(normalize(...INF))).toBe(false);
     expect(isNaN2(PI)).toBe(false);
 
-    expect(isInfinite2(INF)).toBe(true);
-    expect(isInfinite2(NINF)).toBe(true);
-    expect(isInfinite2(normalize(...INF))).toBe(true);
-    expect(isInfinite2(ONE)).toBe(false);
-    expect(isInfinite2(NaN2)).toBe(false);
-    expect(isInfinite2([prevFloat(Infinity), 2**969])).toBe(false);
+    expect(isInfinite(INF)).toBe(true);
+    expect(isInfinite(NINF)).toBe(true);
+    expect(isInfinite(normalize(...INF))).toBe(true);
+    expect(isInfinite(ONE)).toBe(false);
+    expect(isInfinite(NaN2)).toBe(false);
+    expect(isInfinite([prevFloat(Infinity), 2**969])).toBe(false);
 
     // malformed numbers
     expect(isZero([0, nextFloat(0)])).toBe(false);
     expect(isZero([0, NaN])).toBe(false);
     expect(isOne([1, NaN])).toBe(false);
-    expect(isFinite2(['1', '0'] as unknown as TwoF64)).toBe(false); // no coercion
-    expect(isFinite2([42, NaN])).toBe(false);
-    expect(isInteger2([42, NaN])).toBe(false);
-    expect(isSafeInteger2([42, NaN])).toBe(false);
-    expect(isSafeInteger2([2**53, -1])).toBe(false); // non-canonical
+    expect(isFinite(['1', '0'] as unknown as TwoF64)).toBe(false); // no coercion
+    expect(isFinite([42, NaN])).toBe(false);
+    expect(isInteger([42, NaN])).toBe(false);
+    expect(isSafeInteger([42, NaN])).toBe(false);
+    expect(isSafeInteger([2**53, -1])).toBe(false); // non-canonical
     expect(isNaN2([1, NaN])).toBe(true);
     expect(isNaN2([NaN, 0])).toBe(true);
     expect(isNaN2([null, undefined] as unknown as TwoF64)).toBe(true); // coercion

@@ -11,7 +11,7 @@ import { asin_pade, atan_pade } from "../pre/trig-inv.js";
 import { square_1, square_2 } from "./exp.js";
 import { sqrt_1, sqrt_2 } from "./roots.js";
 import { normalize } from "../base/eft.js";
-import { eq21, eq22, ge21, gt21, isFinite2, isNaN2, isZero, lt21 } from "../base/compare.js";
+import { eq21, eq22, ge21, gt21, isFinite, isNaN2, isZero, lt21 } from "../base/compare.js";
 import { SQRT1_2 } from "./constants.js";
 
 /**
@@ -291,7 +291,7 @@ export function atan_2(x: TwoF64): TwoF64 {
     return div22(p, q);
   }
 
-  if (!isFinite2(x)) {
+  if (!isFinite(x)) {
     return isNaN2(x) ? NaN2 : ge21(x, 0) ? PI$2 : neg(PI$2);
   }
 
@@ -399,7 +399,7 @@ export function acot_2(x: TwoF64): TwoF64 {
     return PI$2;
   }
 
-  if (!isFinite2(x)) {
+  if (!isFinite(x)) {
     return isNaN2(x) ? NaN2 : ZERO;
   }
 
@@ -437,7 +437,7 @@ export function asec_2(x: TwoF64): TwoF64 {
     return NaN2;
   }
 
-  if (!isFinite2(x)) {
+  if (!isFinite(x)) {
     return PI$2;
   }
 
@@ -475,7 +475,7 @@ export function acsc_2(x: TwoF64): TwoF64 {
     return NaN2;
   }
 
-  if (!isFinite2(x)) {
+  if (!isFinite(x)) {
     return ZERO;
   }
 

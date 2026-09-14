@@ -17,7 +17,7 @@ import { twoSquare, normalize, fast2Diff, fast2Sum } from '../base/eft.js';
 import { add21, sub12, sub21, mul11, mul21, mul22, div22, inv1, inv2, add22 } from '../arithmetic/index.js';
 import { exp_n, exp_nmax, exp_pade_int, expm1_pade_int } from '../pre/exp.js';
 import { INF } from './constants.js';
-import { isFinite2, isZero } from '../base/compare.js';
+import { isFinite, isZero } from '../base/compare.js';
 
 /**
  * Compute `x²`, the square of `x`, using extended-precision arithmetic.
@@ -351,7 +351,7 @@ function divrem(x: f64, y: f64): [int, f64] {
 export function exp_2([xhi, xlo]: TwoF64): TwoF64 {
   if (Number.isInteger(xhi)) {
     const e_xhi = _exp_1i(xhi);
-    if (xlo === 0 || !isFinite2(e_xhi) || isZero(e_xhi)) {
+    if (xlo === 0 || !isFinite(e_xhi) || isZero(e_xhi)) {
       return e_xhi;
     }
     return mul22(e_xhi, _exp_1f(xlo));
@@ -370,7 +370,7 @@ export function exp_2([xhi, xlo]: TwoF64): TwoF64 {
   }
 
   const e_xi = _exp_1i(xi);
-  if (!isFinite2(e_xi) || isZero(e_xi)) {
+  if (!isFinite(e_xi) || isZero(e_xi)) {
     return e_xi;
   }
 

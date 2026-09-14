@@ -11,7 +11,7 @@ import { sqrt_2 } from "./roots.js";
 import { ln_2 } from "./log.js";
 import { abs, neg } from "./basic.js";
 import { asinh_pade } from "../pre/hyp-inv.js";
-import { eq21, ge21, isFinite2, isNaN2, isOne, isZero, le21, lt21 } from "../base/compare.js";
+import { eq21, ge21, isFinite, isNaN2, isOne, isZero, le21, lt21 } from "../base/compare.js";
 import { INF, NINF } from "./constants.js";
 
 /**
@@ -48,7 +48,7 @@ export function asinh_1(x: f64): TwoF64 {
  * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function asinh_2(x: TwoF64): TwoF64 {
-  if (!isFinite2(x)) {
+  if (!isFinite(x)) {
     return [...x];
   }
 
@@ -160,7 +160,7 @@ export function acosh_1(x: f64): TwoF64 {
  * @returns A {@link TwoF64|`TwoF64`} number in the range `[0, ∞]`
  */
 export function acosh_2(x: TwoF64): TwoF64 {
-  if (!isFinite2(x)) {
+  if (!isFinite(x)) {
     return [...x];
   }
 
@@ -251,7 +251,7 @@ export function acoth_2(x: TwoF64): TwoF64 {
     return x[0] > 0 ? INF : NINF;
   }
 
-  if (!isFinite2(x)) {
+  if (!isFinite(x)) {
     return x[0] < 0 ? neg(ZERO) : ZERO;
   }
 
@@ -331,7 +331,7 @@ export function acsch_1(x: f64): TwoF64 {
  * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function acsch_2(x: TwoF64): TwoF64 {
-  if (!isFinite2(x)) {
+  if (!isFinite(x)) {
     if (isNaN2(x)) {
       return NaN2;
     }
