@@ -6,3 +6,5 @@ yarn.lock
 
 /test/**/*.json
 /scripts/**/*.json
+
+!/test/tsconfig.json
