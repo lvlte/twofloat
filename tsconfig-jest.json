@@ -6,7 +6,8 @@
     "lib": ["esnext"],
     "skipLibCheck": true,
     "types": ["node", "jest"],
-    "isolatedModules": true
+    "isolatedModules": true,
+    "noEmit": true
   }
 }
 
