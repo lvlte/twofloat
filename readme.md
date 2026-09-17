@@ -17,6 +17,12 @@
 npm install twofloat
 ```
 
+Or load from a CDN:
+
+- [jsdelivr](https://www.jsdelivr.com/package/npm/twofloat)
+- [unpkg](https://unpkg.com)
+- [esm.sh](https://esm.sh/#docs)
+
 ## What is Double-Double Arithmetic ?
 
 Standard IEEE 754 double-precision numbers (64-bit floats, `number` in JS, aliased `f64` in this library) provide 53 bits of significand precision (~15–17 decimal digits).
