@@ -39,10 +39,7 @@
     "pretest": "npm run test:clean && npm run test:prejl",
     "test": "jest --verbose && npm run test:jl",
     "prebuild": "rm -Rf dist && mkdir dist",
-    "build:esm": "tsc && tsc -d --emitDeclarationOnly true --removeComments false",
-    "build:cjs": "tsc -p tsconfig-cjs.json && tsc -p tsconfig-cjs.json -d --emitDeclarationOnly true --removeComments false",
-    "build": "npm run build:esm && npm run build:cjs",
-    "postbuild": "(echo { && echo   \"type\": \"commonjs\" && echo }) > ./dist/cjs/package.json",
+    "build": "tsdown",
     "prepublishOnly": "npm test && npm run build"
   },
   "keywords": [
@@ -64,6 +61,7 @@
     "jest": "^30.5.1",
     "pure-rand": "^8.4.2",
     "ts-jest": "^29.4.12",
+    "tsdown": "^0.23.0",
     "tsx": "^4.23.13",
     "typescript": "^6.0.3"
   },
