@@ -13,6 +13,9 @@ export default defineConfig([{
   entry: 'src/index.ts',
   outDir: './dist/cjs',
   tsconfig: './tsconfig-cjs.json',
+  outExtensions() {
+    return { js: '.js' }
+  },
 }, {
   format: 'umd',
   platform: 'neutral',
