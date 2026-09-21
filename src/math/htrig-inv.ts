@@ -4,15 +4,15 @@
  * @module twofloat/math/hyperbolicTrigInverse
  */
 
-import { NaN2, ZERO, type f64, type TwoF64 } from "../base/common.js";
-import { add21, add22, div12, div22, inv1, inv2, mul21, mul22, sub12, sub21 } from "../arithmetic/index.js";
-import { square_1, square_2 } from "./exp.js";
-import { sqrt_2 } from "./roots.js";
-import { ln_2 } from "./log.js";
-import { abs, neg } from "./basic.js";
-import { asinh_pade } from "../pre/hyp-inv.js";
-import { eq21, ge21, isFinite, isNaN2, isOne, isZero, le21, lt21 } from "../base/compare.js";
-import { INF, NINF } from "./constants.js";
+import { NaN2, ZERO, type f64, type TwoF64 } from '../base/common.js';
+import { add21, add22, div12, div22, inv1, inv2, mul21, mul22, sub12, sub21 } from '../arithmetic/index.js';
+import { eq21, ge21, isFinite, isNaN2, isOne, isZero, le21, lt21 } from '../base/compare.js';
+import { asinh_pade } from '../pre/hyp-inv.js';
+import { square_1, square_2 } from './exp.js';
+import { sqrt_2 } from './roots.js';
+import { ln_2 } from './log.js';
+import { abs, neg } from './basic.js';
+import { INF, NINF } from './constants.js';
 
 /**
  * Compute the inverse hyperbolic sine of `x` using extended-precision

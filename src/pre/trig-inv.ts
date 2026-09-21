@@ -5,7 +5,7 @@
  * @internal
  */
 
-import type { TwoF64 } from "../base/common.js";
+import type { TwoF64 } from '../base/common.js';
 
 /**
  * Coefficients (from lowest to highest degree) of the Padé (n,n) approximant

@@ -4,15 +4,15 @@
  * @module twofloat/math/trigonometryInverse
  */
 
-import { NaN2, ZERO, type f64, type TwoF64 } from "../base/common.js";
-import { add21, add22, div12, div22, inv1, inv2, mul11, mul21, mul22, sub12, sub22 } from "../arithmetic/index.js";
-import { abs, neg } from "./basic.js";
-import { asin_pade, atan_pade } from "../pre/trig-inv.js";
-import { square_1, square_2 } from "./exp.js";
-import { sqrt_1, sqrt_2 } from "./roots.js";
-import { normalize } from "../base/eft.js";
-import { eq21, eq22, ge21, gt21, isFinite, isNaN2, isZero, lt21 } from "../base/compare.js";
-import { SQRT1_2 } from "./constants.js";
+import { NaN2, ZERO, type f64, type TwoF64 } from '../base/common.js';
+import { add21, add22, div12, div22, inv1, inv2, mul11, mul21, mul22, sub12, sub22 } from '../arithmetic/index.js';
+import { eq21, eq22, ge21, gt21, isFinite, isNaN2, isZero, lt21 } from '../base/compare.js';
+import { asin_pade, atan_pade } from '../pre/trig-inv.js';
+import { normalize } from '../base/eft.js';
+import { abs, neg } from './basic.js';
+import { square_1, square_2 } from './exp.js';
+import { sqrt_1, sqrt_2 } from './roots.js';
+import { SQRT1_2 } from './constants.js';
 
 /**
  * TwoF64 representation of `π/2` (`PI$2 > π/2`).

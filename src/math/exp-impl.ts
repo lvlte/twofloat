@@ -10,14 +10,13 @@ import {
   type int,
   ONE,
   NaN2,
-  ZERO
+  ZERO,
 } from '../base/common.js';
-
 import { twoSquare, normalize, fast2Diff, fast2Sum } from '../base/eft.js';
 import { add21, sub12, sub21, mul11, mul21, mul22, div22, inv1, inv2, add22 } from '../arithmetic/index.js';
 import { exp_n, exp_nmax, exp_pade_int, expm1_pade_int } from '../pre/exp.js';
-import { INF } from './constants.js';
 import { isFinite, isZero } from '../base/compare.js';
+import { INF } from './constants.js';
 
 /**
  * Compute `x²`, the square of `x`, using extended-precision arithmetic.

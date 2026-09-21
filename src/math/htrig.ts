@@ -4,10 +4,10 @@
  * @module twofloat/math/hyperbolicTrig
  */
 
-import { type f64, type TwoF64 } from "../base/common.js";
-import { add21, add22, div22, inv2, sub21, sub22 } from "../arithmetic/index.js";
-import { exp_1, exp_2, expm1_1, expm1_2} from "./exp.js";
-import { sqrt_2 } from "./roots.js";
+import { type f64, type TwoF64 } from '../base/common.js';
+import { add21, add22, div22, inv2, sub21, sub22 } from '../arithmetic/index.js';
+import { exp_1, exp_2, expm1_1, expm1_2} from './exp.js';
+import { sqrt_2 } from './roots.js';
 
 /**
  * Compute the hyperbolic sine of `x` using extended-precision arithmetic.

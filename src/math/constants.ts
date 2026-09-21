@@ -4,7 +4,7 @@
  * @module twofloat/math/constants
  */
 
-import type { ThreeF64, TwoF64 } from "../base/common.js";
+import type { ThreeF64, TwoF64 } from '../base/common.js';
 
 /**
  * `TwoF64` representation of the mathematical constant `e`, Euler's number,

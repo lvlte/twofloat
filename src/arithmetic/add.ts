@@ -10,7 +10,6 @@ import {
   NaN2,
   ZERO,
 } from '../base/common.js';
-
 import { normalize, twoSum } from '../base/eft.js';
 import { DWPlusFP, AccurateDWPlusDW } from '../base/algorithms.js';
 

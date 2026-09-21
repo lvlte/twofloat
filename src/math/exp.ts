@@ -4,23 +4,29 @@
  * @module twofloat/math/exponentiation
  */
 
-import {
-  type TwoF64,
-  type f64,
-  type int,
-} from '../base/common.js';
-
-import { mul21, mul22 } from '../arithmetic/index.js';
-import { isSafeInteger } from '../base/compare.js';
-import { ln_1, ln_2 } from './log.js';
-
 // NB. This file contains only wrapper functions that dispacth to more specific
 // functions. Those functions are implemented in a separate module in order to
 // avoid the dependency cicle `exp.ts -> log.ts -> exp.ts`.
 
 import {
-  square_1, square_2, cube_1, cube_2, exp_1, exp_2, expm1_1, expm1_2,
-  powint_1, powint_2,
+  type TwoF64,
+  type f64,
+  type int,
+} from '../base/common.js';
+import { mul21, mul22 } from '../arithmetic/index.js';
+import { isSafeInteger } from '../base/compare.js';
+import { ln_1, ln_2 } from './log.js';
+import {
+  square_1,
+  square_2,
+  cube_1,
+  cube_2,
+  exp_1,
+  exp_2,
+  expm1_1,
+  expm1_2,
+  powint_1,
+  powint_2,
 } from './exp-impl.js';
 
 export * from './exp-impl.js';

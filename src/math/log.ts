@@ -4,9 +4,9 @@
  * @module twofloat/math/logarithms
  */
 
-import { NaN2, ONE, ZERO, type f64, type TwoF64 } from "../base/common.js";
-import { add21, add22, div22, sub12, sub21, sub22 } from "../arithmetic/index.js";
-import { INF, LN10, LN2, NINF } from "./constants.js";
+import { NaN2, ONE, ZERO, type f64, type TwoF64 } from '../base/common.js';
+import { add21, add22, div22, sub12, sub21, sub22 } from '../arithmetic/index.js';
+import { INF, LN10, LN2, NINF } from './constants.js';
 import { exp_1 } from './exp-impl.js';
 
 /**

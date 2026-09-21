@@ -7,7 +7,7 @@
 import { type TwoF64, type f64, type int, NaN2, ZERO } from '../base/common.js';
 import { add21, add22, div12, div21, div22, mul11 } from '../arithmetic/index.js';
 import { normalize } from '../base/eft.js';
-import { powint_1, square_1 } from '../math/exp.js';
+import { powint_1, square_1 } from './exp.js';
 import { INF, NINF } from './constants.js';
 
 // Computing nth root (Newton's iteration)
