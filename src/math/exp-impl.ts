@@ -150,6 +150,7 @@ export function _logpow_1(x: f64, n: int): TwoF64 {
     if (i % 2) {
       xn = mul22(xn, sn);
     }
+
     sn = square_2(sn);
     i = Math.floor(i/2);
   }
@@ -261,6 +262,7 @@ export function _logpow_2(x: TwoF64, n: int): TwoF64 {
     if (i % 2) {
       xn = mul22(xn, sn);
     }
+
     sn = square_2(sn);
     i = Math.floor(i/2);
   }
@@ -285,7 +287,7 @@ export function exp_1(x: f64): TwoF64 {
   }
 
   if (!Number.isFinite(x)) {
-    return x < 0 ? ZERO : x > 0 ? INF : NaN2;
+    return x < 0 ? ZERO : (x > 0 ? INF : NaN2);
   }
 
   const e_xi = _exp_1i(Math.trunc(x));
@@ -314,7 +316,7 @@ function _exp_1i(x: int): TwoF64 {
   const [a, r] = divrem(x, m);
   const e_xi = powint_2(exp_n.get(m) as TwoF64, a);
 
-  return r !== 0 ? mul22(e_xi, exp_n.get(r) as TwoF64) : e_xi;
+  return r === 0 ? e_xi : mul22(e_xi, exp_n.get(r)!);
 }
 
 /**
@@ -350,15 +352,14 @@ function divrem(x: f64, y: f64): [int, f64] {
 export function exp_2([xhi, xlo]: TwoF64): TwoF64 {
   if (Number.isInteger(xhi)) {
     const e_xhi = _exp_1i(xhi);
-    if (xlo === 0 || !isFinite(e_xhi) || isZero(e_xhi)) {
-      return e_xhi;
-    }
-    return mul22(e_xhi, _exp_1f(xlo));
+    return xlo === 0 || !isFinite(e_xhi) || isZero(e_xhi)
+      ? e_xhi
+      : mul22(e_xhi, _exp_1f(xlo));
   }
 
   const xf64 = xhi + xlo;
   if (!Number.isFinite(xf64)) {
-    return xf64 < 0 ? ZERO : xf64 > 0 ? INF : NaN2;
+    return xf64 < 0 ? ZERO : (xf64 > 0 ? INF : NaN2);
   }
 
   // If xlo is an integer, then |xhi| ≥ 2^53 so the result will be the same (0

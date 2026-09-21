@@ -202,8 +202,8 @@ export function isInfinite([xhi,]: TwoF64): boolean {
  */
 export function eq(x: f64 | TwoF64, y: f64 | TwoF64): boolean {
   return typeof x === 'number'
-    ? typeof y === 'number' ? x === y : eq21(y, x)
-    : typeof y === 'number' ? eq21(x, y) : eq22(x, y);
+    ? (typeof y === 'number' ? x === y : eq21(y, x))
+    : (typeof y === 'number' ? eq21(x, y) : eq22(x, y));
 }
 
 /**
@@ -211,8 +211,8 @@ export function eq(x: f64 | TwoF64, y: f64 | TwoF64): boolean {
  */
 export function lt(x: f64 | TwoF64, y: f64 | TwoF64): boolean {
   return typeof x === 'number'
-    ? typeof y === 'number' ? x < y : lt12(x, y)
-    : typeof y === 'number' ? lt21(x, y) : lt22(x, y)
+    ? (typeof y === 'number' ? x < y : lt12(x, y))
+    : (typeof y === 'number' ? lt21(x, y) : lt22(x, y));
 }
 
 /**
@@ -220,8 +220,8 @@ export function lt(x: f64 | TwoF64, y: f64 | TwoF64): boolean {
  */
 export function le(x: f64 | TwoF64, y: f64 | TwoF64): boolean {
   return typeof x === 'number'
-    ? typeof y === 'number' ? x <= y : le12(x, y)
-    : typeof y === 'number' ? le21(x, y) : le22(x, y)
+    ? (typeof y === 'number' ? x <= y : le12(x, y))
+    : (typeof y === 'number' ? le21(x, y) : le22(x, y));
 }
 
 /**
@@ -229,8 +229,8 @@ export function le(x: f64 | TwoF64, y: f64 | TwoF64): boolean {
  */
 export function gt(x: f64 | TwoF64, y: f64 | TwoF64): boolean {
   return typeof x === 'number'
-    ? typeof y === 'number' ? x > y : gt12(x, y)
-    : typeof y === 'number' ? gt21(x, y) : gt22(x, y)
+    ? (typeof y === 'number' ? x > y : gt12(x, y))
+    : (typeof y === 'number' ? gt21(x, y) : gt22(x, y));
 }
 
 /**
@@ -238,6 +238,6 @@ export function gt(x: f64 | TwoF64, y: f64 | TwoF64): boolean {
  */
 export function ge(x: f64 | TwoF64, y: f64 | TwoF64): boolean {
   return typeof x === 'number'
-    ? typeof y === 'number' ? x >= y : ge12(x, y)
-    : typeof y === 'number' ? ge21(x, y) : ge22(x, y)
+    ? (typeof y === 'number' ? x >= y : ge12(x, y))
+    : (typeof y === 'number' ? ge21(x, y) : ge22(x, y));
 }

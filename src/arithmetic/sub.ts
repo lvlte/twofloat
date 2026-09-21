@@ -38,6 +38,6 @@ export function sub12(x: f64, [yhi, ylo]: TwoF64): TwoF64 {
  */
 export function sub(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
   return typeof x === 'number'
-    ? typeof y === 'number' ? sub11(x, y) : sub12(x, y)
-    : typeof y === 'number' ? sub21(x, y) : sub22(x, y);
+    ? (typeof y === 'number' ? sub11(x, y) : sub12(x, y))
+    : (typeof y === 'number' ? sub21(x, y) : sub22(x, y));
 }

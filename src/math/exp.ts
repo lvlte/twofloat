@@ -40,10 +40,7 @@ export * from './exp-impl.js';
  * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
  */
 export function pow_11(x: f64, p: f64): TwoF64 {
-  if (Number.isSafeInteger(p)) {
-    return powint_1(x, p);
-  }
-  return exp_2(mul21(ln_1(x), p));
+  return Number.isSafeInteger(p) ? powint_1(x, p) : exp_2(mul21(ln_1(x), p));
 }
 
 /**
@@ -55,10 +52,7 @@ export function pow_11(x: f64, p: f64): TwoF64 {
  * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
  */
 export function pow_12(x: f64, p: TwoF64): TwoF64 {
-  if (isSafeInteger(p)) {
-    return powint_1(x, p[0]);
-  }
-  return exp_2(mul22(ln_1(x), p));
+  return isSafeInteger(p) ? powint_1(x, p[0]) : exp_2(mul22(ln_1(x), p));
 }
 
 /**
@@ -70,10 +64,7 @@ export function pow_12(x: f64, p: TwoF64): TwoF64 {
  * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
  */
 export function pow_21(x: TwoF64, p: f64): TwoF64 {
-  if (Number.isSafeInteger(p)) {
-    return powint_2(x, p);
-  }
-  return exp_2(mul21(ln_2(x), p));
+  return Number.isSafeInteger(p) ? powint_2(x, p) : exp_2(mul21(ln_2(x), p));
 }
 
 /**
@@ -85,10 +76,7 @@ export function pow_21(x: TwoF64, p: f64): TwoF64 {
  * @returns The {@link TwoF64|`TwoF64`} representation of `xᵖ`
  */
 export function pow_22(x: TwoF64, p: TwoF64): TwoF64 {
-  if (isSafeInteger(p)) {
-    return powint_2(x, p[0]);
-  }
-  return exp_2(mul22(ln_2(x), p));
+  return isSafeInteger(p) ? powint_2(x, p[0]) : exp_2(mul22(ln_2(x), p));
 }
 
 /**
@@ -133,8 +121,8 @@ export function powint(x: f64 | TwoF64, n: int): TwoF64 {
  */
 export function pow(x: f64 | TwoF64, p: f64 | TwoF64): TwoF64 {
   return typeof x === 'number'
-    ? typeof p === 'number' ? pow_11(x, p) : pow_12(x, p)
-    : typeof p === 'number' ? pow_21(x, p) : pow_22(x, p);
+    ? (typeof p === 'number' ? pow_11(x, p) : pow_12(x, p))
+    : (typeof p === 'number' ? pow_21(x, p) : pow_22(x, p));
 }
 
 /**

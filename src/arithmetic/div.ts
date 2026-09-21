@@ -43,8 +43,8 @@ export function div12(x: f64, [yhi, ylo]: TwoF64): TwoF64 {
  */
 export function div(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
   return typeof x === 'number'
-    ? typeof y === 'number' ? div11(x, y) : div12(x, y)
-    : typeof y === 'number' ? div21(x, y) : div22(x, y);
+    ? (typeof y === 'number' ? div11(x, y) : div12(x, y))
+    : (typeof y === 'number' ? div21(x, y) : div22(x, y));
 }
 
 /**

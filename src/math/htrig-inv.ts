@@ -274,11 +274,7 @@ export function asech_1(x: f64): TwoF64 {
     return 1/x < 0 ? NaN2 : INF;
   }
 
-  if (x === 1) {
-    return ZERO;
-  }
-
-  return acosh_2(inv1(x));
+  return x === 1 ? ZERO : acosh_2(inv1(x));
 }
 
 /**
@@ -297,11 +293,7 @@ export function asech_2(x: TwoF64): TwoF64 {
     return 1/x[0] < 0 ? NaN2 : INF;
   }
 
-  if (isOne(x)) {
-    return ZERO;
-  }
-
-  return acosh_2(inv2(x));
+  return isOne(x) ? ZERO : acosh_2(inv2(x));
 }
 
 /**
@@ -313,7 +305,7 @@ export function asech_2(x: TwoF64): TwoF64 {
  */
 export function acsch_1(x: f64): TwoF64 {
   if (!Number.isFinite(x)) {
-    return x > 0 ? ZERO : x < 0 ? neg(ZERO) : NaN2;
+    return x > 0 ? ZERO : (x < 0 ? neg(ZERO) : NaN2);
   }
 
   if (x === 0) {

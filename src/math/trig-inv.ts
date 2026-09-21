@@ -258,12 +258,13 @@ export function atan_1(x: f64): TwoF64 {
     if (x === 0) {
       return ZERO;
     }
+
     const [p, q] = _atan_padé_1(x);
     return div22(p, q);
   }
 
   if (!Number.isFinite(x)) {
-    return Number.isNaN(x) ? NaN2 : x >= 0 ? PI$2 : neg(PI$2);
+    return Number.isNaN(x) ? NaN2 : (x >= 0 ? PI$2 : neg(PI$2));
   }
 
   // atan(x) = 2*atan( x / (1 + √(1 + x²)) )
@@ -287,12 +288,13 @@ export function atan_2(x: TwoF64): TwoF64 {
     if (isZero(x)) {
       return ZERO;
     }
+
     const [p, q] = _atan_padé_2(x);
     return div22(p, q);
   }
 
   if (!isFinite(x)) {
-    return isNaN2(x) ? NaN2 : ge21(x, 0) ? PI$2 : neg(PI$2);
+    return isNaN2(x) ? NaN2 : (ge21(x, 0) ? PI$2 : neg(PI$2));
   }
 
   const x2p1 = add21(square_2(x), 1);
@@ -418,11 +420,7 @@ export function asec_1(x: f64): TwoF64 {
     return NaN2;
   }
 
-  if (!Number.isFinite(x)) {
-    return PI$2;
-  }
-
-  return acos_2(inv1(x));
+  return !Number.isFinite(x) ? PI$2 : acos_2(inv1(x));
 }
 
 /**
@@ -437,11 +435,7 @@ export function asec_2(x: TwoF64): TwoF64 {
     return NaN2;
   }
 
-  if (!isFinite(x)) {
-    return PI$2;
-  }
-
-  return acos_2(inv2(x));
+  return !isFinite(x) ? PI$2 : acos_2(inv2(x));
 }
 
 /**
@@ -456,11 +450,7 @@ export function acsc_1(x: f64): TwoF64 {
     return NaN2;
   }
 
-  if (!Number.isFinite(x)) {
-    return ZERO;
-  }
-
-  return asin_2(inv1(x));
+  return !Number.isFinite(x) ? ZERO : asin_2(inv1(x));
 }
 
 /**
@@ -475,11 +465,7 @@ export function acsc_2(x: TwoF64): TwoF64 {
     return NaN2;
   }
 
-  if (!isFinite(x)) {
-    return ZERO;
-  }
-
-  return asin_2(inv2(x));
+  return !isFinite(x) ? ZERO : asin_2(inv2(x));
 }
 
 /**

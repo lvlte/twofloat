@@ -90,8 +90,8 @@ export function prod2(factors: ArrayLike<TwoF64>): TwoF64 {
  */
 export function mul(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
   return typeof x === 'number'
-    ? typeof y === 'number' ? mul11(x, y) : mul21(y, x)
-    : typeof y === 'number' ? mul21(x, y) : mul22(x, y);
+    ? (typeof y === 'number' ? mul11(x, y) : mul21(y, x))
+    : (typeof y === 'number' ? mul21(x, y) : mul22(x, y));
 }
 
 /**

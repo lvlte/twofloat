@@ -61,6 +61,7 @@ export function trunc([xhi, xlo]: TwoF64): TwoF64 {
     if (Number.isInteger(xlo)) {
       return [xhi, xlo];
     }
+
     const s = Math.sign(xhi);
     const [hi, lo] = normalize(xhi, s > 0 ? Math.floor(xlo) : Math.ceil(xlo));
     return hi === 0 ? [s*0, 0] : [hi, lo];
@@ -104,6 +105,7 @@ export function ceil([xhi, xlo]: TwoF64): TwoF64 {
     if (Number.isInteger(xlo)) {
       return [xhi, xlo];
     }
+
     const [hi, lo] = normalize(xhi, Math.ceil(xlo));
     return hi === 0 ? [Math.sign(xhi)*0, 0] : [hi, lo];
   }
@@ -130,7 +132,8 @@ export function round([xhi, xlo]: TwoF64): TwoF64 {
 
   if (Math.abs(xhi) === 0.5 && xlo !== 0) {
     const s = Math.sign(xhi);
-    return s === Math.sign(xlo) ? [s*1, 0] : [s*0, 0];
+    // eslint-disable-next-line unicorn/prefer-minimal-ternary
+    return s === Math.sign(xlo) ? [s, 0] : [s*0, 0];
   }
 
   return [Math.round(xhi), 0];
@@ -165,11 +168,8 @@ export function max([hi, lo]: TwoF64, ...args: Array<TwoF64>): TwoF64 {
     }
   }
 
-  if (Math.abs(hi) === Infinity) {
-    return [hi, 0];
-  }
-
-  return [hi, lo];
+  // eslint-disable-next-line unicorn/prefer-minimal-ternary
+  return Math.abs(hi) === Infinity ? [hi, 0] : [hi, lo];
 }
 
 /**
@@ -195,9 +195,6 @@ export function min([hi, lo]: TwoF64, ...args: Array<TwoF64>): TwoF64 {
     }
   }
 
-  if (Math.abs(hi) === Infinity) {
-    return [hi, 0];
-  }
-
-  return [hi, lo];
+  // eslint-disable-next-line unicorn/prefer-minimal-ternary
+  return Math.abs(hi) === Infinity ? [hi, 0] : [hi, lo];
 }

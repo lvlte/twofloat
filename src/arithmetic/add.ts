@@ -140,8 +140,8 @@ export function sum2_alt(terms: ArrayLike<TwoF64>): TwoF64 {
  */
 export function add(x: f64 | TwoF64, y: f64 | TwoF64): TwoF64 {
   return typeof x === 'number'
-    ? typeof y === 'number' ? add11(x, y) : add21(y, x)
-    : typeof y === 'number' ? add21(x, y) : add22(x, y);
+    ? (typeof y === 'number' ? add11(x, y) : add21(y, x))
+    : (typeof y === 'number' ? add21(x, y) : add22(x, y));
 }
 
 /**

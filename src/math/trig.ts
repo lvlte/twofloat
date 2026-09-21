@@ -45,7 +45,7 @@ export function sin_1(x: f64): TwoF64 {
     return sign < 0 ? neg(_cos(r)) : _cos(r);
   }
 
-  return sign < 0 ? _sin_2(neg(r)) : _sin_2(r);
+  return _sin_2(sign < 0 ? neg(r) : r);
 }
 
 /**
@@ -75,7 +75,7 @@ export function sin_2(x: TwoF64): TwoF64 {
     return sign < 0 ? neg(_cos(r)) : _cos(r);
   }
 
-  return sign < 0 ? _sin_2(neg(r)) : _sin_2(r);
+  return _sin_2(sign < 0 ? neg(r) : r);
 }
 
 /**
@@ -186,7 +186,7 @@ export function cos_1(x: f64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? _sin_2(r) : _sin_2(neg(r));
+    return _sin_2(sign < 0 ? r : neg(r));
   }
 
   return sign < 0 ? neg(_cos(r)) : _cos(r);
@@ -216,7 +216,7 @@ export function cos_2(x: TwoF64): TwoF64 {
 
   if (ge22(r, PI_HALF)) {
     r = sub22(r, PI_HALF);
-    return sign < 0 ? _sin_2(r) : _sin_2(neg(r));
+    return _sin_2(sign < 0 ? r : neg(r));
   }
 
   return sign < 0 ? neg(_cos(r)) : _cos(r);
@@ -239,7 +239,7 @@ function _cos_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
   const [P, Q] = cos_pade[16];
   const x2 = typeof x === 'number' ? square_1(x) : square_2(x);
 
-  let p = mul22(P[1], x2)   // p = 1 + P₁x² + P₂x⁴ + ... + Pₖ*x²ᵏ
+  let p = mul22(P[1], x2);  // p = 1 + P₁x² + P₂x⁴ + ... + Pₖ*x²ᵏ
   let q = mul22(Q[1], x2);  // q = 1 + Q₁x² + Q₂x⁴ + ... + Qₖ*x²ᵏ
 
   for (let i = 2, xpow = x2; i < P.length; i++) {
@@ -310,8 +310,8 @@ export function tan_2(x: TwoF64): TwoF64 {
 function _tan_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
   const [P, Q] = tan_pade_int[18]; // (17, 18, 19)
   const [x2, pmulx] = typeof x === 'number'
-    ? [square_1(x), mul21 as ((x:TwoF64, y:f64 | TwoF64) => TwoF64)]
-    : [square_2(x), mul22 as ((x:TwoF64, y:f64 | TwoF64) => TwoF64)];
+    ? [square_1(x), mul21 as ((x: TwoF64, y: f64 | TwoF64) => TwoF64)]
+    : [square_2(x), mul22 as ((x: TwoF64, y: f64 | TwoF64) => TwoF64)];
 
   let p = add22(mul22(x2, P[0]), P[1]);
   let q = add22(mul22(x2, Q[0]), Q[1]);

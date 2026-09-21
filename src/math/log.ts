@@ -93,11 +93,7 @@ export function log2_1(x: f64): TwoF64 {
   }
 
   const y = Math.log2(x);
-  if (Number.isInteger(y) && 2**y === x) {
-    return [y, 0];
-  }
-
-  return div22(ln_1(x), LN2);
+  return Number.isInteger(y) && 2**y === x ? [y, 0] : div22(ln_1(x), LN2);
 }
 
 /**
