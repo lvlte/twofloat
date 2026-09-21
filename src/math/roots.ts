@@ -126,7 +126,7 @@ export function nthroot_1(x: f64, n: int): TwoF64 {
     return ZERO;
   }
 
-  if (x < 0 && n % 2 === 0 || !Number.isInteger(n) || n < 1) {
+  if ((x < 0 && n % 2 === 0) || !Number.isInteger(n) || n < 1) {
     return NaN2;
   }
 
@@ -157,7 +157,7 @@ export function nthroot_2([xhi, xlo]: TwoF64, n: int): TwoF64 {
     return ZERO;
   }
 
-  if (xhi < 0 && n % 2 === 0 || !Number.isInteger(n) || n < 1) {
+  if ((xhi < 0 && n % 2 === 0) || !Number.isInteger(n) || n < 1) {
     return NaN2;
   }
 
