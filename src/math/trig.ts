@@ -171,12 +171,12 @@ function _sin_padé_2(x: TwoF64): [TwoF64, TwoF64] {
  */
 export function cos_1(x: f64): TwoF64 {
   const xabs = Math.abs(x);
-  let sign = 1;
 
   if (xabs <= PI_HALF[0]) {
     return _cos(xabs);
   }
 
+  let sign = 1;
   let r = rem2pi_1(xabs);
 
   if (ge22(r, PI)) {
@@ -201,12 +201,12 @@ export function cos_1(x: f64): TwoF64 {
  */
 export function cos_2(x: TwoF64): TwoF64 {
   const xabs = abs(x);
-  let sign = 1;
 
   if (lt22(xabs, PI_HALF)) {
     return _cos(x);
   }
 
+  let sign = 1;
   let r = rem2pi_2(xabs);
 
   if (ge22(r, PI)) {
@@ -408,12 +408,12 @@ function _cot(x: f64 | TwoF64): TwoF64 {
  */
 export function sec_1(x: f64): TwoF64 {
   const xabs = Math.abs(x);
-  let sign = 1;
 
   if (xabs <= PI_HALF[0]) {
     return _sec(xabs);
   }
 
+  let sign = 1;
   let r = rem2pi_1(xabs);
 
   if (ge22(r, PI)) {
@@ -438,12 +438,12 @@ export function sec_1(x: f64): TwoF64 {
  */
 export function sec_2(x: TwoF64): TwoF64 {
   const xabs = abs(x);
-  let sign = 1;
 
   if (lt22(xabs, PI_HALF)) {
     return _sec(x);
   }
 
+  let sign = 1;
   let r = rem2pi_2(xabs);
 
   if (ge22(r, PI)) {
