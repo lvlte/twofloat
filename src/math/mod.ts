@@ -67,12 +67,14 @@ function _rem_npi_13(x: f64, npi: ThreeF64): TwoF64 {
   const xabs = Math.abs(x);
   if (ymd > 0) {
     if (xabs <= 2*yhi) {
+      // eslint-disable-next-line @stylistic/multiline-ternary, unicorn/no-nested-ternary
       return xabs <= yhi ? [x, 0] : x > 0
         ? sub21(sub21(sub11(x, yhi), ymd), ylo)
         : add21(add21(add11(x, yhi), ymd), ylo);
     }
   }
   else if (xabs < 2*yhi) {
+    // eslint-disable-next-line @stylistic/multiline-ternary, unicorn/no-nested-ternary
     return xabs < yhi ? [x, 0] : x > 0
       ? sub21(sub21(sub11(x, yhi), ymd), ylo)
       : add21(add21(add11(x, yhi), ymd), ylo);
@@ -102,12 +104,14 @@ function _rem_npi_23(x: TwoF64, npi: ThreeF64): TwoF64 {
 
   if (ylo > 0) {
     if (le22(xabs, [2*yhi, 2*ymd])) {
+      // eslint-disable-next-line @stylistic/multiline-ternary, unicorn/no-nested-ternary
       return le22(xabs, [yhi, ymd]) ? x : Math.sign(x[0]) > 0
         ? sub21(sub21(sub21(x, yhi), ymd), ylo)
         : add21(add21(add21(x, yhi), ymd), ylo);
     }
   }
   else if (lt22(xabs, [2*yhi, 2*ymd])) {
+    // eslint-disable-next-line @stylistic/multiline-ternary, unicorn/no-nested-ternary
     return lt22(xabs, [yhi, ymd]) ? x : Math.sign(x[0]) > 0
       ? sub21(sub21(sub21(x, yhi), ymd), ylo)
       : add21(add21(add21(x, yhi), ymd), ylo);
