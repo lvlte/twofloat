@@ -22,7 +22,7 @@ const PI_HALF: TwoF64 = [1.5707963267948966, 6.123233995736766e-17];
  * Compute the sine of `x`, where `x` is expressed in radians, using extended
  * precision arithmetic.
  *
- * @param {f64} x A `f64` number
+ * @param x A `f64` number
  * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
  */
 export function sin_1(x: f64): TwoF64 {
@@ -133,7 +133,7 @@ function _sin_2(x: TwoF64): TwoF64 {
 }
 
 /**
- * @see _sin_padé_1
+ * see _sin_padé_1
  */
 function _sin_padé_2(x: TwoF64): [TwoF64, TwoF64] {
   const [P, Q] = sin_pade[17];
@@ -166,8 +166,8 @@ function _sin_padé_2(x: TwoF64): [TwoF64, TwoF64] {
  * Compute the cosine of `x`, where `x` is expressed in radians, using extended
  * precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function cos_1(x: f64): TwoF64 {
   const xabs = Math.abs(x);
@@ -255,8 +255,8 @@ function _cos_padé(x: f64 | TwoF64): [TwoF64, TwoF64] {
  * Compute the tangent of `x`, where `x` is expressed in radians, using
  * extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function tan_1(x: f64): TwoF64 {
   let sign = Math.sign(x);
@@ -343,8 +343,8 @@ function _tan(x: f64 | TwoF64): TwoF64 {
  * Compute the cotangent of `x`, where `x` is expressed in radians, using
  * extended-precision arithmetic.
  *
- * @param {f64} x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @param x A `f64` number
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function cot_1(x: f64): TwoF64 {
   let sign = Math.sign(x);

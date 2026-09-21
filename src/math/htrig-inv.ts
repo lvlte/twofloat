@@ -100,7 +100,7 @@ function _asinh_padé_1(x: f64): [TwoF64, TwoF64] {
 }
 
 /**
- * @see _asinh_padé_1
+ * see _asinh_padé_1
  */
 function _asinh_padé_2(x: TwoF64): [TwoF64, TwoF64] {
   const [P, Q] = asinh_pade[25];
