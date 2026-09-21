@@ -328,7 +328,7 @@ function _exp_1f(x: f64): TwoF64 {
 
   let p = fast2Sum(coeff[1], x);
   let q = fast2Diff(coeff[1], x);
-  for (let i = 2, s = -1; i < coeff.length; i++, s*=-1) {
+  for (let i = 2, s = -1; i < coeff.length; i++, s *= -1) {
     p = add21(mul21(p, x), coeff[i]);
     q = add21(mul21(q, x), coeff[i] * s);
   }
@@ -390,7 +390,7 @@ function _exp_2f(x: TwoF64): TwoF64 {
 
   let p = add21(x, coeff[1]);
   let q = sub12(coeff[1], x);
-  for (let i = 2, s = -1; i < coeff.length; i++, s*=-1) {
+  for (let i = 2, s = -1; i < coeff.length; i++, s *= -1) {
     p = add21(mul22(p, x), coeff[i]);
     q = add21(mul22(q, x), coeff[i] * s);
   }
@@ -441,7 +441,7 @@ function _expm1_1f(x: f64): TwoF64 {
  * @param x A `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `eˣ - 1`
  */
-export function expm1_2(x: TwoF64): TwoF64{
+export function expm1_2(x: TwoF64): TwoF64 {
   if (Math.abs(x[0]) < Math.LN2) {
     return x[0] === 0 ? ZERO : _expm1_2f(x);
   }

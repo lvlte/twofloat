@@ -327,6 +327,7 @@ export function acsch_2(x: TwoF64): TwoF64 {
     if (isNaN2(x)) {
       return NaN2;
     }
+
     return x[0] > 0 ? ZERO : neg(ZERO);
   }
 

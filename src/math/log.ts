@@ -55,6 +55,7 @@ export function ln_2(x: TwoF64): TwoF64 {
       if (xlo === 0) {
         return ZERO;
       }
+
       y = Math.log1p(xlo);
       break;
 

@@ -27,7 +27,7 @@ export function abs([xhi, xlo]: TwoF64): TwoF64 {
  * @param x A `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `-x`
  */
-export function neg(x: TwoF64): TwoF64
+export function neg(x: TwoF64): TwoF64;
 export function neg([xhi, xlo]: TwoF64): TwoF64 {
   return [-xhi, xlo === 0 ? 0 : -xlo];
 }

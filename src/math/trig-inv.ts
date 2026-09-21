@@ -43,11 +43,10 @@ const SQRT3_$2: TwoF64 = [0.8660254037844386, 5.0175421109034514e-17];
  * Compute the inverse sine of `x` using extended-precision arithmetic. The
  * output is expressed in radians.
  *
- * @param {f64} x A `f64` number in the domain `[-1, 1]`
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
+ * @param x A `f64` number in the domain `[-1, 1]`
+ * @returns A {@link TwoF64|`TwoF64`} number in the range `[-π/2, +π/2]`
  */
 export function asin_1(x: f64): TwoF64 {
-
   switch (x) {
     case 0:
       return [x, 0];

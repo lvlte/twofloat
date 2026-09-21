@@ -75,9 +75,10 @@ export function cosh_2(x: TwoF64): TwoF64 {
 /**
  * Return `[TwoF64(eˣ - 1), TwoF64(eˣ + 1)]`.
  */
-function _exp_pm1_1(x: f64): [TwoF64, TwoF64]{
+function _exp_pm1_1(x: f64): [TwoF64, TwoF64] {
   let ex_m1: TwoF64;
   let ex_p1: TwoF64;
+
   if (Math.abs(x) < Math.LN2) {
     ex_m1 = expm1_1(x);
     ex_p1 = add21(ex_m1, 2);
@@ -87,15 +88,17 @@ function _exp_pm1_1(x: f64): [TwoF64, TwoF64]{
     ex_m1 = sub21(ex, 1);
     ex_p1 = add21(ex, 1);
   }
+
   return [ex_m1, ex_p1];
 }
 
 /**
  * Return `[TwoF64(eˣ - 1), TwoF64(eˣ + 1)]`.
  */
-function _exp_pm1_2(x: TwoF64): [TwoF64, TwoF64]{
+function _exp_pm1_2(x: TwoF64): [TwoF64, TwoF64] {
   let ex_m1: TwoF64;
   let ex_p1: TwoF64;
+
   if (Math.abs(x[0]) < Math.LN2) {
     ex_m1 = expm1_2(x);
     ex_p1 = add21(ex_m1, 2);
@@ -105,6 +108,7 @@ function _exp_pm1_2(x: TwoF64): [TwoF64, TwoF64]{
     ex_m1 = sub21(ex, 1);
     ex_p1 = add21(ex, 1);
   }
+
   return [ex_m1, ex_p1];
 }
 

@@ -68,7 +68,7 @@ export function le21([xhi, xlo]: TwoF64, y: f64): boolean {
 /**
  * `x ≤ y` — Return a boolean indicating whether `x` is less than or equal to `y`.
  */
-export function le22(x: TwoF64, y: TwoF64): boolean
+export function le22(x: TwoF64, y: TwoF64): boolean;
 export function le22([xhi, xlo]: TwoF64, [yhi, ylo]: TwoF64): boolean {
   return xhi < yhi || (xhi === yhi && xlo <= ylo);
 }
