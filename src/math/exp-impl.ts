@@ -169,7 +169,7 @@ export function _logpow_1(x: f64, n: int): TwoF64 {
  * of `xⁿ` as long as `n ≤ 2^49`.
  */
 export function _logpowltr(x: f64, n: int): TwoF64 {
-  let bits = n.toString(2);
+  const bits = n.toString(2);
   let xn = square_1(x);
   let i = 1;
 
