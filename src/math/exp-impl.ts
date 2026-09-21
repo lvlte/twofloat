@@ -349,6 +349,7 @@ function divrem(x: f64, y: f64): [int, f64] {
  * @param x A `TwoF64` number
  * @returns The {@link TwoF64|`TwoF64`} representation of `eˣ`
  */
+export function exp_2(x: TwoF64): TwoF64;
 export function exp_2([xhi, xlo]: TwoF64): TwoF64 {
   if (Number.isInteger(xhi)) {
     const e_xhi = _exp_1i(xhi);
