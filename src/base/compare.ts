@@ -192,9 +192,8 @@ export function isNaN2([xhi, xlo]: TwoF64): boolean {
  * twofloat number having an infinite hi part, including `[Infinity, NaN]` (the
  * reason for this is that `normalize(...INF)` returns `[Infinity, NaN]`).
  */
-export function isInfinite(x: TwoF64): boolean;
-export function isInfinite([xhi,]: TwoF64): boolean {
-  return Math.abs(xhi) === Infinity;
+export function isInfinite(x: TwoF64): boolean {
+  return Math.abs(x[0]) === Infinity;
 }
 
 /**
