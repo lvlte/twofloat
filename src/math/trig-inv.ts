@@ -65,7 +65,7 @@ export function asin_1(x: f64): TwoF64 {
   }
 
   const xabs = Math.abs(x);
-  if (xabs <= 1 === false) {
+  if (!(xabs <= 1)) {
     return NaN2;
   }
 
