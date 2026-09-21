@@ -300,8 +300,8 @@ export function exp_1(x: f64): TwoF64 {
  * Compute `eˣ`, assuming `x` is an integer.
  */
 function _exp_1i(x: int): TwoF64 {
-  if (exp_n.has(x))  {
-    return exp_n.get(x) as TwoF64;
+  if (exp_n.has(x)) {
+    return exp_n.get(x)!;
   }
 
   if (x > 709) {
@@ -314,7 +314,7 @@ function _exp_1i(x: int): TwoF64 {
 
   const m = Math.sign(x) * exp_nmax;
   const [a, r] = divrem(x, m);
-  const e_xi = powint_2(exp_n.get(m) as TwoF64, a);
+  const e_xi = powint_2(exp_n.get(m)!, a);
 
   return r === 0 ? e_xi : mul22(e_xi, exp_n.get(r)!);
 }

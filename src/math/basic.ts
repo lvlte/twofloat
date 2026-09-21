@@ -145,15 +145,15 @@ export function round([xhi, xlo]: TwoF64): TwoF64 {
  * @param args More `TwoF64` numbers
  * @returns The maximum {@link TwoF64|`TwoF64`} number
  */
-export function max(arg1: TwoF64, ...args: Array<TwoF64>): TwoF64;
+export function max(arg1: TwoF64, ...args: TwoF64[]): TwoF64;
 /**
  * Return the maximum of the given arguments (at least one must be provided).
  *
  * @param args One or more `TwoF64` numbers
  * @returns The maximum {@link TwoF64|`TwoF64`} number
  */
-export function max(...args: Array<TwoF64>): TwoF64;
-export function max([hi, lo]: TwoF64, ...args: Array<TwoF64>): TwoF64 {
+export function max(...args: TwoF64[]): TwoF64;
+export function max([hi, lo]: TwoF64, ...args: TwoF64[]): TwoF64 {
   if (isNaN2([hi, lo])) {
     return NaN2;
   }
@@ -178,9 +178,9 @@ export function max([hi, lo]: TwoF64, ...args: Array<TwoF64>): TwoF64 {
  * @param args More `TwoF64` numbers
  * @returns The minimum {@link TwoF64|`TwoF64`} number
  */
-export function min(arg1: TwoF64, ...args: Array<TwoF64>): TwoF64;
-export function min(...args: Array<TwoF64>): TwoF64;
-export function min([hi, lo]: TwoF64, ...args: Array<TwoF64>): TwoF64 {
+export function min(arg1: TwoF64, ...args: TwoF64[]): TwoF64;
+export function min(...args: TwoF64[]): TwoF64;
+export function min([hi, lo]: TwoF64, ...args: TwoF64[]): TwoF64 {
   if (isNaN2([hi, lo])) {
     return NaN2;
   }
