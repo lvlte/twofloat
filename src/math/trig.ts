@@ -23,7 +23,7 @@ const PI_HALF: TwoF64 = [1.5707963267948966, 6.123233995736766e-17];
  * precision arithmetic.
  *
  * @param x A `f64` number
- * @returns {TwoF64} A {@link TwoF64|`TwoF64`} number
+ * @returns A {@link TwoF64|`TwoF64`} number
  */
 export function sin_1(x: f64): TwoF64 {
   let sign = Math.sign(x);
