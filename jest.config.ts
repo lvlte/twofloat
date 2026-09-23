@@ -5,6 +5,6 @@ export default {
     tsconfig: 'tsconfig-jest.json',
   }),
   moduleNameMapper: {
-    '(.+)\\.js': '$1'
-  }
+    '(.+)\\.js': '$1',
+  },
 } satisfies JestConfigWithTsJest;
