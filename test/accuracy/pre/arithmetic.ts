@@ -32,17 +32,17 @@ import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 // Functions to test grouped by signature
 const fnBySig = {
-  'opa1': {sum1, prod1},
-  'opa2': {sum2, prod2},
-  'op12': {sub12, div12},
+  opa1: {sum1, prod1},
+  opa2: {sum2, prod2},
+  op12: {sub12, div12},
 } satisfies FnBySigOpt;
 
 type FnBySig = typeof fnBySig;
 type TestedFunctions = UnionToIntersection<FnBySig[keyof FnBySig]>;
 type FnName = keyof TestedFunctions;
 
-type ArgsListBySig = { [K in keyof FnBySig]: Parameters<FnSig[K]>[] };
-type FnOutputList = { [K in FnName]: ReturnType<TestedFunctions[K]>[] }
+type ArgsListBySig = { [K in keyof FnBySig]: Array<Parameters<FnSig[K]>> };
+type FnOutputList = { [K in FnName]: Array<ReturnType<TestedFunctions[K]>> };
 
 // Pseudo-random number generator
 const rng = xoroshiro128plus(2345);
@@ -56,12 +56,14 @@ const argsList = initArgsList<ArgsListBySig>(fnBySig);
 
 // Fill argsList with number sequences of increasing length
 for (let len = 3; len < 1e4; len = Math.floor(len*1.5)) {
-  const emin = Math.max(-52, exponent(Math.pow(FLOAT64_MIN, 1/len))) - 0.25;
-  const emax = Math.min(+52, exponent(Math.pow(Number.MAX_VALUE, 1/len))) - 0.25;
-  const rmax = len < 100 ? 500 : len < 1000 ? 50 : 5;
+  const emin = Math.max(-52, exponent(FLOAT64_MIN**(1/len))) - 0.25;
+  const emax = Math.min(52, exponent(Number.MAX_VALUE**(1/len))) - 0.25;
+  const rmax = len < 100 ? 500 : (len < 1000 ? 50 : 5);
+
   for (let r = 0; r < rmax; r++) {
     const list: f64[] = [];
     const list2: TwoF64[] = [];
+
     for (let i = 0; i < len; i++) {
       // randWithin(2**emin, 2**emax) yields sequences whose sum1 have no error
       const exp = randWithin(emin, emax);
@@ -71,6 +73,7 @@ for (let len = 3; len < 1e4; len = Math.floor(len*1.5)) {
       list.push(x);
       list2.push(xx);
     }
+
     argsList['opa1'].push([list]);
     argsList['opa2'].push([list2]);
   }

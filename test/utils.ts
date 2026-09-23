@@ -34,25 +34,36 @@ type Rand2Fn<T extends boolean> = T extends false
     ? Rand2FnWithRangeOpt
     : never;
 
-export interface FnSig {
-  'op1': (x: f64) => TwoF64;
-  'op2': (x: TwoF64) => TwoF64;
-  'op11': (x: f64, y: f64) => TwoF64;
-  'op12': (x: f64, y: TwoF64) => TwoF64;
-  'op21': (x: TwoF64, y: f64) => TwoF64;
-  'op22': (x: TwoF64, y: TwoF64) => TwoF64;
-  'op1n': (x: f64, n: int) => TwoF64;
-  'op2n': (x: TwoF64, n: int) => TwoF64;
-  'opa1': (x: f64[]) => TwoF64;
-  'opa2': (x: TwoF64[]) => TwoF64;
-  'exp1': (x: f64) => TwoF64;
-  'exp2': (x: TwoF64) => TwoF64;
+export type SigId = 'op1' | 'op2' | 'op11' | 'op12' | 'op21' | 'op22' | 'op1n' | 'op2n'
+  | 'opa1' | 'opa2' | 'exp1' | 'exp2';
+
+export interface OpArgs {
+  op1: [x: f64];
+  op2: [x: TwoF64];
+  op11: [x: f64, y: f64];
+  op12: [x: f64, y: TwoF64];
+  op21: [x: TwoF64, y: f64];
+  op22: [x: TwoF64, y: TwoF64];
+  op1n: [x: f64, y: int];
+  op2n: [x: TwoF64, y: f64];
+  opa1: [x: f64[]];
+  opa2: [x: TwoF64[]];
+  exp1: [x: f64];
+  exp2: [x: TwoF64];
 }
 
-type FnBySig = {[K in keyof FnSig]: {[fnName: string]: FnSig[K]}};
+export type FnSig = { [K in SigId]: (...args: OpArgs[K]) => TwoF64 };
+export type FnBySig = {[K in keyof FnSig]: Record<string, FnSig[K]>};
 export type FnBySigOpt = Partial<FnBySig>;
-type ArgsListBySig = Partial<{[K in keyof FnBySig]: Parameters<FnSig[K]>[]}>;
-type FnOutputList = Partial<{[key: string]: ReturnType<FnBySig[keyof FnBySig][string]>[]}>;
+
+type ArgsListBySig = Partial<{[K in keyof FnBySig]: Array<Parameters<FnSig[K]>>}>;
+type FnOutputList = Record<string, TwoF64[]>;
+
+export type PArgsFnType<T> = T extends SigId
+  ? (fnName: string) => ((...args: OpArgs[T]) => OpArgs[T])
+  : never;
+
+export type ProcessArgsFn<T extends SigId> = ReturnType<PArgsFnType<T>>;
 
 /**
  * Exponent of the maximum absolute value that can be splitted by `F64_SPLITTER`
@@ -82,13 +93,14 @@ export function ldexp2([xhi, xlo]: TwoF64, n: number): TwoF64 {
  * - otherwise the generated numbers are in the range `[0, 1]`.
  */
 export function randomFn<T extends boolean>(rng: RandomGenerator, rangeOpt: T): RandomFn<T> {
-  if (rangeOpt === true) {
+  if (rangeOpt) {
     return function (exp: number, sign: Sign): number {
       const x = uniformFloat64(rng);
       const p = exp - exponent(x);
       return sign * ldexp(x, p);
     } as RandomFn<T>;
   }
+
   return function (): number {
     return uniformFloat64(rng);
   } as RandomFn<T>;
@@ -104,7 +116,7 @@ export function randomFn<T extends boolean>(rng: RandomGenerator, rangeOpt: T): 
  * - otherwise the generated numbers are in the range `[0, 1]`.
  */
 export function rand2Fn<T extends boolean>(rng: RandomGenerator, rangeOpt: T): Rand2Fn<T> {
-  if (rangeOpt === true) {
+  if (rangeOpt) {
     return function (exp: number, sign: Sign, losign?: Sign): TwoF64 {
       losign ??= uniformFloat64(rng) >= 0.5 ? 1 : -1;
       const x = uniformFloat64(rng);
@@ -116,6 +128,7 @@ export function rand2Fn<T extends boolean>(rng: RandomGenerator, rangeOpt: T): R
       return normalize(hi, lo);
     } as Rand2Fn<T>;
   }
+
   return function (): TwoF64 {
     const losign = uniformFloat64(rng) >= 0.5 ? 1 : -1;
     const hi = uniformFloat64(rng);
@@ -129,11 +142,13 @@ export function rand2Fn<T extends boolean>(rng: RandomGenerator, rangeOpt: T): R
 /**
  * In-place array shufling (Durstenfeld)
  */
-export function shuffle<T>(rng: RandomGenerator, arr: Array<T>): Array<T> {
+export function shuffle<T>(rng: RandomGenerator, arr: T[]): T[] {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(uniformFloat64(rng) * (i + 1));
+    // eslint-disable-next-line unicorn/no-unreadable-array-destructuring
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
+
   return arr;
 }
 
@@ -142,11 +157,13 @@ export function shuffle<T>(rng: RandomGenerator, arr: Array<T>): Array<T> {
  */
 export function pairsInRange(emin: f64, emax: f64, step: f64): Array<[f64, f64]> {
   const pairs: Array<[f64, f64]> = [];
+
   for (let e1 = emin; e1 <= emax; e1+=step) {
     for (let e2 = emin+1; e2 <= emax; e2+=step) {
       pairs.push([e1, e2]);
     }
   }
+
   return pairs;
 }
 
@@ -169,13 +186,15 @@ export function initArgsList<T extends ArgsListBySig>(fnBySig: FnBySigOpt): Expa
  * for some specific function(s), in which case it needs to be replicated on
  * the julia side via "process_args".
  */
-export function collectOutputs<T extends FnOutputList>(fnBySig: FnBySigOpt, argsList: ArgsListBySig, processArgsFn?: Function): Expand<T> {
-  const fnOutput = {} as FnOutputList;
+export function collectOutputs<T extends FnOutputList>(fnBySig: FnBySigOpt, argsList: ArgsListBySig, processArgsFn?: PArgsFnType<SigId>): Expand<T> {
+  const fnOutput: FnOutputList = {};
 
+  // eslint-disable-next-line guard-for-in
   for (const sid in fnBySig) {
-    const fnGroup = fnBySig[sid as keyof FnBySigOpt];
-    const argsGroup = argsList[sid as keyof FnBySigOpt]!;
+    const fnGroup = fnBySig[sid as SigId]!;
+    const argsGroup = argsList[sid as SigId]!;
 
+    // eslint-disable-next-line guard-for-in
     for (const fnName in fnGroup) {
       fnOutput[fnName] = [];
       const fn = fnGroup[fnName];
@@ -184,15 +203,17 @@ export function collectOutputs<T extends FnOutputList>(fnBySig: FnBySigOpt, args
       if (processArgsFn) {
         const processArgs = processArgsFn(fnName);
         for (const args of argsGroup) {
-          const _args = processArgs(...args) as typeof args;
-          // @ts-ignore
+          // @ts-expect-error correlated union (`args` can only match one single
+          // function signature, that's the purpose of `fnGroup` and `argsGroup`)
+          const _args = processArgs(...args);
+          // @ts-expect-error correlated union
           const result = fn(..._args);
           fnOut.push(result);
         }
       }
       else {
         for (const args of argsGroup) {
-          // @ts-ignore
+          // @ts-expect-error correlated union
           const result = fn(...args);
           fnOut.push(result);
         }

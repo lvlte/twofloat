@@ -2,14 +2,30 @@
  * @file Tests - Comparison functions (equality/ordering/is* predicates)
  */
 
-import {describe, expect, test} from '@jest/globals';
-import { randomFn, type Sign } from "../utils.js";
-import { nextFloat, prevFloat } from "@lvlte/ulp";
+import { describe, expect, test } from '@jest/globals';
+import { randomFn, type Sign } from '../utils.js';
+import { nextFloat, prevFloat } from '@lvlte/ulp';
 import {
   type TwoF64,
-  eq, lt, le, gt, ge, neg,
-  isZero, isOne, isFinite, isInteger, isSafeInteger, isSafeTwoInteger, isNaN2,
-  ZERO, ONE, INF, NINF, NaN2, PI,
+  eq,
+  lt,
+  le,
+  gt,
+  ge,
+  neg,
+  isZero,
+  isOne,
+  isFinite,
+  isInteger,
+  isSafeInteger,
+  isSafeTwoInteger,
+  isNaN2,
+  ZERO,
+  ONE,
+  INF,
+  NINF,
+  NaN2,
+  PI,
   isInfinite,
   normalize,
 } from '../../src/index.js';
@@ -21,7 +37,6 @@ const random = randomFn(rng, true);
 const exponents = [-80, -53, 0, 52, 76];
 
 describe('Comparison functions', () => {
-
   test('Equality', () => {
     for (const e of exponents) {
       for (const s of [1, -1] as const) {
@@ -46,10 +61,19 @@ describe('Comparison functions', () => {
 
         const unequals = [
           // different hi
-          [w, x2], [w, y2], [x, w2], [x, y2], [y, w2], [y, x2],
-          [w2, x2], [w2, y2], [x2, y2],
+          [w, x2],
+          [w, y2],
+          [x, w2],
+          [x, y2],
+          [y, w2],
+          [y, x2],
+          [w2, x2],
+          [w2, y2],
+          [x2, y2],
           // same hi / different lo
-          [w2, w2p], [x2, x2p], [y2, y2p]
+          [w2, w2p],
+          [x2, x2p],
+          [y2, y2p],
         ];
 
         for (const [a, b] of unequals) {
@@ -79,12 +103,20 @@ describe('Comparison functions', () => {
 
         const lessThan = [
           // different hi
-          [w, x2], [w2, x], [w2, x2],
-          [w, y2], [w2, y], [w2, y2],
-          [x, y2], [x2, y], [x2, y2],
+          [w, x2],
+          [w2, x],
+          [w2, x2],
+          [w, y2],
+          [w2, y],
+          [w2, y2],
+          [x, y2],
+          [x2, y],
+          [x2, y2],
           // same hi / different lo
-          [w2, w2p], [x2, x2p], [y2, y2p],
-          ...(s > 0 ? [[w2, w], [y, y2]] : [[w, w2], [y2, y]])
+          [w2, w2p],
+          [x2, x2p],
+          [y2, y2p],
+          ...(s > 0 ? [[w2, w], [y, y2]] : [[w, w2], [y2, y]]),
         ];
 
         for (const [a, b] of lessThan) {

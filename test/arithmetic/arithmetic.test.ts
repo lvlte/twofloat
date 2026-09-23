@@ -15,7 +15,7 @@ import {
   mul,
   twoProd,
   div,
-  inv
+  inv,
 } from '../../src/index.js';
 
 import {
@@ -35,7 +35,7 @@ import {
 import {
   randomFn,
   pairsInRange,
-  signCombinations
+  signCombinations,
 } from '../utils.js';
 
 import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
@@ -116,7 +116,6 @@ describe('Derived Algorithms', () => {
 });
 
 describe('Basic Arithmetic Functions', () => {
-
   test('Addition', () => {
     for (const [e1, e2] of exponentPairs) {
       for (const [s1, s2] of signCombinations) {

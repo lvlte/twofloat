@@ -3,12 +3,27 @@
  */
 
 import {describe, expect, test} from '@jest/globals';
-import { type Sign, rand2Fn, shuffle } from "../utils.js";
-import { nextFloat, prevFloat } from "@lvlte/ulp";
+import { type Sign, rand2Fn, shuffle } from '../utils.js';
+import { nextFloat, prevFloat } from '@lvlte/ulp';
 import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 import {
-  type TwoF64, INF, NINF, NaN2, ONE, PI, ZERO,
-  abs, ceil, floor, max, min, neg, normalize, round, sign, trunc,
+  type TwoF64,
+  INF,
+  NINF,
+  NaN2,
+  ONE,
+  PI,
+  ZERO,
+  abs,
+  ceil,
+  floor,
+  max,
+  min,
+  neg,
+  normalize,
+  round,
+  sign,
+  trunc,
 } from '../../src/index.js';
 
 const rng = xoroshiro128plus(1234);
@@ -16,7 +31,6 @@ const rand2 = rand2Fn(rng, true);
 const exponents = [-80, -53, 0, 52, 76];
 
 describe('Basic math functions', () => {
-
   test('abs / neg', () => {
     expect(neg(ZERO)).toEqual([-0, 0]);
     expect(neg(ONE)).toEqual([-1, 0]);
@@ -69,8 +83,8 @@ describe('Basic math functions', () => {
       for (const s of [1, -1] as const) {
         const x: TwoF64 = rand2(e, s, s);
         const y: TwoF64 = rand2(e, s, -s as Sign);
-        expect(sign(x)).toEqual([s*1, 0]);
-        expect(sign(y)).toEqual([s*1, 0]);
+        expect(sign(x)).toEqual([s, 0]);
+        expect(sign(y)).toEqual([s, 0]);
       }
     }
   });
@@ -234,7 +248,6 @@ describe('Basic math functions', () => {
   });
 
   test('min/max', () => {
-
     // one arg
     for (const x of [ZERO, ONE, neg(ONE), PI, neg(PI), INF, NINF, NaN2]) {
       expect(max(x)).toEqual(x);
@@ -267,10 +280,10 @@ describe('Basic math functions', () => {
     do {
       const posArgs = exponents.map(e => rand2(e, 1));
       const negArgs = exponents.map(e => rand2(e, -1));
-      const maxPos = posArgs.at(-1) as TwoF64;
+      const maxPos = posArgs.at(-1)!;
       const minPos = posArgs[0];
       const maxNeg = negArgs[0];
-      const minNeg = negArgs.at(-1) as TwoF64;
+      const minNeg = negArgs.at(-1)!;
 
       expect(max(...shuffle(rng, posArgs))).toEqual(maxPos);
       expect(max(...shuffle(rng, negArgs))).toEqual(maxNeg);
@@ -296,5 +309,4 @@ describe('Basic math functions', () => {
       expect(min(...argsNaN)).toEqual(NaN2);
     } while (repeat-- > 0);
   });
-
 });
