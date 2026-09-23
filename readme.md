@@ -170,8 +170,8 @@ import { abs, neg, sign, floor, ceil, trunc, round, min, max } from 'twofloat';
 
 ```typescript
 import {
-  eq, lt, le, gt, ge,
-  isZero, isOne, isFinite2, isInfinite2, isNaN2, isInteger2, isSafeInteger2, isSafeTwoInteger
+  eq, lt, gt, le, ge, // ==, <, >, ≤, ≥
+  isZero, isOne, isNaN2, isFinite, isInfinite, isInteger, isSafeInteger, isSafeTwoInteger
 } from 'twofloat';
 ```
 
