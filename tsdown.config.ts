@@ -7,6 +7,11 @@ export default defineConfig([{
   outDir: './dist/esm',
   tsconfig: './tsconfig.json',
   fixedExtension: false,
+  outputOptions: {
+    comments: {
+      jsdoc: false,
+    },
+  },
 }, {
   format: 'cjs',
   unbundle: true,
@@ -14,7 +19,12 @@ export default defineConfig([{
   outDir: './dist/cjs',
   tsconfig: './tsconfig-cjs.json',
   outExtensions() {
-    return { js: '.js' }
+    return { js: '.js' };
+  },
+  outputOptions: {
+    comments: {
+      jsdoc: false,
+    },
   },
 }, {
   format: 'umd',
@@ -24,8 +34,8 @@ export default defineConfig([{
   entry: './src/index.ts',
   globalName: 'twofloat',
   outputOptions: {
-    entryFileNames: 'twofloat.js'
-  }
+    entryFileNames: 'twofloat.js',
+  },
 }, {
   format: 'umd',
   platform: 'neutral',
@@ -36,6 +46,6 @@ export default defineConfig([{
   minify: true,
   sourcemap: true,
   outputOptions: {
-    entryFileNames: 'twofloat.min.js'
-  }
+    entryFileNames: 'twofloat.min.js',
+  },
 }]);
