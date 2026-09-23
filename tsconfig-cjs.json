@@ -4,6 +4,6 @@
       "module": "CommonJS",
       "moduleResolution": "bundler",
       "verbatimModuleSyntax": false,
-      "outDir": "${configDir}/dist/cjs",
+      "outDir": "./dist/cjs"
   }
 }
