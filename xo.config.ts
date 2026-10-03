@@ -1,4 +1,4 @@
-import {type FlatXoConfig} from 'xo';
+import { type FlatXoConfig } from 'xo';
 
 export default [{
   space: 2,
@@ -24,8 +24,13 @@ export default [{
     '@stylistic/brace-style': ['error', 'stroustrup', {
       allowSingleLine: true,
     }],
-    '@stylistic/object-curly-spacing': 'off',
-    '@stylistic/object-curly-newline': 'off',
+    '@stylistic/object-curly-spacing': ['error', 'always', {
+      arraysInObjects: false,
+    }],
+    '@stylistic/object-curly-newline': ['error', {
+      multiline: true,
+      consistent: true,
+    }],
     '@stylistic/no-multi-spaces': ['error', {
       ignoreEOLComments: true,
     }],
