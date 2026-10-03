@@ -1,4 +1,24 @@
-import { defineConfig } from 'tsdown';
+import { type UserConfig, defineConfig } from 'tsdown';
+import { minifySync } from 'oxc-minify';
+
+const selectiveMinify = {
+  name: 'selective-minify',
+  async generateBundle(opt, bundle) {
+    for (const [fileName, chunk] of Object.entries(bundle)) {
+      if (!(chunk.type === 'chunk' && /pre\/.+\.(?:c|m)?js$/v.test(fileName))) {
+        continue;
+      }
+
+      const result = minifySync(fileName, chunk.code, {
+        compress: true,
+        mangle: true,
+        codegen: { removeWhitespace: true },
+      });
+
+      chunk.code = result.code;
+    }
+  },
+} satisfies UserConfig['plugins'];
 
 export default defineConfig([{
   format: 'esm',
@@ -7,6 +27,7 @@ export default defineConfig([{
   outDir: './dist/esm',
   tsconfig: './tsconfig.json',
   fixedExtension: false,
+  plugins: [selectiveMinify],
   outputOptions: {
     comments: {
       jsdoc: false,
@@ -18,6 +39,7 @@ export default defineConfig([{
   entry: 'src/index.ts',
   outDir: './dist/cjs',
   tsconfig: './tsconfig-cjs.json',
+  plugins: [selectiveMinify],
   outExtensions() {
     return { js: '.js' };
   },
@@ -33,6 +55,7 @@ export default defineConfig([{
   outDir: './dist/umd',
   entry: './src/index.ts',
   globalName: 'twofloat',
+  plugins: [selectiveMinify],
   outputOptions: {
     entryFileNames: 'twofloat.js',
   },
