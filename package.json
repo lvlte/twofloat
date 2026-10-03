@@ -77,7 +77,7 @@
   },
   "allowScripts": {
     "@parcel/watcher": true,
-    "esbuild@0.28.2": true,
+    "esbuild": true,
     "unrs-resolver": true
   },
   "overrides": {
