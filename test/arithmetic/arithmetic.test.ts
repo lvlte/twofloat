@@ -39,7 +39,7 @@ import {
 } from '../utils.js';
 
 import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
-import {describe, expect, test} from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 
 const rng = xoroshiro128plus(5678);
 const random = randomFn(rng, true);

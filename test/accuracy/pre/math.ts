@@ -64,24 +64,24 @@ import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 // Functions to test grouped by signature
 const fnBySig = {
-  op1: {square_1, cube_1, sqrt_1, cbrt_1, ln_1, log2_1, log10_1, rempi_1, rem2pi_1},
-  op2: {square_2, cube_2, sqrt_2, cbrt_2, ln_2, log2_2, log10_2, rempi_2, rem2pi_2},
-  op1n: {_linpow_1, _logpow_1, _logpowltr, powint_1, nthroot_1},
-  op2n: {_linpow_2, _logpow_2, powint_2, nthroot_2},
-  exp1: {exp_1, expm1_1},
-  exp2: {exp_2, expm1_2},
-  op11: {pow_11},
-  op12: {pow_12},
-  op21: {pow_21},
-  op22: {pow_22},
+  op1: { square_1, cube_1, sqrt_1, cbrt_1, ln_1, log2_1, log10_1, rempi_1, rem2pi_1 },
+  op2: { square_2, cube_2, sqrt_2, cbrt_2, ln_2, log2_2, log10_2, rempi_2, rem2pi_2 },
+  op1n: { _linpow_1, _logpow_1, _logpowltr, powint_1, nthroot_1 },
+  op2n: { _linpow_2, _logpow_2, powint_2, nthroot_2 },
+  exp1: { exp_1, expm1_1 },
+  exp2: { exp_2, expm1_2 },
+  op11: { pow_11 },
+  op12: { pow_12 },
+  op21: { pow_21 },
+  op22: { pow_22 },
 } satisfies FnBySigOpt;
 
 type FnBySig = typeof fnBySig;
 type TestedFunctions = UnionToIntersection<FnBySig[keyof FnBySig]>;
 type FnName = keyof TestedFunctions;
-type ArgsListBySig = { [K in keyof FnBySig]: Array<Parameters<FnSig[K]>> };
-type FnOutputList = { [K in FnName]: Array<ReturnType<TestedFunctions[K]>> };
-type FnArgs = { [K in FnName]: Parameters<TestedFunctions[K]> };
+type ArgsListBySig = {[K in keyof FnBySig]: Array<Parameters<FnSig[K]>> };
+type FnOutputList = {[K in FnName]: Array<ReturnType<TestedFunctions[K]>> };
+type FnArgs = {[K in FnName]: Parameters<TestedFunctions[K]> };
 
 // Return the appropriate processArgs callback for the given function. The role
 // of the callback is to make the function parameters fit its domain if needed.

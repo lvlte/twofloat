@@ -32,17 +32,17 @@ import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 // Functions to test grouped by signature
 const fnBySig = {
-  opa1: {sum1, prod1},
-  opa2: {sum2, prod2},
-  op12: {sub12, div12},
+  opa1: { sum1, prod1 },
+  opa2: { sum2, prod2 },
+  op12: { sub12, div12 },
 } satisfies FnBySigOpt;
 
 type FnBySig = typeof fnBySig;
 type TestedFunctions = UnionToIntersection<FnBySig[keyof FnBySig]>;
 type FnName = keyof TestedFunctions;
 
-type ArgsListBySig = { [K in keyof FnBySig]: Array<Parameters<FnSig[K]>> };
-type FnOutputList = { [K in FnName]: Array<ReturnType<TestedFunctions[K]>> };
+type ArgsListBySig = {[K in keyof FnBySig]: Array<Parameters<FnSig[K]>> };
+type FnOutputList = {[K in FnName]: Array<ReturnType<TestedFunctions[K]>> };
 
 // Pseudo-random number generator
 const rng = xoroshiro128plus(2345);

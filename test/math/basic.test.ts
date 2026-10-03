@@ -2,7 +2,7 @@
  * @file Tests basic math functions
  */
 
-import {describe, expect, test} from '@jest/globals';
+import { describe, expect, test } from '@jest/globals';
 import { type Sign, rand2Fn, shuffle } from '../utils.js';
 import { nextFloat, prevFloat } from '@lvlte/ulp';
 import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';

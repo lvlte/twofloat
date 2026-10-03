@@ -12,10 +12,10 @@ type _UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends 
 ) ? I : never;
 
 export type UnionToIntersection<U> = _UnionToIntersection<U> extends infer O
-  ? { [K in keyof O]: O[K] }
+  ? {[K in keyof O]: O[K] }
   : never;
 
-export type Expand<T> = {} & T extends TwoF64 ? T : { [P in keyof T]: Expand<T[P]> };
+export type Expand<T> = {} & T extends TwoF64 ? T : {[P in keyof T]: Expand<T[P]> };
 export type Sign = -1 | 1;
 
 type RandomFnDefault = () => number;
@@ -52,11 +52,11 @@ export interface OpArgs {
   exp2: [x: TwoF64];
 }
 
-export type FnSig = { [K in SigId]: (...args: OpArgs[K]) => TwoF64 };
-export type FnBySig = {[K in keyof FnSig]: Record<string, FnSig[K]>};
+export type FnSig = {[K in SigId]: (...args: OpArgs[K]) => TwoF64 };
+export type FnBySig = {[K in keyof FnSig]: Record<string, FnSig[K]> };
 export type FnBySigOpt = Partial<FnBySig>;
 
-type ArgsListBySig = Partial<{[K in keyof FnBySig]: Array<Parameters<FnSig[K]>>}>;
+type ArgsListBySig = Partial<{[K in keyof FnBySig]: Array<Parameters<FnSig[K]>> }>;
 type FnOutputList = Record<string, TwoF64[]>;
 
 export type PArgsFnType<T> = T extends SigId

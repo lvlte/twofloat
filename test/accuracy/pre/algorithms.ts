@@ -47,17 +47,17 @@ const normalize: typeof _normalize = (x, y) => Math.abs(x) >= Math.abs(y)
 
 // Functions to test grouped by signature
 const fnBySig = {
-  op1: {split},
-  op11: {normalize, twoSum, twoProd},
-  op21: {DWPlusFP, DWTimesFP1, DWDivFP3},
-  op22: {AccurateDWPlusDW, DWTimesDW1, DWDivDW2},
+  op1: { split },
+  op11: { normalize, twoSum, twoProd },
+  op21: { DWPlusFP, DWTimesFP1, DWDivFP3 },
+  op22: { AccurateDWPlusDW, DWTimesDW1, DWDivDW2 },
 } satisfies FnBySigOpt;
 
 type FnBySig = typeof fnBySig;
 type TestedFunctions = UnionToIntersection<FnBySig[keyof FnBySig]>;
 type FnName = keyof TestedFunctions;
-type ArgsListBySig = { [K in keyof FnBySig]: Array<Parameters<FnSig[K]>> };
-type FnOutputList = { [K in FnName]: Array<ReturnType<TestedFunctions[K]>> };
+type ArgsListBySig = {[K in keyof FnBySig]: Array<Parameters<FnSig[K]>> };
+type FnOutputList = {[K in FnName]: Array<ReturnType<TestedFunctions[K]>> };
 
 // Pseudo-random number generator
 const rng = xoroshiro128plus(5678);

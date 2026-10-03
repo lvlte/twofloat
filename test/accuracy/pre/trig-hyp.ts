@@ -87,16 +87,16 @@ const fnBySig = {
     asinh_2, acosh_2, atanh_2, acoth_2, asech_2, acsch_2,
   },
   // functions defined in terms of e^x are tested apart from op1/op2 group
-  exp1: {sinh_1, cosh_1, tanh_1, coth_1, sech_1, csch_1},
-  exp2: {sinh_2, cosh_2, tanh_2, coth_2, sech_2, csch_2},
+  exp1: { sinh_1, cosh_1, tanh_1, coth_1, sech_1, csch_1 },
+  exp2: { sinh_2, cosh_2, tanh_2, coth_2, sech_2, csch_2 },
 } satisfies FnBySigOpt;
 
 type FnBySig = typeof fnBySig;
 type TestedFunctions = UnionToIntersection<FnBySig[keyof FnBySig]>;
 type FnName = keyof TestedFunctions;
-type ArgsListBySig = { [K in keyof FnBySig]: Array<Parameters<FnSig[K]>> };
-type FnOutputList = { [K in FnName]: Array<ReturnType<TestedFunctions[K]>> };
-type FnArgs = { [K in FnName]: Parameters<TestedFunctions[K]> };
+type ArgsListBySig = {[K in keyof FnBySig]: Array<Parameters<FnSig[K]>> };
+type FnOutputList = {[K in FnName]: Array<ReturnType<TestedFunctions[K]>> };
+type FnArgs = {[K in FnName]: Parameters<TestedFunctions[K]> };
 
 /**
  * Return the appropriate processArgs callback for the given function. The role
