@@ -102,7 +102,7 @@ type FnArgs = { [K in FnName]: Parameters<TestedFunctions[K]> };
  * Return the appropriate processArgs callback for the given function. The role
  * of the callback is to make the function parameters fit its domain if needed.
  */
-const processArgsFn = ((fnName: FnName): ProcessArgsFn => {
+const processArgsFn = ((fnName: FnName): ProcessArgsFn<keyof FnBySig> => {
   switch (fnName) {
     // domain [-1, 1]
     case 'asin_1':
@@ -222,7 +222,7 @@ const processArgsFn = ((fnName: FnName): ProcessArgsFn => {
       };
 
     default:
-      return ((...args: FnArgs[typeof fnName]) => args) as ProcessArgsFn;
+      return ((...args: FnArgs[typeof fnName]) => args) as ProcessArgsFn<keyof FnBySig>;
   }
 }) as PArgsFnType<keyof FnBySig>;
 
