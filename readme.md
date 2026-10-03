@@ -79,7 +79,6 @@ const x = div(1, 10);         // [0.1, -5.551115123125783e-18]
 const [yhi, ylo] = mul(x, 3); // [0.3, 1.1102230246251563e-17]
 
 console.log(yhi === 0.3);     // true 🎉
-);
 ```
 
 In most cases, when done with twice-precision calculations, you can go with the high part. In our example `yhi`.
