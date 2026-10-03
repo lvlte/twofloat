@@ -36,16 +36,19 @@
     "dist"
   ],
   "scripts": {
+    "tscheck": "tsc --noEmit && tsc -p ./test/tsconfig.json",
     "test:clean": "rm -Rf ./test/accuracy/pre/output && mkdir \"./test/accuracy/pre/output\"",
+    "test:unit": "jest --verbose",
     "test:prejl": "tsx ./test/accuracy/prerun.ts",
     "test:jl": "julia ./test/accuracy/runtests.jl",
-    "pretest": "npm run test:clean && npm run test:prejl",
-    "test": "xo --quiet && jest --verbose && npm run test:jl",
+    "pretest": "npm run tscheck && npm run lint && npm run test:clean",
+    "test": "npm run test:unit && npm run test:prejl && npm run test:jl",
     "prebuild": "rm -Rf dist && mkdir dist",
     "build": "tsdown",
     "postbuild": "(echo { \"type\": \"commonjs\" }) > ./dist/cjs/package.json",
     "prepublishOnly": "npm test && npm run build",
-    "lint": "xo --quiet"
+    "lint": "xo --quiet",
+    "lint:fix": "xo --fix --quiet"
   },
   "keywords": [
     "double-double",
