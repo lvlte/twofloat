@@ -11,6 +11,7 @@ export default [{
   ignores: ['./package.json'],
 }, {
   rules: {
+    'no-bitwise': 'off',
     'capitalized-comments': 'off',
     'no-implicit-coercion': ['error', {
       allow: ['+'],
@@ -54,6 +55,7 @@ export default [{
     }],
     '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
     '@typescript-eslint/naming-convention': 'off',
+    '@typescript-eslint/triple-slash-reference': 'off',
     '@typescript-eslint/switch-exhaustiveness-check': ['error', {
       allowDefaultCaseForExhaustiveSwitch: false,
       considerDefaultExhaustiveForUnions: true,
@@ -69,6 +71,7 @@ export default [{
       allowNumber: true,
       allowString: true,
     }],
+    'unicorn/prefer-at': 'off',
     'jsdoc/check-indentation': 'off',
     'jsdoc/require-asterisk-prefix': 'off',
     'unicorn/no-break-in-nested-loop': 'off',
@@ -79,10 +82,14 @@ export default [{
     'unicorn/no-constant-zero-expression': 'off',
     'unicorn/prefer-number-is-safe-integer': 'off',
     'unicorn/prefer-simple-condition-first': 'off',
+    'unicorn/prefer-bigint-literals': 'off',
     'unicorn/switch-case-braces': ['error', 'avoid'],
     'unicorn/numeric-separators-style': ['error', {
       onlyIfContainsSeparator: true,
     }],
+    '@typescript-eslint/prefer-regexp-exec': 'off',
+    'regexp/prefer-named-capture-group': 'off',
+    'require-unicode-regexp': 'off',
   },
 }, {
   files: ['src/pre/*'],
