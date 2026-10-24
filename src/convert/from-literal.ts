@@ -23,6 +23,11 @@ const F64_MAX_INT_LITERAL = 18014398509481988;
 /**
  * Return the literal (base 10) representation of `x` as a `TwoF64` number.
  *
+ * The relative error is bounded at `u²`, with `u = 2^-53` for finite `x` (ie.
+ * the result `y` is such that `|(x₁₀ - y)/y| ≤ 2^-106`) - if the runtime env
+ * doesn't support `bigint`, the bound is estimated at `~8u^2`. For subnormal
+ * input, the max roundoff error is `|x - r| < ulp(ulp(x))`.
+ *
  * @param x The input number
  * @returns The {@link TwoF64|`TwoF64`} representation of `"${x}"`
  */
