@@ -1,5 +1,5 @@
-# Test the accuracy of twofloat's math functions
-# Function inputs/outputs dataset is created by /test/accuracy/pre/math.ts
+# Test the accuracy of twofloat's arithmetic functions
+# Function inputs/outputs dataset is created by /test/accuracy/pre/arithmetic.ts
 
 json = read("$(dirname(@__DIR__))/pre/output/arithmetic.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)

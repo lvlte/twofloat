@@ -21,6 +21,10 @@ ENV["JULIA_DEBUG"] = debug ? "all" : ""
         include("./testset/trig-hyp.jl")
     end
 
+    @testset verbose=true "Helper Functions ─────────────────────" begin
+        include("./testset/twof64.jl")
+    end
+
     @testset verbose=true "Test Coverage ──────────────────────" begin
         # Ensure all functions that have produced outputs are actually tested
         # (independently of code coverage)

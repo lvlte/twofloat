@@ -7,6 +7,10 @@ setprecision(BigFloat, 512)
 const TwoF64 = Tuple{Float64, Float64}
 const VecF64 = Vector{Float64}
 const VecTwo = Vector{TwoF64}
+const RationalTuple = Tuple{BigInt, BigInt}
+
+Base.convert(::Type{BigInt}, x::AbstractString) = Base.BigInt(x)
+Base.BigInt(x::AbstractString) = Base.parse(BigInt, x);
 
 const split_max = prevfloat(floatmax(Float64)/(2^27 + 1))
 const u = big(2.0)^-precision(Float64)
@@ -31,6 +35,7 @@ struct ArgsList
     opa2::Union{Vector{Tuple{VecTwo}},Nothing}
     exp1::Union{Vector{Tuple{Float64}},Nothing}
     exp2::Union{Vector{Tuple{TwoF64}},Nothing}
+    r::Union{Vector{Tuple{RationalTuple}},Nothing}
 end
 
 struct TestSet
