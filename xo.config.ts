@@ -83,6 +83,7 @@ export default [{
     'unicorn/prefer-number-is-safe-integer': 'off',
     'unicorn/prefer-simple-condition-first': 'off',
     'unicorn/prefer-bigint-literals': 'off',
+    'unicorn/prefer-math-trunc': 'off',
     'unicorn/switch-case-braces': ['error', 'avoid'],
     'unicorn/numeric-separators-style': ['error', {
       onlyIfContainsSeparator: true,
