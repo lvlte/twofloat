@@ -93,9 +93,10 @@ function f64FromRational([p, q]: Rational): f64 {
 /**
  * Returns the closest `TwoF64` number to the exact rational number `r`.
  *
- * The result `x` is such that `|x - r| < ulp(ulp(x))` (except when `x`
- * overflows to `±Infinity`). For normal numbers, it means the max relative
- * roundoff error is bounded at 2^-106`.
+ * Closest means the relative error is bounded at `u²`, with `u = 2^-53` (ie.
+ * the result `x` is such that `|(x - r)/r| ≤ 2^-106`), except obviously when
+ * `x` overflows to `±Infinity`, and for subnormals the max roundoff error is
+ * `|x - r| < ulp(ulp(x))`).
  *
  * @param r a rational number represented as a tuple `[num: bigint, den: bigint]`
  * @returns a {@link TwoF64|`TwoF64`} number
@@ -126,16 +127,3 @@ export function twof64FromRational([p, q]: Rational): TwoF64 {
 
   return [hi, lo];
 }
-
-// https://github.com/lvlte/twofloat/issues/5
-// https://github.com/lvlte/rationalize/commit/dcf4d8bd7b323e238e19b14b6197ea2c639ac57d
-// Well this among other things has already been - it seems - plagiarized.
-// Edifying, how a dormant repo suddenly wakes up less than one month after
-// twofloat 1st release, suddenly "discovering" various unrelated issues and
-// addressing all of them in a massive noisy commit without doing the additional
-// tests that could have revealed the existence of those issues.
-// To the person concerned: use everything you need but please be fair, respect
-// the licence terms. "Taken from [...]" is not enough when the copyright notice
-// of the original author is missing. Fairness would also require adding public
-// mentions in the readme/changelog. I would have prefered discussing this in
-// private so if you want you can contact me at lvlte.code@gmail.com.
