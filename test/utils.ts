@@ -4,8 +4,10 @@
 
 import { exponent } from '@lvlte/ulp';
 import { type TwoF64, type f64, type int, F64_SPLITTER, normalize } from '../src/index.js';
+import { type Rational } from '../src/convert/from-rational.js';
 import { type RandomGenerator } from 'pure-rand/types/RandomGenerator';
 import { uniformFloat64 } from 'pure-rand/distribution/uniformFloat64';
+import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 
 type _UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   (k: infer I) => void
@@ -35,7 +37,7 @@ type Rand2Fn<T extends boolean> = T extends false
     : never;
 
 export type SigId = 'op1' | 'op2' | 'op11' | 'op12' | 'op21' | 'op22' | 'op1n' | 'op2n'
-  | 'opa1' | 'opa2' | 'exp1' | 'exp2';
+  | 'opa1' | 'opa2' | 'exp1' | 'exp2' | 'r';
 
 export interface OpArgs {
   op1: [x: f64];
@@ -50,6 +52,7 @@ export interface OpArgs {
   opa2: [x: TwoF64[]];
   exp1: [x: f64];
   exp2: [x: TwoF64];
+  r: [x: Rational];
 }
 
 export type FnSig = {[K in SigId]: (...args: OpArgs[K]) => TwoF64 };
@@ -90,7 +93,7 @@ export function ldexp2([xhi, xlo]: TwoF64, n: number): TwoF64 {
  * `rng`.
  * - if `rangeOpt` is `true`, the generator expects two arguments `exp` and
  *   `sign` that define its output range `[sign*2^exp, sign*2^(exp+1)]`
- * - otherwise the generated numbers are in the range `[0, 1]`.
+ * - otherwise the generated numbers are in the range `[0, 1)`.
  */
 export function randomFn<T extends boolean>(rng: RandomGenerator, rangeOpt: T): RandomFn<T> {
   if (rangeOpt) {
@@ -113,7 +116,7 @@ export function randomFn<T extends boolean>(rng: RandomGenerator, rangeOpt: T): 
  *   `sign` that define its output range `[sign*2^exp, sign*2^(exp+1)]`, a third
  *   argument `losign` (optional, default is random) determines the sign of `lo`
  *   in the output
- * - otherwise the generated numbers are in the range `[0, 1]`.
+ * - otherwise the generated numbers are in the range `[0, 1)`.
  */
 export function rand2Fn<T extends boolean>(rng: RandomGenerator, rangeOpt: T): Rand2Fn<T> {
   if (rangeOpt) {
@@ -222,4 +225,15 @@ export function collectOutputs<T extends FnOutputList>(fnBySig: FnBySigOpt, args
   }
 
   return fnOutput as Expand<T>;
+}
+
+const srng = xoroshiro128plus(123);
+
+/**
+ * Return `-1` or `1` randomly. `p` can be set to adjust the probabilty of
+ * returning `1` rather than `-1`.
+ */
+export function randomSign(p = 0.5): Sign {
+  const x = uniformFloat64(srng);
+  return x < p ? 1 : -1;
 }

@@ -9,3 +9,4 @@ import './pre/algorithms.js';
 import './pre/arithmetic.js';
 import './pre/math.js';
 import './pre/trig-hyp.js';
+import './pre/twof64.js';
