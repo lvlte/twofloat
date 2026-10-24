@@ -15,6 +15,12 @@ import { powint_1 } from '../math/exp-impl.js';
 import { twof64FromRational } from './from-rational.js';
 
 /**
+ * Largest Float64 integer whose literal (decimal) representation is guaranteed
+ * to match its binary representation exactly.
+ */
+const F64_MAX_INT_LITERAL = 18014398509481988;
+
+/**
  * Return the literal (base 10) representation of `x` as a `TwoF64` number.
  *
  * @param x The input number
@@ -36,7 +42,7 @@ export function fromLiteral(x: f64): TwoF64 {
   const sign = Math.sign(x);
   x = Math.abs(x);
 
-  if (Number.isInteger(x) && x <= Number.MAX_SAFE_INTEGER) {
+  if (Number.isInteger(x) && x <= F64_MAX_INT_LITERAL) {
     return [sign*x, 0];
   }
 
@@ -48,7 +54,9 @@ export function fromLiteral(x: f64): TwoF64 {
   const nstr = m[1] + m[2];
   const n = +nstr;
 
-  if (exp >= 0 && exp < 23 && n <= Number.MAX_SAFE_INTEGER) {
+  if (exp >= 0 && exp < 23 && (
+    n <= Number.MAX_SAFE_INTEGER || (n.toString() === nstr && n <= F64_MAX_INT_LITERAL))
+  ) {
     return mul11(sign*n, 10**exp);
   }
 
