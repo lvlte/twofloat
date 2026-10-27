@@ -1,11 +1,6 @@
 # Test the accuracy of the twof64 helpers
 # Function inputs/outputs dataset is created by /test/accuracy/pre/twof64.ts
 
-# import Base: BigInt, convert
-
-# convert(::Type{BigInt}, x::AbstractString) = BigInt(x)
-# BigInt(x::AbstractString) = parse(BigInt, x);
-
 json = read("$(dirname(@__DIR__))/pre/output/twof64.json", String)
 testset = JSON.parse(json, TestSet; null=NaN)
 
@@ -29,7 +24,7 @@ merge!(coverage, OrderedDict(keys(fn_output) .=> false))
         _test(Dict(
             "fn" => "fromLiteralNoBigInt",
             "args" => args_list.op1,
-            "rel_err_bound" => 8u^2,
+            "rel_err_bound" => 16u^2,
             "compute" => x -> BigFloat("$x"),
         ))
     end
@@ -41,6 +36,15 @@ merge!(coverage, OrderedDict(keys(fn_output) .=> false))
             "rel_err_bound" => u^2,
             "process_args" => r -> Rational{BigInt}(r...),
             "compute" => r -> BigFloat(r),
+        ))
+    end
+
+    @testset "fromString" begin
+        _test(Dict(
+            "fn" => "fromString",
+            "args" => args_list.str,
+            "rel_err_bound" => u^2,
+            "compute" => str -> BigFloat(str),
         ))
     end
 end

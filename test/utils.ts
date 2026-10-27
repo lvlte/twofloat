@@ -37,7 +37,7 @@ type Rand2Fn<T extends boolean> = T extends false
     : never;
 
 export type SigId = 'op1' | 'op2' | 'op11' | 'op12' | 'op21' | 'op22' | 'op1n' | 'op2n'
-  | 'opa1' | 'opa2' | 'exp1' | 'exp2' | 'r';
+  | 'opa1' | 'opa2' | 'exp1' | 'exp2' | 'str' | 'r';
 
 export interface OpArgs {
   op1: [x: f64];
@@ -52,6 +52,7 @@ export interface OpArgs {
   opa2: [x: TwoF64[]];
   exp1: [x: f64];
   exp2: [x: TwoF64];
+  str: [x: string];
   r: [x: Rational];
 }
 
