@@ -35,6 +35,7 @@ struct ArgsList
     opa2::Union{Vector{Tuple{VecTwo}},Nothing}
     exp1::Union{Vector{Tuple{Float64}},Nothing}
     exp2::Union{Vector{Tuple{TwoF64}},Nothing}
+    str::Union{Vector{Tuple{String}},Nothing}
     r::Union{Vector{Tuple{RationalTuple}},Nothing}
 end
 

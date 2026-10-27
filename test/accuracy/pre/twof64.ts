@@ -4,6 +4,7 @@
 
 import { xoroshiro128plus } from 'pure-rand/generator/xoroshiro128plus';
 import { uniformBigInt } from 'pure-rand/distribution/uniformBigInt';
+import { uniformInt } from 'pure-rand/distribution/uniformInt';
 import {
   collectOutputs,
   initArgsList,
@@ -13,9 +14,10 @@ import {
   type UnionToIntersection,
 } from '../../utils.js';
 
-import { type TwoF64 } from '../../../src/index.js';
 import { writeFileSync } from 'node:fs';
+import { type TwoF64 } from '../../../src/index.js';
 import { fromLiteral } from '../../../src/convert/from-literal.js';
+import { fromString } from '../../../src/convert/from-string.js';
 import { twof64FromRational as fromRational, type Rational } from '../../../src/convert/from-rational.js';
 
 const originalBigInt = BigInt;
@@ -31,6 +33,7 @@ const fromLiteralNoBigInt = (x: number): TwoF64 => {
 // Functions to test grouped by signature
 const fnBySig = {
   op1: { fromLiteral, fromLiteralNoBigInt },
+  str: { fromString },
   r: { fromRational },
 } satisfies FnBySigOpt;
 
@@ -59,8 +62,9 @@ function randint(p: bigint): [bigint, string] {
     return [n, n0.toString()];
   }
 
-  const nfstr = r.toString().padStart(Number(p) - 1, '0');
-  const nstr = `${n0}.${nfstr.replace(/0$/, '')}`;
+  // eslint-disable-next-line regexp/no-super-linear-move
+  const nfstr = r.toString().padStart(Number(p) - 1, '0').replace(/0+$/, '');
+  const nstr = `${n0}.${nfstr}`;
 
   return [n, nstr];
 }
@@ -68,13 +72,13 @@ function randint(p: bigint): [bigint, string] {
 /**
  * Helper to generate various f64 numbers to be used as literal
  */
-function f64Literal(precision: bigint, exp: bigint) {
+function f64Literal(precision: bigint, exp: number) {
   const [n, nstr] = randint(precision);
-  const xabs = +`${n}e-${exp}`;
+  const xabs = +`${n}e${exp}`;
   const xstr = xabs.toExponential().slice(0, nstr.length);
 
   if (xstr !== nstr) {
-    // There is no f64 number that has a literal representation matching `${p}e-${exp}`
+    // no f64 number has a literal representation matching +`${n}e${exp}`
     return false;
   }
 
@@ -88,26 +92,26 @@ const argsList = initArgsList<ArgsListBySig>(fnBySig);
 
 // Generate and add numbers to argsList
 for (let precision = 1n; precision < 18n; precision++) {
-  const emax = precision + 25n;
-  for (let exp = 0n; exp <= emax; exp++) {
-    for (let i = 0; i < 50; i++) {
-      const x = f64Literal(precision, exp);
-      if (x !== false) {
-        argsList['op1'].push([x]);
-      }
-    }
-  }
-
-  for (let i = 0; i < 1e3; i++) {
-    const exp = uniformBigInt(rng, 0n, 100n);
-    const x = f64Literal(precision, exp);
-    if (x !== false) {
+  let imax = 5*Number(precision);
+  for (let exp = 0; exp < 70; exp++) {
+    for (let i = 0; i < imax; i++) {
+      const x = f64Literal(precision, randomSign(0.4)*exp);
+      if (x === false) continue;
       argsList['op1'].push([x]);
     }
   }
+
+  imax *= 5;
+  for (let i = 0; i < imax; i++) {
+    const exp = uniformInt(rng, 0, 200);
+    const x = f64Literal(precision, randomSign()*exp);
+    if (x === false) continue;
+    argsList['op1'].push([x]);
+  }
 }
 
-// Higher precision rational
+// Higher precision rational (rationals with smaller components are implicitly
+// tested via fromLiteral/fromString)
 const from = 10n**18n;
 const to = BigInt(Number.MAX_VALUE);
 for (let i = 0; i < 5e4; i++) {
@@ -116,6 +120,55 @@ for (let i = 0; i < 5e4; i++) {
   const sign = BigInt(randomSign());
   const r: Rational = [sign*p, q];
   argsList['r'].push([r]);
+}
+
+// Decimal strings
+for (let precision = 1n; precision < 100n; precision++) {
+  const [start, end] = [10n**(precision - 1n), 10n**precision - 1n];
+
+  // simple strings
+  let n = uniformBigInt(rng, start, end);
+  let nstr = n.toString();
+  argsList['str'].push([nstr], [`0.${nstr}`]);
+
+  let sign = randomSign() < 0 ? '-' : '+';
+  n = uniformBigInt(rng, start, end);
+  nstr = n.toString();
+  argsList['str'].push([`${sign}${nstr}`], [`${sign}0.${nstr}`]);
+
+  // with zeroes
+  for (let i = 0; i < 50; i++) {
+    n = uniformBigInt(rng, start, end);
+    nstr = n.toString();
+    sign = randomSign() < 0 ? '-' : '';
+    const lz = '0'.repeat(uniformInt(rng, 1, 1 + i*4));
+    const tz = '0'.repeat(uniformInt(rng, 1, 1 + i*4));
+    argsList['str'].push([`${sign}${nstr}${tz}`], [`${sign}0.${lz}${nstr}`]);
+  }
+
+  if (precision < 2n) continue;
+
+  // exponential notation
+  for (let i = 0; i < 150; i++) {
+    n = uniformBigInt(rng, start, end);
+    nstr = n.toString();
+    nstr = `${nstr[0]}.${nstr.slice(1)}`;
+    sign = randomSign() < 0 ? '-' : '';
+    const exp = randomSign() * uniformInt(rng, 0, i);
+    argsList['str'].push([`${sign}${nstr}e${exp}`]);
+  }
+
+  // significant ipart and fpart
+  for (let i = 0; i < 150; i++) {
+    n = uniformBigInt(rng, start, end);
+    const m = 10n**uniformBigInt(rng, 1n, precision - 1n);
+    const fpart = n % m;
+    const ipart = n - fpart;
+    sign = randomSign() < 0 ? '-' : '';
+    const str = `${sign}${ipart}.${fpart}`;
+    const exp = randomSign() * uniformInt(rng, 0, i);
+    argsList['str'].push([str], [`${str}e${exp}`]);
+  }
 }
 
 // Produce the list of outputs keyed by function
