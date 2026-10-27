@@ -11,6 +11,7 @@ export default [{
   ignores: ['./package.json'],
 }, {
   rules: {
+    curly: ['error', 'multi-line'],
     'no-bitwise': 'off',
     'capitalized-comments': 'off',
     'no-implicit-coercion': ['error', {
@@ -18,6 +19,7 @@ export default [{
     }],
     complexity: ['error', {
       variant: 'modified',
+      max: 25,
     }],
     'new-cap': ['error', {
       capIsNewExceptionPattern: '^(?:Accurate)?DW',
@@ -71,9 +73,10 @@ export default [{
       allowNumber: true,
       allowString: true,
     }],
-    'unicorn/prefer-at': 'off',
     'jsdoc/check-indentation': 'off',
     'jsdoc/require-asterisk-prefix': 'off',
+    'unicorn/new-for-builtins': 'off',
+    'unicorn/prefer-at': 'off',
     'unicorn/no-break-in-nested-loop': 'off',
     'unicorn/name-replacements': 'off',
     'unicorn/prefer-math-constants': 'off',
