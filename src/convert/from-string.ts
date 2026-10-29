@@ -6,13 +6,13 @@
  * @module twofloat/fromString
  */
 
-import { NaN2, type TwoF64 } from '../base/common.js';
-import { add21, add22 } from '../arithmetic/add.js';
+import { NaN2, type f64, type TwoF64 } from '../base/common.js';
+import { add, add21, add22 } from '../arithmetic/add.js';
 import { div } from '../arithmetic/div.js';
 import { mul, mul11 } from '../arithmetic/mul.js';
 import { neg } from '../math/basic.js';
 import { powint_1 } from '../math/exp-impl.js';
-import { _decimalRatio, twof64FromRational } from './from-rational.js';
+import { twof64FromRational } from './from-rational.js';
 
 /**
  * Largest Float64 integer whose literal (decimal) representation is guaranteed
@@ -70,18 +70,23 @@ export function fromString(str: string): TwoF64 {
     return NaN2;
   }
 
-  m[2] = m[2]?.replace(LZERO_MATCHER, '') ?? '';
-  m[3] = m[3]?.replace(TZERO_MATCHER, '') ?? '';
+  m[2] ??= '';
+  m[3] ??= '';
+  m[4] ??= '0';
 
-  const sign = (m[1] ?? '+') === '+' ? 1 : -1;
-  const exp = +(m[4] ?? '0') - m[3].length;
+  const sign = m[1] === '-' ? -1 : 1;
+  let exp = +m[4] - m[3].length;
+  let nstr = (m[2] + m[3]).replace(LZERO_MATCHER, '');
 
-  const nstr = m[2] + m[3];
+  if (nstr.endsWith('0')) {
+    const len = nstr.length;
+    nstr = nstr.replace(TZERO_MATCHER, '');
+    exp += len - nstr.length;
+  }
+
   const n = +nstr;
 
-  if (exp >= 0 && exp < 23 && (
-    n <= Number.MAX_SAFE_INTEGER || (n <= F64_MAX_INT_LITERAL && n.toString() === nstr))
-  ) {
+  if (exp >= 0 && exp < 23 && isSafeIntStr(n, nstr)) {
     return mul11(sign*n, 10**exp);
   }
 
@@ -93,31 +98,58 @@ export function fromString(str: string): TwoF64 {
     const r: [bigint, bigint] = exp < 0 ? [bign, pow10] : [bign * pow10, BigInt(1)];
     xx = twof64FromRational(r);
   }
+  else if (isSafeIntStr(n, nstr)) {
+    const pow10 = tenpow(exp);
+    xx = exp < 0 ? div(n, pow10) : mul(pow10, n);
+  }
   else {
-    const absexp = Math.abs(exp);
-    const pow10 = absexp < 23 ? 10**absexp : powint_1(10, absexp);
-    if (n <= Number.MAX_SAFE_INTEGER) {
-      xx = exp < 0 ? div(n, pow10) : mul(pow10, n);
-    }
-    else {
-      // todo: strip nstr trailing zeroes
-      const nn = twoFromIntStr(nstr);
-      xx = exp < 0 ? div(nn, pow10) : mul(pow10, nn);
-    }
+    xx = twoFromIntStr(nstr, exp);
   }
 
   return sign < 0 ? neg(xx) : xx;
 }
 
-function twoFromIntStr(nstr: string): TwoF64 {
+/**
+ * Checks whether `nstr`, coerced to number `n`, is a safe integer literal (safe
+ * in this context means the decimal and the binary representations match).
+ * Expects absolute values.
+ */
+function isSafeIntStr(n: f64, nstr: string): boolean {
+  return n <= Number.MAX_SAFE_INTEGER || (
+    n <= F64_MAX_INT_LITERAL && n.toString() === nstr
+  );
+}
+
+/**
+ * Return 10^|n|
+ */
+function tenpow(n: f64): f64 | TwoF64 {
+  n = Math.abs(n);
+  return n < 23 ? 10**n : powint_1(10, n);
+}
+
+/**
+ * Decimal string to `TwoF64` conversion (no bigint fallback).
+ *
+ * Returns `n`, an integer represented by the decimal string `nstr`, multiplied
+ * by `10^exp`, as a `TwoF64` number. Assume `nstr` is unsigned with no trailing
+ * zeroes.
+ */
+function twoFromIntStr(nstr: string, exp: f64): TwoF64 {
   const len = nstr.length;
+  const pow10 = tenpow(exp);
+  let n: TwoF64;
+
+  // split in 15-digits chunks (safe int)
   if (nstr.length <= 30) {
-    return add21(mul11(+nstr.slice(0, 15), 10**(len - 15)), +nstr.slice(15));
+    n = add21(mul11(+nstr.slice(0, 15), 10**(len - 15)), +nstr.slice(15));
+  }
+  else {
+    const n1 = mul(+nstr.slice(0, 15), tenpow(len - 15));
+    const n2 = mul(+nstr.slice(15, 30), tenpow(len - 30));
+    const n3 = nstr.length > 45 ? fromString(nstr.slice(30)) : +nstr.slice(30);
+    n = add22(add(n3, n2), n1);
   }
 
-  const n1 = mul11(+nstr.slice(0, 15), 10**(len - 15));
-  const n2 = mul11(+nstr.slice(15, 30), 10**(len - 30));
-  const lo = +nstr.slice(30);
-
-  return add21(add22(n1, n2), lo);
+  return exp < 0 ? div(n, pow10) : mul(pow10, n);
 }
