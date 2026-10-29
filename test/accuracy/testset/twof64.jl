@@ -47,4 +47,13 @@ merge!(coverage, OrderedDict(keys(fn_output) .=> false))
             "compute" => str -> BigFloat(str),
         ))
     end
+
+    @testset "fromString (no bigint)" begin
+        _test(Dict(
+            "fn" => "fromStringNoBigInt",
+            "args" => args_list.str,
+            "rel_err_bound" => 16u^2,
+            "compute" => str -> BigFloat(str),
+        ))
+    end
 end

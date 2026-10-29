@@ -30,10 +30,19 @@ const fromLiteralNoBigInt = (x: number): TwoF64 => {
   return xx;
 };
 
+const fromStringNoBigInt = (x: string): TwoF64 => {
+  // @ts-expect-error mock env with no bigint
+  delete globalThis.BigInt;
+  const xx = fromString(x);
+  // eslint-disable-next-line unicorn/no-global-object-property-assignment
+  globalThis.BigInt = originalBigInt;
+  return xx;
+};
+
 // Functions to test grouped by signature
 const fnBySig = {
   op1: { fromLiteral, fromLiteralNoBigInt },
-  str: { fromString },
+  str: { fromString, fromStringNoBigInt },
   r: { fromRational },
 } satisfies FnBySigOpt;
 
