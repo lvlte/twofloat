@@ -11,28 +11,73 @@ import { type f64, type TwoF64 } from '../base/common.js';
 
 export type Rational = [num: bigint, den: bigint];
 
-const FLOAT64_EMAX = 1023;
+// Reusable 64-bit buffer / typed array (avoid allocations)
+const BUF = new ArrayBuffer(8);
+const F64_VIEW = new Float64Array(BUF);
+const U64_VIEW = typeof BigUint64Array === 'function'
+  ? new BigUint64Array(BUF)
+  : [] as unknown as BigUint64Array;
 
 /**
  * Returns the dyadic rational representation of `x` (error-free transform).
  *
  * Assume `x` is a finite number.
  */
-function dyadicRational(x: f64): Rational {
-  const k = x.toString(2).split('.', 2)[1]?.length ?? 0;
-
-  if (k > FLOAT64_EMAX) {
-    // prevent spurious overflow
-    const m = k - FLOAT64_EMAX;
-    const p = BigInt(x * 2**FLOAT64_EMAX * 2**m);
-    const q = BigInt(1) << BigInt(k);
-    return [p, q];
+export function dyadicRational(x: f64): Rational {
+  const one = BigInt(1);
+  if (Number.isInteger(x)) {
+    return [BigInt(x), one];
   }
 
-  const q = 2**k;
-  const p = x*q;
+  F64_VIEW[0] = x;
+  const bits = U64_VIEW[0];
 
-  return [BigInt(p), BigInt(q)];
+  let m = bits & BigInt(0xFFFFFFFFFFFFF);               // raw mantissa
+  let e = Number((bits >> BigInt(52)) & BigInt(0x7FF)); // raw exponent
+
+  // normalized mantissa / unbiased exponent
+  if (e === 0) {
+    // subnormal
+    e = -1074;
+  }
+  else {
+    // normal (implicit leading 1)
+    m |= BigInt(0x10000000000000);
+    e -= 1075;
+  }
+
+  // Strip trailing zeroes to obttain an irreducible fraction
+  const tz = ctz64(m);
+  if (tz > 0) {
+    m >>= BigInt(tz);
+    e += tz;
+  }
+
+  // x is not an integer so we know the exponent is negative
+  return [BigInt(Math.sign(x)) * m, one << BigInt(-e)];
+}
+
+/**
+ * Count the number of trailing zero bits in the binary representation of `x`.
+ *
+ * Assume `x` is a non-zero 64-bit integer.
+ */
+function ctz64(x: bigint): number {
+  let tz = 0;
+
+  // Extract the lowest 32 bits as a signed int32
+  let x32 = Number(x & BigInt(0xFFFFFFFF)) | 0;
+
+  if (x32 === 0) {
+    // empty, check the upper 32 bits
+    tz = 32;
+    x32 = Number(x >> BigInt(32)) | 0;
+  }
+
+  // Count lz of the two's complement to deduce the number of tz
+  tz += 31 - Math.clz32(x32 & -x32);
+
+  return tz;
 }
 
 /**
@@ -61,7 +106,8 @@ function f64FromRational([p, q]: Rational): f64 {
   [sign, p] = p < zero ? [-1, -p] : [1, p];
 
   // We want to scale p/q by 2^k so that (p * 2^k)/q is a 53-bit integer.
-  const d = p.toString(2).length - q.toString(2).length; // TODO perf
+  // const d = p.toString(2).length - q.toString(2).length; // TODO perf
+  const d = bitlen(p) - bitlen(q);
   let k = Math.min(52 - d, 1074); // maximum subnormal shift limit
 
   let m: bigint; // mantissa
@@ -69,7 +115,7 @@ function f64FromRational([p, q]: Rational): f64 {
   let qq = q;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  k >= 0 ? pp = p << BigInt(k) : qq = q << BigInt(-k);
+  k >= 0 ? (pp = p << BigInt(k)) : (qq = q << BigInt(-k));
   m = pp/qq;
 
   // Align the fraction to exactly 53 bits
@@ -91,12 +137,12 @@ function f64FromRational([p, q]: Rational): f64 {
 }
 
 /**
- * Returns the closest `TwoF64` number to the exact rational number `r`.
+ * Converts a rational number `r` into a {@link TwoF64|`TwoF64`} number.
  *
- * Closest means the relative error is bounded at `u²`, with `u = 2^-53` (ie.
- * the result `x` is such that `|(x - r)/r| ≤ 2^-106`), except obviously when
- * `x` overflows to `±Infinity`, and for subnormals the max roundoff error is
- * `|x - r| < ulp(ulp(x))`).
+ * The result `x` is the most accurate twice-precision representation of `r`:
+ * when rounding occurs, the relative error is bounded at `u²` with `u = 2^-53`,
+ * except when `x` overflows to `±Infinity` or when `x` lies in the subnormal
+ * range (in the latter case, the maximum absolute roundoff error is `2^-1075`).
  *
  * @param r a rational number represented as a tuple `[num: bigint, den: bigint]`
  * @returns a {@link TwoF64|`TwoF64`} number
@@ -113,7 +159,16 @@ export function twof64FromRational([p, q]: Rational): TwoF64 {
     [p, q] = [-p, -q];
   }
 
-  const hi = q > 0 ? f64FromRational([p, q]) : Infinity*(p < 0 ? -1 : 1);
+  // @ts-expect-error - intentional (avoid bigint literal)
+  // eslint-disable-next-line eqeqeq
+  return q == 0 ? [Infinity*(p < 0 ? -1 : 1), 0] : _twof64FromRational([p, q]);
+}
+
+/**
+ * twof64FromRational no-check (assume q > 0)
+ */
+export function _twof64FromRational([p, q]: Rational): TwoF64 {
+  const hi = f64FromRational([p, q]);
 
   if (hi === 0 || Math.abs(hi) === Infinity) {
     return [hi, 0];
@@ -121,9 +176,31 @@ export function twof64FromRational([p, q]: Rational): TwoF64 {
 
   const [p_hi, q_hi] = dyadicRational(hi);
 
-  const p_rem = p*q_hi - p_hi*q;
-  const q_rem = q*q_hi;
-  const lo = f64FromRational([p_rem, q_rem]);
+  p = p*q_hi - p_hi*q;
+  q *= q_hi;
+  const lo = f64FromRational([p, q]);
 
   return [hi, lo];
+}
+
+/**
+ * Construct a rational from an integer string and a base-10 exponent (output
+ * fraction is not reduced).
+ */
+export function decimalRatio(nstr: string, exp: number): Rational {
+  const bign = BigInt(nstr);
+  const pow10 = BigInt(10)**BigInt(Math.abs(exp));
+  return exp < 0 ? [bign, pow10] : [bign*pow10, BigInt(1)];
+}
+
+// Bit lengths of hex digits 0x0 through 0xf
+const HEX_BIT_LENGTHS = [0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4];
+
+/**
+ * Assume x > 0
+ */
+function bitlen(x: bigint) {
+  const hex = x.toString(16);
+  const firstDigitBits = HEX_BIT_LENGTHS[Number(`0x${hex[0]}`)];
+  return (hex.length - 1) * 4 + firstDigitBits;
 }
