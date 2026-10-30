@@ -12,34 +12,40 @@ import { div } from '../arithmetic/div.js';
 import { mul, mul11 } from '../arithmetic/mul.js';
 import { neg } from '../math/basic.js';
 import { powint_1 } from '../math/exp-impl.js';
-import { twof64FromRational } from './from-rational.js';
+import { _twof64FromRational, decimalRatio } from './from-rational.js';
 
 /**
  * Largest Float64 integer whose literal (decimal) representation is guaranteed
  * to match its binary representation exactly.
  */
-const F64_MAX_INT_LITERAL = 18014398509481988;
+export const F64_MAX_INT_LITERAL = 18014398509481988;
 
 /**
- * Return the literal (base 10) representation of `x` as a `TwoF64` number.
+ * Absolute values less than this threshold cannot be extended/corrected by a
+ * `lo` part (`ulp(x) = Number.MIN_VALUE` if `|x| < F64_HILO_THRESHOLD`).
+ */
+export const F64_HILO_THRESHOLD = 4.450147717014403e-308;
+
+/**
+ * Regex for matching the output of `x.toExponential()` where `x > 0`.
+ */
+const F64_TO_EXP_MATCHER = /([1-9])(?:\.(\d+))?e([+-]\d+)/;
+
+/**
+ * Return the literal representation of `x` (read as a decimal string) as a
+ * {@link TwoF64|`TwoF64`} number.
  *
- * The relative error is bounded at `u²`, with `u = 2^-53` for finite `x` (ie.
- * the result `y` is such that `|(x₁₀ - y)/y| ≤ 2^-106`) - if the runtime env
- * doesn't support `bigint`, the bound is estimated at `~8u^2`. For subnormal
- * input, the max roundoff error is `|x - r| < ulp(ulp(x))`.
+ * The result is the most accurate twice-precision representation of `"${x}"`:
+ * when rounding occurs, the relative error is bounded at `u²` with `u = 2^-53`
+ * for normal `x` (for subnormals the max absolute roundoff error is `2^-1075`).
+ *
+ * NB. If the runtime environment doesn't support `bigint`, the relative error
+ * bound is estimated at `~16u^2`.
  *
  * @param x The input number
  * @returns The {@link TwoF64|`TwoF64`} representation of `"${x}"`
  */
 export function fromLiteral(x: f64): TwoF64 {
-  // https://github.com/lvlte/twofloat/issues/5
-  // Parse `x` decimals as `n * 10^exp`, where n is an integer, then use the
-  // best strategy to compute the output:
-  // - for integer `x` not too big, and if `n` is safe: use twoProd EFT
-  // - for other inputs:
-  //  - use twof64FromRational from @lvlte/rationalize if supported (bigint)
-  //  - or fall back with twofloat operations, splitting `n` if necessary
-
   if (!Number.isFinite(x)) {
     return Math.abs(x) === Infinity ? [x, 0] : NaN2;
   }
@@ -47,36 +53,30 @@ export function fromLiteral(x: f64): TwoF64 {
   const sign = Math.sign(x);
   x = Math.abs(x);
 
-  if (Number.isInteger(x) && x <= F64_MAX_INT_LITERAL) {
+  if (x < F64_HILO_THRESHOLD || (Number.isInteger(x) && x <= F64_MAX_INT_LITERAL)) {
     return [sign*x, 0];
   }
 
   const xstr = x.toExponential();
-  const m = xstr.match(/([1-9])(?:\.(\d+))?e([+-]\d+)/)!;
-  m[2] ??= '';
+  const m = F64_TO_EXP_MATCHER.exec(xstr)!;
+  m[2] ||= '';
 
   const exp = +m[3] - m[2].length;
   const nstr = m[1] + m[2];
   const n = +nstr;
 
-  if (exp >= 0 && exp < 23 && (
-    n <= Number.MAX_SAFE_INTEGER || (n.toString() === nstr && n <= F64_MAX_INT_LITERAL))
-  ) {
+  if (exp >= 0 && exp < 23 && isSafeIntStr(n, nstr)) {
     return mul11(sign*n, 10**exp);
   }
 
   let xx: TwoF64;
 
   if (typeof BigInt === 'function') {
-    const bign = BigInt(nstr);
-    const pow10 = BigInt(10)**BigInt(Math.abs(exp));
-    const r: [bigint, bigint] = exp < 0 ? [bign, pow10] : [bign * pow10, BigInt(1)];
-    xx = twof64FromRational(r);
+    xx = _twof64FromRational(decimalRatio(nstr, exp));
   }
   else {
-    const absexp = Math.abs(exp);
-    const pow10 = absexp < 23 ? 10**absexp : powint_1(10, absexp);
-    if (n <= Number.MAX_SAFE_INTEGER) {
+    const pow10 = tenpow(exp);
+    if (isSafeIntStr(n, nstr)) {
       xx = exp < 0 ? div(n, pow10) : mul(pow10, n);
     }
     else {
@@ -86,4 +86,23 @@ export function fromLiteral(x: f64): TwoF64 {
   }
 
   return sign < 0 ? neg(xx) : xx;
+}
+
+/**
+ * Checks whether `nstr`, coerced to number `n`, is a safe integer literal (safe
+ * in this context means the decimal and the binary representations match).
+ * Expects absolute values.
+ */
+export function isSafeIntStr(n: f64, nstr: string): boolean {
+  return n <= Number.MAX_SAFE_INTEGER || (
+    n <= F64_MAX_INT_LITERAL && n.toString() === nstr
+  );
+}
+
+/**
+ * Return 10^|n|
+ */
+export function tenpow(n: f64): f64 | TwoF64 {
+  n = Math.abs(n);
+  return n < 23 ? 10**n : powint_1(10, n);
 }

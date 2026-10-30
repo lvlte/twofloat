@@ -11,35 +11,23 @@ import { add, add21, add22 } from '../arithmetic/add.js';
 import { div } from '../arithmetic/div.js';
 import { mul, mul11 } from '../arithmetic/mul.js';
 import { neg } from '../math/basic.js';
-import { powint_1 } from '../math/exp-impl.js';
-import { twof64FromRational } from './from-rational.js';
-
-/**
- * Largest Float64 integer whose literal (decimal) representation is guaranteed
- * to match its binary representation exactly.
- */
-const F64_MAX_INT_LITERAL = 18014398509481988;
-
-/**
- * Absolute values less than this threshold cannot be extended/corrected by a
- * `lo` part (`ulp(x) = Number.MIN_VALUE` if `|x| < F64_HILO_THRESHOLD`).
- */
-const F64_HILO_THRESHOLD = 4.450147717014403e-308;
+import { _twof64FromRational, decimalRatio } from './from-rational.js';
+import { F64_HILO_THRESHOLD, isSafeIntStr, tenpow } from './from-literal.js';
 
 /**
  * Regex for matching a decimal string.
  */
-const DEC_STR_MATCHER = /^([+-])?(\d*)(?:\.(\d+))?(?:e([+-]?\d+))?$/i;
+const DEC_STR_MATCHER = /^([+-])?(\d*)(?:\.(\d*))?(?:e([+-]?\d+))?$/i;
 
 /**
  * Match leading zeroes
  */
-const LZERO_MATCHER = /^0+/;
+const L_ZERO_MATCHER = /^0+/;
 
 /**
  * Match trailing zeroes
  */
-const TZERO_MATCHER = /0+$/; // eslint-disable-line regexp/no-super-linear-move
+const T_ZERO_MATCHER = /0+$/; // eslint-disable-line regexp/no-super-linear-move
 
 /**
  * Converts a decimal string `str` into a {@link TwoF64|`TwoF64`} number.
@@ -65,25 +53,17 @@ export function fromString(str: string): TwoF64 {
     return [s, 0];
   }
 
-  const m = str.trim().match(DEC_STR_MATCHER);
+  const m = DEC_STR_MATCHER.exec(str.trim());
   if (!m) {
     return NaN2;
   }
 
-  m[2] ??= '';
-  m[3] ??= '';
-  m[4] ??= '0';
+  m[2] ||= '';
+  m[3] ||= '';
+  m[4] ||= '0';
 
   const sign = m[1] === '-' ? -1 : 1;
-  let exp = +m[4] - m[3].length;
-  let nstr = (m[2] + m[3]).replace(LZERO_MATCHER, '');
-
-  if (nstr.endsWith('0')) {
-    const len = nstr.length;
-    nstr = nstr.replace(TZERO_MATCHER, '');
-    exp += len - nstr.length;
-  }
-
+  const [nstr, exp] = stripZeros(m[2] + m[3], +m[4] - m[3].length);
   const n = +nstr;
 
   if (exp >= 0 && exp < 23 && isSafeIntStr(n, nstr)) {
@@ -93,10 +73,7 @@ export function fromString(str: string): TwoF64 {
   let xx: TwoF64;
 
   if (typeof BigInt === 'function') {
-    const bign = BigInt(nstr);
-    const pow10 = BigInt(10)**BigInt(Math.abs(exp));
-    const r: [bigint, bigint] = exp < 0 ? [bign, pow10] : [bign * pow10, BigInt(1)];
-    xx = twof64FromRational(r);
+    xx = _twof64FromRational(decimalRatio(nstr, exp));
   }
   else if (isSafeIntStr(n, nstr)) {
     const pow10 = tenpow(exp);
@@ -110,30 +87,11 @@ export function fromString(str: string): TwoF64 {
 }
 
 /**
- * Checks whether `nstr`, coerced to number `n`, is a safe integer literal (safe
- * in this context means the decimal and the binary representations match).
- * Expects absolute values.
- */
-function isSafeIntStr(n: f64, nstr: string): boolean {
-  return n <= Number.MAX_SAFE_INTEGER || (
-    n <= F64_MAX_INT_LITERAL && n.toString() === nstr
-  );
-}
-
-/**
- * Return 10^|n|
- */
-function tenpow(n: f64): f64 | TwoF64 {
-  n = Math.abs(n);
-  return n < 23 ? 10**n : powint_1(10, n);
-}
-
-/**
  * Decimal string to `TwoF64` conversion (no bigint fallback).
  *
  * Returns `n`, an integer represented by the decimal string `nstr`, multiplied
- * by `10^exp`, as a `TwoF64` number. Assume `nstr` is unsigned with no trailing
- * zeroes.
+ * by `10^exp`, as a `TwoF64` number. Assume `nstr` is unsigned with no leading
+ * or trailing zeroes.
  */
 function twoFromIntStr(nstr: string, exp: f64): TwoF64 {
   const len = nstr.length;
@@ -152,4 +110,18 @@ function twoFromIntStr(nstr: string, exp: f64): TwoF64 {
   }
 
   return exp < 0 ? div(n, pow10) : mul(pow10, n);
+}
+
+/**
+ * Strip leading and trailing zeroes from `s` and shift `exp` accordingly.
+ * Assume `s` is unsigned.
+ */
+function stripZeros(s: string, exp: f64): [string, f64] {
+  if (s.endsWith('0')) {
+    const len = s.length;
+    s = s.replace(T_ZERO_MATCHER, '');
+    exp += len - s.length;
+  }
+
+  return [s.startsWith('0') ? s.replace(L_ZERO_MATCHER, '') : s, exp];
 }
