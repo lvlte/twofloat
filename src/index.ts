@@ -9,3 +9,4 @@ export * from './base/eft.js';
 export * from './base/compare.js';
 export * from './arithmetic/index.js';
 export * from './math/index.js';
+export * from './convert/twof64.js';
