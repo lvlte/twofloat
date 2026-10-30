@@ -15,10 +15,10 @@ import {
 } from '../../utils.js';
 
 import { writeFileSync } from 'node:fs';
-import { type TwoF64 } from '../../../src/index.js';
-import { fromLiteral } from '../../../src/convert/from-literal.js';
-import { fromString } from '../../../src/convert/from-string.js';
-import { twof64FromRational as fromRational, type Rational } from '../../../src/convert/from-rational.js';
+import { type TwoF64, twof64 } from '../../../src/index.js';
+import { type Rational } from '../../../src/convert/from-rational.js';
+
+const { fromLiteral, fromRational, fromString } = twof64;
 
 const originalBigInt = BigInt;
 const fromLiteralNoBigInt = (x: number): TwoF64 => {

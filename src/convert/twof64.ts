@@ -5,9 +5,9 @@
  */
 
 import type { f64, TwoF64 } from '../base/common.js';
-import { fromLiteral } from './from-literal.js';
+import { twof64FromLiteral } from './from-literal.js';
 import { twof64FromRational, type Rational } from './from-rational.js';
-import { fromString } from './from-string.js';
+import { twof64FromString } from './from-string.js';
 
 export interface twof64Ctor {
   /**
@@ -88,10 +88,10 @@ export interface twof64Ctor {
  * @param x The input number
  * @returns The {@link TwoF64|`TwoF64`} representation of `"${x}"`
  */
-const twof64 = ((x: f64): TwoF64 => fromLiteral(x)) as twof64Ctor;
+const twof64 = ((x: f64): TwoF64 => twof64FromLiteral(x)) as twof64Ctor;
 
-twof64.fromLiteral = fromLiteral;
+twof64.fromLiteral = twof64FromLiteral;
 twof64.fromRational = twof64FromRational;
-twof64.fromString = fromString;
+twof64.fromString = twof64FromString;
 
 export { twof64 };

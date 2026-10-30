@@ -45,7 +45,7 @@ const F64_TO_EXP_MATCHER = /([1-9])(?:\.(\d+))?e([+-]\d+)/;
  * @param x The input number
  * @returns The {@link TwoF64|`TwoF64`} representation of `"${x}"`
  */
-export function fromLiteral(x: f64): TwoF64 {
+export function twof64FromLiteral(x: f64): TwoF64 {
   if (!Number.isFinite(x)) {
     return Math.abs(x) === Infinity ? [x, 0] : NaN2;
   }
