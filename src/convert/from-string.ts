@@ -43,7 +43,7 @@ const T_ZERO_MATCHER = /0+$/; // eslint-disable-line regexp/no-super-linear-move
  * @param str the input string
  * @returns a {@link TwoF64|`TwoF64`} number
  */
-export function fromString(str: string): TwoF64 {
+export function twof64FromString(str: string): TwoF64 {
   const s = Number(str);
   if (!Number.isFinite(s)) {
     return Math.abs(s) === Infinity ? [s, 0] : NaN2;
@@ -105,7 +105,7 @@ function twoFromIntStr(nstr: string, exp: f64): TwoF64 {
   else {
     const n1 = mul(+nstr.slice(0, 15), tenpow(len - 15));
     const n2 = mul(+nstr.slice(15, 30), tenpow(len - 30));
-    const n3 = nstr.length > 45 ? fromString(nstr.slice(30)) : +nstr.slice(30);
+    const n3 = nstr.length > 45 ? twof64FromString(nstr.slice(30)) : +nstr.slice(30);
     n = add22(add(n3, n2), n1);
   }
 
