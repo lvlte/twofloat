@@ -25,7 +25,7 @@ Or load from a CDN:
 
 ## What is Double-Double Arithmetic ?
 
-Standard IEEE 754 double-precision numbers (64-bit floats, `number` in JS, aliased `f64` in this library) provide 53 bits of significand precision (~15–17 decimal digits).
+Standard IEEE 754 double-precision numbers (64-bit floats, `number` in JS, aliased as `f64` in this library) provide 53 bits of significand precision (~15–17 decimal digits).
 
 In high-precision scientific computing, especially when dealing with sensitive iterative algorithms, 53 bits can be insufficient and lead to catastrophic cancellation and cumulative rounding errors.
 
@@ -49,11 +49,11 @@ A threefloat type `ThreeF64` (triple-double expansion) is also provided and used
 
 ## What you need to know
 
-*TL;DR: only a small part of IEEE 754 floating-point numbers are exactly what their literal representation says they are.*
+*TL;DR: only a small subset of IEEE 754 floating-point numbers are exactly what their literal representation says they are.*
 
 Let's consider the classic case `0.1 * 3 = 0.30000000000000004`.
 
-Like `1/3` in decimal, the binary representation of `1/10` doesn't end, like most of the rationals in binary. So **when you write or see the (IEEE 754 64-bit float) literal `0.1`, remember it's only the closest `f64` approximation of the mathematical value `0.1`**, ie.
+Much like `1/3` in decimal, the binary representation of `1/10` does not terminate, as is the case for most rational numbers in binary. So **when you write or see the (IEEE 754 64-bit float) literal `0.1`, remember it's only the closest `f64` approximation of the mathematical value `0.1`**, i.e.
 
 ```typescript
 // See the hidden digits wrapped in square brackets
@@ -83,7 +83,7 @@ const r2 = mul(x2, 3);        // [0.3, 1.1102230246251563e-17]
 
 In both `x2` and `r2`, see how the lo part compensates for the intrinsic (hidden) roundoff error of the hi part.
 
-NB. f64 [safe integer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger#description) literals don't need to be converted since their literal (decimal) representation always match their binary value.
+NB. f64 [safe integer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger#description) literals don't need to be converted since their literal (decimal) representation always matches their binary value exactly.
 
 *Recommended reading: [David Goldberg’s classic paper](https://dl.acm.org/doi/epdf/10.1145/103162.103163)*
 
@@ -100,7 +100,7 @@ import { twof64, E, eq } from 'twofloat';
 console.log(twof64(1e-7));                    // [1e-7, 4.525188817411374e-24]
 console.log(twof64(1e+23));                   // [1e+23, 8388608]
 
-// decimal strings of arbitrary precision (accepts exponential notation)
+// decimal strings of arbitrary precision (supports exponential notation)
 const e = twof64('2.718281828459045235360287471352662497757');
 console.log(eq(e, E));                        // true
 
@@ -114,7 +114,7 @@ const sOneThird = twof64('0.3333333333333333333333333333333333333333');
 console.log(eq(rOneThird, sOneThird));        // true
 ```
 
-Note you can also (or maybe even should) use the specialized (typed) function depending on the input type:
+Note that you can also use specialized, type-specific methods directly (recommended where performance is critical):
 
 ```typescript
 twof64.fromLiteral(x: number): TwoF64;
@@ -123,9 +123,11 @@ twof64.fromBigInt(x: bigint): TwoF64;
 twof64.fromRational(r: [num: bigint, den: bigint]): TwoF64;
 ```
 
+*Don't use `fromLiteral` if the input is the result of previous calculations (a number literal is a number written literally in the source code).*
+
 ### Twofloat Constants
 
-Constants names are consistent with those from the standard JS `Math` library.
+Constant names are consistent with those from the standard JS `Math` library.
 
 ```typescript
 import {
@@ -214,11 +216,11 @@ import {
 
 ### Function Signature and Naming Convention
 
-Every operation is implemented by type-specific functions that accept `f64` and/or `TwoF64` operands, and a main function with more flexible signature that dispatches to the specific implementation depending on the input arguments.
+Every operation is implemented by type-specific functions that accept `f64` and/or `TwoF64` operands, and a main function with a more flexible signature that dispatches to the specific implementation depending on the input arguments.
 
 Type-specific functions follow the naming convention `<op><suffix>` (modulo minor exceptions), where `<op>` is the name of the main function and `<suffix>` is a n-digits sequence where `n` is the number of expected arguments and where each digit is either `1` for `f64`, `2` for `TwoF64`, or in rare cases `3` for `ThreeF64`. Because some math functions have a digit in their name, their suffix has a leading underscore `_` to prevent confusion.
 
-For example, binary operations have a two-digits suffix:
+For example, binary operations have a two-digit suffix:
 
 ```typescript
 // Commutative (`mul12` not implemented since redundant with `mul21`)
