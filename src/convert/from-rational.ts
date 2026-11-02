@@ -7,8 +7,11 @@
  * @module twofloat/fromRational
  */
 
-import { type f64, type TwoF64 } from '../base/common.js';
+import { NaN2, type f64, type TwoF64 } from '../base/common.js';
 
+/**
+ * BigInt rational number represented as a tuple `[num: bigint, den: bigint]`
+ */
 export type Rational = [num: bigint, den: bigint];
 
 // Reusable 64-bit buffer / typed array (avoid allocations)
@@ -137,37 +140,36 @@ function f64FromRational([p, q]: Rational): f64 {
 }
 
 /**
- * Converts a rational number `r` into a {@link TwoF64|`TwoF64`} number.
+ * Converts a {@linkcode Rational} number `r` to a {@linkcode TwoF64} number.
  *
  * The result `x` is the most accurate twice-precision representation of `r`:
- * when rounding occurs, the relative error is bounded at `u²` with `u = 2^-53`,
- * except when `x` overflows to `±Infinity` or when `x` lies in the subnormal
- * range (in the latter case, the maximum absolute roundoff error is `2^-1075`).
+ * when rounding occurs, the relative error is bounded at `2^-106`, except when
+ * `x` overflows to `±Infinity` or when `x` lies in the subnormal range (in the
+ * latter case, the maximum absolute roundoff error is `2^-1075`).
  *
- * @param r a rational number represented as a tuple `[num: bigint, den: bigint]`
- * @returns a {@link TwoF64|`TwoF64`} number
+ * @param r A rational number represented as a tuple `[num: bigint, den: bigint]`
+ * @returns A {@linkcode TwoF64} number
  */
-export function twof64FromRational(r: Rational): TwoF64;
-export function twof64FromRational([p, q]: Rational): TwoF64 {
-  if (typeof p !== 'bigint' || typeof q !== 'bigint') {
-    throw new TypeError(
-      'The given argument must be a bigint rational: [num: bigint, den: bigint]'
-      + `(received [${typeof p}, ${typeof q}])`);
+export function fromRational(r: Rational): TwoF64 {
+  if (!isRational(r)) {
+    return NaN2;
   }
+
+  let [p, q] = r;
 
   if (q < 0) {
     [p, q] = [-p, -q];
   }
 
-  // @ts-expect-error - intentional (avoid bigint literal)
-  // eslint-disable-next-line eqeqeq
-  return q == 0 ? [Infinity*(p < 0 ? -1 : 1), 0] : _twof64FromRational([p, q]);
+  return q
+    ? _fromRational([p, q])
+    : (p ? [Infinity*(p < 0 ? -1 : 1), 0] : NaN2);
 }
 
 /**
- * twof64FromRational no-check (assume q > 0)
+ * fromRational no-check (assume q > 0)
  */
-export function _twof64FromRational([p, q]: Rational): TwoF64 {
+export function _fromRational([p, q]: Rational): TwoF64 {
   const hi = f64FromRational([p, q]);
 
   if (hi === 0 || Math.abs(hi) === Infinity) {
@@ -203,4 +205,12 @@ function bitlen(x: bigint) {
   const hex = x.toString(16);
   const firstDigitBits = HEX_BIT_LENGTHS[Number(`0x${hex[0]}`)];
   return (hex.length - 1) * 4 + firstDigitBits;
+}
+
+/**
+ * Returns a boolean indicating whether `x` is a bigint Rational
+ */
+function isRational(x: any): x is Rational {
+  return Array.isArray(x) && x.length === 2
+    && typeof x[0] === 'bigint' && typeof x[1] === 'bigint';
 }

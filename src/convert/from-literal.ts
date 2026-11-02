@@ -12,7 +12,7 @@ import { div } from '../arithmetic/div.js';
 import { mul, mul11 } from '../arithmetic/mul.js';
 import { neg } from '../math/basic.js';
 import { powint_1 } from '../math/exp-impl.js';
-import { _twof64FromRational, decimalRatio } from './from-rational.js';
+import { _fromRational, decimalRatio } from './from-rational.js';
 
 /**
  * Largest Float64 integer whose literal (decimal) representation is guaranteed
@@ -42,10 +42,10 @@ const F64_TO_EXP_MATCHER = /([1-9])(?:\.(\d+))?e([+-]\d+)/;
  * NB. If the runtime environment doesn't support `bigint`, the relative error
  * bound is estimated at `~16u^2`.
  *
- * @param x The input number
+ * @param x The input number. Must be a `f64` number literal.
  * @returns The {@link TwoF64|`TwoF64`} representation of `"${x}"`
  */
-export function twof64FromLiteral(x: f64): TwoF64 {
+export function fromLiteral(x: f64): TwoF64 {
   if (!Number.isFinite(x)) {
     return Math.abs(x) === Infinity ? [x, 0] : NaN2;
   }
@@ -72,7 +72,7 @@ export function twof64FromLiteral(x: f64): TwoF64 {
   let xx: TwoF64;
 
   if (typeof BigInt === 'function') {
-    xx = _twof64FromRational(decimalRatio(nstr, exp));
+    xx = _fromRational(decimalRatio(nstr, exp));
   }
   else {
     const pow10 = tenpow(exp);
