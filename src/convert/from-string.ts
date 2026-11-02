@@ -11,7 +11,7 @@ import { add, add21, add22 } from '../arithmetic/add.js';
 import { div } from '../arithmetic/div.js';
 import { mul, mul11 } from '../arithmetic/mul.js';
 import { neg } from '../math/basic.js';
-import { _twof64FromRational, decimalRatio } from './from-rational.js';
+import { _fromRational, decimalRatio } from './from-rational.js';
 import { F64_HILO_THRESHOLD, isSafeIntStr, tenpow } from './from-literal.js';
 
 /**
@@ -30,20 +30,20 @@ const L_ZERO_MATCHER = /^0+/;
 const T_ZERO_MATCHER = /0+$/; // eslint-disable-line regexp/no-super-linear-move
 
 /**
- * Converts a decimal string `str` into a {@link TwoF64|`TwoF64`} number.
+ * Converts a decimal string `str` to a {@linkcode TwoF64} number.
  *
  * The result `x` is the most accurate twice-precision representation of `str`:
- * when rounding occurs, the relative error is bounded at `u²` with `u = 2^-53`
- * except when `x` overflows to `±Infinity` or when `x` lies in the subnormal
- * range (in the latter case, the maximum absolute roundoff error is `2^-1075`).
+ * when rounding occurs, the relative error is bounded at `2^-106`, except when
+ * `x` overflows to `±Infinity` or when `x` lies in the subnormal range (in the
+ * latter case, the maximum absolute roundoff error is `2^-1075`).
  *
  * NB. If the runtime environment doesn't support `bigint`, the relative error
  * bound is estimated at `~16u^2`.
  *
- * @param str the input string
- * @returns a {@link TwoF64|`TwoF64`} number
+ * @param str The input string
+ * @returns A {@linkcode TwoF64} number
  */
-export function twof64FromString(str: string): TwoF64 {
+export function fromString(str: string): TwoF64 {
   const s = Number(str);
   if (!Number.isFinite(s)) {
     return Math.abs(s) === Infinity ? [s, 0] : NaN2;
@@ -73,7 +73,7 @@ export function twof64FromString(str: string): TwoF64 {
   let xx: TwoF64;
 
   if (typeof BigInt === 'function') {
-    xx = _twof64FromRational(decimalRatio(nstr, exp));
+    xx = _fromRational(decimalRatio(nstr, exp));
   }
   else if (isSafeIntStr(n, nstr)) {
     const pow10 = tenpow(exp);
@@ -105,7 +105,7 @@ function twoFromIntStr(nstr: string, exp: f64): TwoF64 {
   else {
     const n1 = mul(+nstr.slice(0, 15), tenpow(len - 15));
     const n2 = mul(+nstr.slice(15, 30), tenpow(len - 30));
-    const n3 = nstr.length > 45 ? twof64FromString(nstr.slice(30)) : +nstr.slice(30);
+    const n3 = nstr.length > 45 ? fromString(nstr.slice(30)) : +nstr.slice(30);
     n = add22(add(n3, n2), n1);
   }
 
