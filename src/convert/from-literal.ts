@@ -42,6 +42,9 @@ const F64_TO_EXP_MATCHER = /([1-9])(?:\.(\d+))?e([+-]\d+)/;
  * NB. If the runtime environment doesn't support `bigint`, the relative error
  * bound is estimated at `~16u^2`.
  *
+ * **Don't use `fromLiteral` if `x` is the result of previous calculations (a
+ * number literal is a number written literally in the source code).**
+ *
  * @param x The input number. Must be a `f64` number literal.
  * @returns The {@link TwoF64|`TwoF64`} representation of `"${x}"`
  */
