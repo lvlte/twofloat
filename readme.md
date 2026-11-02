@@ -47,13 +47,13 @@ Every twofloat operation returns a canonical result, which allows maintaining th
 
 A threefloat type `ThreeF64` (triple-double expansion) is also provided and used internally for high-accuracy intermediate computations and range reduction.
 
-## Basic Example
+## What you need to know
 
-*More than an example, this is the first thing you should know before using this library.*
+*TL;DR: only a small part of IEEE 754 floating-point numbers are exactly what their literal representation says they are.*
 
 Let's consider the classic case `0.1 * 3 = 0.30000000000000004`.
 
-Like `1/3` in decimal, the binary representation of `1/10` doesn't end, like most of the rationals in binary. So **when you write or see the (IEEE 754 64-bit float) value `0.1`, remember it's only the closest float64 approximation of the mathematical value `0.1`**, ie.
+Like `1/3` in decimal, the binary representation of `1/10` doesn't end, like most of the rationals in binary. So **when you write or see the (IEEE 754 64-bit float) literal `0.1`, remember it's only the closest `f64` approximation of the mathematical value `0.1`**, ie.
 
 ```typescript
 // See the hidden digits wrapped in square brackets
@@ -62,28 +62,66 @@ const x = 0.1;    // 0.10000000000000000[55511151231257827021181583404541015625]
 // These are hidden to preserve developer sanity, until they come across:
 const y = x * 3;  // 0.30000000000000004[44089209850062616169452667236328125]
 
-console.log(
-  x === 0.1,      // true
-  y === 0.3,      // false 🤯
-);
+console.log(y === 0.3); // false 🤯
 ```
 
-There is no bug, it's just that a non-significant (hidden) part of `x` multiplied by `3` becomes significant relative to the float64 representation of `0.3`, so we actually see the approximation error we didn't see earlier.
+There is no bug, it's just that a non-significant (hidden) part of `x` multiplied by `3` becomes significant relative to the f64 representation of `0.3`, so we actually see the approximation error we didn't see earlier.
 
-When using double-double arithmetic, a common mistake is to think this case will be addressed with `mul(0.1, 3)`. While the result will be better than `0.1 * 3`, this is still wrong because you start with a float64 approximation of `1/10` while you could start with a twofloat approximation. The key is to actually *not* use the `f64` value `0.1` at all, but instead the `TwoF64` result of `div(1, 10)`:
+When using double-double arithmetic, a common mistake is to think this case will be addressed with `mul(0.1, 3)`. Although the result will be better than `0.1 * 3`, this is still wrong because we start with a f64 approximation of `1/10` while we could start with a twofloat approximation:
 
 ```typescript
-import { div, mul } from 'twofloat';
+import { mul, twof64 } from 'twofloat';
 
-const x = div(1, 10);         // [0.1, -5.551115123125783e-18]
-const [yhi, ylo] = mul(x, 3); // [0.3, 1.1102230246251563e-17]
+// ❌ Inaccurate: the f64 value is multiplied by 3
+const x1 = 0.1;
+const r1 = mul(x1, 3);       // [0.30000000000000004, -2.7755575615628914e-17]
 
-console.log(yhi === 0.3);     // true 🎉
+// ✅ Accurate: use the TwoF64 value constructed from the number literal `0.1`
+const x2 = twof64(0.1);       // [0.1, -5.551115123125783e-18]
+const r2 = mul(x2, 3);        // [0.3, 1.1102230246251563e-17]
 ```
 
-In most cases, when done with twice-precision calculations, you can go with the high part. In our example `yhi`.
+In both `x2` and `r2`, see how the lo part compensates for the intrinsic (hidden) roundoff error of the hi part.
+
+NB. f64 [safe integer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isSafeInteger#description) literals don't need to be converted since their literal (decimal) representation always match their binary value.
+
+*Recommended reading: [David Goldberg’s classic paper](https://dl.acm.org/doi/epdf/10.1145/103162.103163)*
 
 ## API Reference Overview
+
+### Conversion
+
+The `twof64` helper accepts f64 number literals, decimal strings, bigint numbers, and bigint rationals. It returns the closest representable `TwoF64` number to the given argument.
+
+```typescript
+import { twof64, E, eq } from 'twofloat';
+
+// f64 number literal
+console.log(twof64(1e-7));                    // [1e-7, 4.525188817411374e-24]
+console.log(twof64(1e+23));                   // [1e+23, 8388608]
+
+// decimal strings of arbitrary precision (accepts exponential notation)
+const e = twof64('2.718281828459045235360287471352662497757');
+console.log(eq(e, E));                        // true
+
+// bigint
+console.log(twof64(1180710183065307828541n)); // [1.1807101830653078e+21, -11971]
+console.log(twof64(10n**23n));                // [1e+23, 8388608]
+
+// rational
+const rOneThird = twof64([1n, 3n]);
+const sOneThird = twof64('0.3333333333333333333333333333333333333333');
+console.log(eq(rOneThird, sOneThird));        // true
+```
+
+Note you can also (or maybe even should) use the specialized (typed) function depending on the input type:
+
+```typescript
+twof64.fromLiteral(x: number): TwoF64;
+twof64.fromString(str: string): TwoF64;
+twof64.fromBigInt(x: bigint): TwoF64;
+twof64.fromRational(r: [num: bigint, den: bigint]): TwoF64;
+```
 
 ### Twofloat Constants
 
