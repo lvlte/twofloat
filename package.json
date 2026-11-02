@@ -28,7 +28,7 @@
     }
   },
   "unpkg": "./dist/umd/twofloat.min.js",
-  "jsdelivr": "./dist/umd/twofloat.js",
+  "jsdelivr": "./dist/umd/twofloat.min.js",
   "engines": {
     "node": ">=18.20"
   },

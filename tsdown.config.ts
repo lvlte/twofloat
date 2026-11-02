@@ -55,17 +55,6 @@ export default defineConfig([{
   outDir: './dist/umd',
   entry: './src/index.ts',
   globalName: 'twofloat',
-  plugins: [selectiveMinify],
-  outputOptions: {
-    entryFileNames: 'twofloat.js',
-  },
-}, {
-  format: 'umd',
-  platform: 'neutral',
-  target: 'es2016',
-  outDir: './dist/umd',
-  entry: './src/index.ts',
-  globalName: 'twofloat',
   minify: true,
   sourcemap: true,
   outputOptions: {
