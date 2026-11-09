@@ -1,0 +1,7 @@
+[deps]
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+RowEchelon = "af85af4c-bcd5-5d23-b03a-a909639aa875"
+
+[compat]
+julia = "1.12, 1.13"
