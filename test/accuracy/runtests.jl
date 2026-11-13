@@ -1,5 +1,8 @@
 # TwoFloat accuracy tests
 
+using Pkg
+Pkg.instantiate()
+
 include("./setup.jl")
 
 debug = "--debug" in ARGS
