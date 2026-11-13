@@ -35,7 +35,12 @@
   "devEngines": {
     "runtime": {
       "name": "node",
-      "version": "^20.19.0 || ^22.13.0 || >=24",
+      "version": "^22.18.0 || ^24.11.0 || >=26.0.0",
+      "onFail": "warn"
+    },
+    "packageManager": {
+      "name": "npm",
+      "version": ">=11.16.0",
       "onFail": "warn"
     }
   },
