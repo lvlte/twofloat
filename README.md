@@ -216,9 +216,11 @@ import {
 
 ### Function Signature and Naming Convention
 
-Every operation is implemented by type-specific functions that accept `f64` and/or `TwoF64` operands, and a main function with a more flexible signature that dispatches to the specific implementation depending on the input arguments.
+Every operation is implemented by type-specific functions that accept `f64` and/or `TwoF64` operands, and a main (wrapper) function with a more flexible signature that dispatches to the specific implementation depending on the input arguments.
 
-Type-specific functions follow the naming convention `<op><suffix>` (modulo minor exceptions), where `<op>` is the name of the main function and `<suffix>` is a n-digits sequence where `n` is the number of expected arguments and where each digit is either `1` for `f64`, `2` for `TwoF64`, or in rare cases `3` for `ThreeF64`. Because some math functions have a digit in their name, their suffix has a leading underscore `_` to prevent confusion.
+Main function names are consistent with those from the standard [`Math`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math) library.
+
+Type-specific functions follow the naming convention `<op><suffix>` (modulo minor exceptions), where `<op>` is the name of the main function and `<suffix>` is a n-digits sequence where `n` is the number of expected arguments and where each digit is either `1` for `f64`, `2` for `TwoF64`, or in rare cases `3` for `ThreeF64`. To prevent confusion, most of the math functions, in particular those already having a digit in their name, have an underscore `_` that clearly separates the operation name from the argument suffix.
 
 For example, binary operations have a two-digit suffix:
 
@@ -246,6 +248,10 @@ function expm1_2(x: TwoF64): TwoF64;
 ```
 
 We recommend using the main functions by default, and opting for type-specific implementations where performance is a concern.
+
+## Contributing
+
+Issues and PRs are welcome! Whether you want to contribute code, report bugs, request a feature, improve documentation, create your own custom build, or simply run the test suites locally, please see our [Contributing Guide](CONTRIBUTING.MD).
 
 ## References
 
