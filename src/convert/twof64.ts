@@ -41,17 +41,6 @@ export interface TwoF64Ctor {
   (r: Rational): TwoF64;
 
   /**
-   * Converts `x` to a {@linkcode TwoF64} number, where `x` can be either:
-   * - a `f64` number literal: see {@linkcode twof64.fromLiteral}
-   * - a decimal `string`: see {@linkcode twof64.fromString}
-   * - a `bigint`: see {@linkcode twof64.fromBigInt}
-   * - a `Rational`: see {@linkcode twof64.fromRational}
-   *
-   * If `x` is not representable or of the wrong type, return `NaN2`.
-   */
-  (x: any): TwoF64; // eslint-disable-line @typescript-eslint/unified-signatures
-
-  /**
    * Return the literal representation of `x` (read as a decimal string) as a
    * {@link TwoF64|`TwoF64`} number.
    *
@@ -118,11 +107,17 @@ export interface TwoF64Ctor {
 /**
  * {@linkcode TwoF64} conversion from various number types.
  *
- * Usage: `twof64(x)` or `twof64.from<suffix>(x)`.
+ * Usage: `twof64(x)`/`twof64.from<suffix>(x)`.
  *
- * @see {@linkcode TwoF64Ctor}
+ * Converts `x` to a {@linkcode TwoF64} number, where `x` can be either:
+ * - a `f64` number literal: see {@linkcode twof64.fromLiteral}
+ * - a decimal `string`: see {@linkcode twof64.fromString}
+ * - a `bigint`: see {@linkcode twof64.fromBigInt}
+ * - a `Rational`: see {@linkcode twof64.fromRational}
+ *
+ * If `x` is not representable or of the wrong type, return `NaN2`.
  */
-const twof64: TwoF64Ctor = ((x: any): TwoF64 => {
+const twof64 = ((x: f64 | string | bigint | Rational): TwoF64 => {
   switch (typeof x) {
     case 'number':
       return fromLiteral(x);
@@ -134,7 +129,7 @@ const twof64: TwoF64Ctor = ((x: any): TwoF64 => {
       return fromBigInt(x);
 
     case 'object':
-      return fromRational(x as Rational);
+      return fromRational(x);
 
     default:
       return NaN2;
