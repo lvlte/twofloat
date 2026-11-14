@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore - tsconfig without node types (avoid another tsconfig)
+import { writeFileSync } from 'node:fs';
 import { type UserConfig, defineConfig } from 'tsdown';
 import { minifySync } from 'oxc-minify';
 
@@ -46,6 +49,11 @@ export default defineConfig([{
   outputOptions: {
     comments: {
       jsdoc: false,
+    },
+  },
+  hooks: {
+    'build:done'() {
+      writeFileSync('./dist/cjs/package.json', '{ "type": "commonjs" }', 'utf8');
     },
   },
 }, {
