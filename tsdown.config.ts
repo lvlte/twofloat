@@ -1,27 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - tsconfig without node types (avoid another tsconfig)
 import { writeFileSync } from 'node:fs';
-import { type UserConfig, defineConfig } from 'tsdown';
-import { minifySync } from 'oxc-minify';
-
-const selectiveMinify = {
-  name: 'selective-minify',
-  async generateBundle(opt, bundle) {
-    for (const [fileName, chunk] of Object.entries(bundle)) {
-      if (!(chunk.type === 'chunk' && /pre\/.+\.(?:c|m)?js$/v.test(fileName))) {
-        continue;
-      }
-
-      const result = minifySync(fileName, chunk.code, {
-        compress: true,
-        mangle: true,
-        codegen: { removeWhitespace: true },
-      });
-
-      chunk.code = result.code;
-    }
-  },
-} satisfies UserConfig['plugins'];
+import { defineConfig } from 'tsdown';
 
 export default defineConfig([{
   format: 'esm',
@@ -30,7 +10,6 @@ export default defineConfig([{
   outDir: './dist/esm',
   tsconfig: './tsconfig.json',
   fixedExtension: false,
-  plugins: [selectiveMinify],
   outputOptions: {
     comments: {
       jsdoc: false,
@@ -42,7 +21,6 @@ export default defineConfig([{
   entry: 'src/index.ts',
   outDir: './dist/cjs',
   tsconfig: './tsconfig-cjs.json',
-  plugins: [selectiveMinify],
   outExtensions() {
     return { js: '.js' };
   },
