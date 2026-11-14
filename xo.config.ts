@@ -11,19 +11,20 @@ export default [{
   ignores: ['./package.json'],
 }, {
   rules: {
-    curly: ['error', 'multi-line'],
+    'curly': ['error', 'multi-line'],
     'no-bitwise': 'off',
     'capitalized-comments': 'off',
     'no-implicit-coercion': ['error', {
       allow: ['+'],
     }],
-    complexity: ['error', {
+    'complexity': ['error', {
       variant: 'modified',
       max: 25,
     }],
     'new-cap': ['error', {
       capIsNewExceptionPattern: '^(?:Accurate)?DW',
     }],
+    '@stylistic/quote-props': ['error', 'consistent-as-needed'],
     '@stylistic/brace-style': ['error', 'stroustrup', {
       allowSingleLine: true,
     }],
@@ -91,7 +92,6 @@ export default [{
     'unicorn/numeric-separators-style': ['error', {
       onlyIfContainsSeparator: true,
     }],
-    '@typescript-eslint/prefer-regexp-exec': 'off',
     'regexp/prefer-named-capture-group': 'off',
     'require-unicode-regexp': 'off',
   },
