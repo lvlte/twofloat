@@ -58,7 +58,6 @@
     "test": "npm run test:unit && npm run test:prejl && npm run test:jl",
     "prebuild": "rm -Rf dist && mkdir dist",
     "build": "tsdown",
-    "postbuild": "echo { \"type\": \"commonjs\" } > ./dist/cjs/package.json",
     "prepublishOnly": "npm test && npm run build",
     "lint": "xo --quiet",
     "lint:fix": "xo --fix --quiet"
